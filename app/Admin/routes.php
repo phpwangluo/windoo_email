@@ -17,4 +17,6 @@ Route::group([
 
     $router->resource('trades', TradeController::class);
 
+    $router->resource('templates', TemplateController::class);
+
 });

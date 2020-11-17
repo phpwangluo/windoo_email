@@ -2,20 +2,20 @@
 
 namespace App\Admin\Controllers;
 
-use App\Models\Country;
+use App\Models\Template;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 
-class CountryController extends AdminController
+class TemplateController extends AdminController
 {
     /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = '国家管理';
+    protected $title = '模板管理';
 
     /**
      * Make a grid builder.
@@ -24,29 +24,30 @@ class CountryController extends AdminController
      */
     protected function grid()
     {
-        $grid = new Grid(new Country());
-        $grid->disableCreateButton(); //禁用添加
+        $grid = new Grid(new Template());
         $grid->disableFilter();//禁用查询
         $grid->disableExport();//禁用导出
-        //$grid->column('id', __('Id'));
-        $grid->column('country_name', __('国家'));
-        $grid->column('start', __('开始时间'));
-        $grid->column('end', __('结束时间'));
+        $grid->column('id', __('序号'));
+        $grid->column('template_name', __('名称'));
+        //$grid->column('email_title', __('Email title'));
+        //$grid->column('email_content', __('Email content'));
+        //$grid->column('template_sign', __('Template sign'));
+        $grid->column('country_id', __('国家'));
+        $grid->column('trade_id', __('行业'));
+        //$grid->column('status', __('Status'));
         //$grid->column('created_at', __('Created at'));
         //$grid->column('updated_at', __('Updated at'));
-
         $grid->actions(function ($actions) {
 
             // 去掉删除
-            $actions->disableDelete();
+            //$actions->disableDelete();
 
             // 去掉编辑
-            //$actions->disableEdit();
+            $actions->disableEdit();
 
             // 去掉查看
             $actions->disableView();
         });
-
         $grid->tools(function ($tools) {
             $tools->batch(function ($batch) {
                 $batch->disableDelete();
@@ -63,12 +64,16 @@ class CountryController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(Country::findOrFail($id));
+        $show = new Show(Template::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('country_name', __('Country name'));
-        $show->field('start', __('Start'));
-        $show->field('end', __('End'));
+        $show->field('template_name', __('Template name'));
+        $show->field('email_title', __('Email title'));
+        $show->field('email_content', __('Email content'));
+        $show->field('template_sign', __('Template sign'));
+        $show->field('country_id', __('Country id'));
+        $show->field('trade_id', __('Trade id'));
+        $show->field('status', __('Status'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
 
@@ -82,11 +87,14 @@ class CountryController extends AdminController
      */
     protected function form()
     {
-        $form = new Form(new Country());
+        $form = new Form(new Template());
 
-        $form->text('country_name', __('国家'))->readonly()->required();
-        $form->number('start', __('开始时间'))->required()->min(0)->max(23);
-        $form->number('end', __('结束时间'))->required()->min(0)->max(23);
+        $form->text('template_name', __('名称'));
+        $form->text('email_title', __('标题'));
+        $form->textarea('email_content', __('内容'));
+        $form->text('template_sign', __('签名'));
+        $form->number('country_id', __('国家'));
+        $form->number('trade_id', __('行业'));
         $form->tools(function (Form\Tools $tools) {
 
             // 去掉`列表`按钮
@@ -106,7 +114,6 @@ class CountryController extends AdminController
 
             // 去掉`提交`按钮
             //$footer->disableSubmit();
-
             // 去掉`查看`checkbox
             $footer->disableViewCheck();
 
@@ -118,15 +125,5 @@ class CountryController extends AdminController
 
         });
         return $form;
-    }
-    public static function boot()
-    {
-        parent::boot();
-
-        static::saving(function ($model) {
-            dd('sdfdsf');
-            // 从$model取出数据并进行处理
-
-        });
     }
 }

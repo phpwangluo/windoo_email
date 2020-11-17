@@ -7,6 +7,8 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\MessageBag;
 
 class TradeController extends AdminController
 {
@@ -42,6 +44,11 @@ class TradeController extends AdminController
             // 去掉查看
             $actions->disableView();
         });
+        $grid->tools(function ($tools) {
+            $tools->batch(function ($batch) {
+                $batch->disableDelete();
+            });
+        });
         return $grid;
     }
 
@@ -72,9 +79,6 @@ class TradeController extends AdminController
     {
         $form = new Form(new Trade());
         $form->tags('trade_name', __('行业'));
-        $form->submitted(function (Form $form) {
-            dd($form->model()->trade_name[]);
-        });
         //$form->text('trade_name', __('行业'));
         $form->tools(function (Form\Tools $tools) {
 
@@ -95,7 +99,6 @@ class TradeController extends AdminController
 
             // 去掉`提交`按钮
             //$footer->disableSubmit();
-
             // 去掉`查看`checkbox
             $footer->disableViewCheck();
 
@@ -104,6 +107,29 @@ class TradeController extends AdminController
 
             // 去掉`继续创建`checkbox
             $footer->disableCreatingCheck();
+
+        });
+        $form->saving(function ($model) {
+            $trade_name_arr = $model->trade_name;
+            //验证是否已经存在数据
+            $is_exist = DB::table('trades')->whereIn('trade_name',$trade_name_arr)->count();
+            if($is_exist > 0){
+                $error = new MessageBag([
+                    'title' => '添加的行业中有重复的行业，请保证行业唯一后再添加    '
+                ]);
+                return redirect(url("admin/trades/create"))->with(compact('error'));
+            }
+            // 从$model取出数据并进行处理
+            $inser_arr = [];
+
+            DB::table('trades')->insert($inser_arr);
+            foreach ($trade_name_arr as $post) {
+                if($post != ''){
+                    $inser_arr[]['trade_name'] = $post;
+                }
+            }
+            DB::table('trades')->insert($inser_arr);
+            return redirect('/admin/trades');
 
         });
         return $form;
