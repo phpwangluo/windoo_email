@@ -117,7 +117,7 @@ class TradeController extends AdminController
         $form->saving(function ($model) {
             $trade_name_arr = $model->trade_name;
             //验证是否已经存在数据
-            $is_exist = DB::table('trades')->whereIn('trade_name',$trade_name_arr)->count();
+            $is_exist = DB::table('trades')->where(['status'=>1])->whereIn('trade_name',$trade_name_arr)->count();
             if($is_exist > 0){
                 $error = new MessageBag([
                     'title' => '添加的行业中有重复的行业，请保证行业唯一后再添加！'

@@ -143,7 +143,8 @@ class TemplateController extends AdminController
             //验证是否已经存在数据
             $where  = [
                 'country_id' => $model->country_id,
-                'trade_id'=>$model->trade_id
+                'trade_id'=>$model->trade_id,
+                'status'=>1,
             ];
             $is_exist = DB::table('templates')->where($where)->count();
             if($is_exist > 0){

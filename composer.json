@@ -16,6 +16,7 @@
         "jxlwqq/wang-editor2": "^1.0",
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
+        "maatwebsite/excel": "^3.1",
         "webklex/laravel-imap": "^2.2",
         "webklex/php-imap": "^2.2"
     },

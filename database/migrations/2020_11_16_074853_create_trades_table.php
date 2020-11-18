@@ -13,9 +13,10 @@ class CreateTradesTable extends Migration
      */
     public function up()
     {
-        Schema::create('trades', function (Blueprint $table) {
+        Schema::create('trades', function (Blueprint $table) {//行业管理
             $table->increments('id');
-            $table->string('trade_name', 50);
+            $table->string('trade_name', 32)->unique('uk_trade_name')->default('')->comment("行业名称");
+            $table->tinyInteger('status')->unsigned()->default(1)->comment("行业状态,0:删除");
             $table->timestamps();
         });
     }

@@ -30,8 +30,8 @@ class CountryController extends AdminController
         $grid->disableExport();//禁用导出
         //$grid->column('id', __('Id'));
         $grid->column('country_name', __('国家'));
-        $grid->column('start', __('开始时间'));
-        $grid->column('end', __('结束时间'));
+        $grid->column('send_start_hour', __('开始时间'));
+        $grid->column('send_end_hour', __('结束时间'));
         //$grid->column('created_at', __('Created at'));
         //$grid->column('updated_at', __('Updated at'));
 
@@ -67,8 +67,8 @@ class CountryController extends AdminController
 
         $show->field('id', __('Id'));
         $show->field('country_name', __('Country name'));
-        $show->field('start', __('Start'));
-        $show->field('end', __('End'));
+        $show->field('send_start_hour', __('Start'));
+        $show->field('send_end_hour', __('End'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
 
@@ -85,8 +85,8 @@ class CountryController extends AdminController
         $form = new Form(new Country());
 
         $form->text('country_name', __('国家'))->readonly()->required();
-        $form->number('start', __('开始时间'))->required()->min(0)->max(23);
-        $form->number('end', __('结束时间'))->required()->min(0)->max(23);
+        $form->number('send_start_hour', __('开始时间'))->required()->min(0)->max(23);
+        $form->number('send_end_hour', __('结束时间'))->required()->min(0)->max(23);
         $form->tools(function (Form\Tools $tools) {
 
             // 去掉`列表`按钮
@@ -124,7 +124,6 @@ class CountryController extends AdminController
         parent::boot();
 
         static::saving(function ($model) {
-            dd('sdfdsf');
             // 从$model取出数据并进行处理
 
         });

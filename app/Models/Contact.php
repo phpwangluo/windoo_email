@@ -5,9 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Template extends Model
+class Contact extends Model
 {
-    use HasFactory;
     /**
      * The attributes that are mass assignable.
      *
@@ -15,8 +14,19 @@ class Template extends Model
      */
     protected $fillable = [
         'id',
-        'status'
+        'email_address',
+        'country_id',
+        'trade_id',
+        'template_id',
+        'customer_tag',
+        'send_start_hour',
+        'send_end_hour',
+        'send_count',
+        'task_status',
+        'status',
+        'remarks'
     ];
+    use HasFactory;
     public function country()
     {
         return $this->belongsTo(Country::class,'country_id');
@@ -25,9 +35,8 @@ class Template extends Model
     {
         return $this->belongsTo(Trade::class,'trade_id');
     }
-
-    public function contact()
+    public function template()
     {
-        return $this->hasOne(Contact::class);
+        return $this->belongsTo(Template::class,'template_id');
     }
 }

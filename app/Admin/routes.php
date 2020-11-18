@@ -13,9 +13,13 @@ Route::group([
 
     $router->get('/', 'HomeController@index')->name('home');
 
-    $router->resource('countries', CountryController::class);
+    $router->resource('countries', CountryController::class); //国家管理路由
 
-    $router->resource('trades', TradeController::class);
+    $router->resource('trades', TradeController::class); //行业管理路由
 
-    $router->resource('templates', TemplateController::class);
+    $router->resource('templates', TemplateController::class); //模板管理路由
+
+    $router->resource('senders', SenderController::class); //发件人/发件箱管理
+
+    $router->resource('contacts', ContactController::class); //联系人管理
 });
