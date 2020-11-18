@@ -17,3 +17,5 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::get('/countrylist', [App\Http\Controllers\Api\CountryController::class, 'countryList']);
+Route::get('/tradelist', [App\Http\Controllers\Api\TradeController::class, 'tradeList']);

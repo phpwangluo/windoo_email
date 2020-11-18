@@ -397,6 +397,47 @@ return [
     |
     */
     'extensions' => [
-
+        'wang-editor2' => [
+            // 如果要关掉这个扩展，设置为false
+            'enable' => true,
+            // 编辑器的配置
+            'config' => [
+                'uploadImgFileName' => 'upload',
+                'uploadImgUrl' => '/admin/upload',
+                'menus' => [
+                    'source',
+                    '|',
+                    'bold',
+                    'underline',
+                    'italic',
+                    'strikethrough',
+                    'eraser',
+                    'forecolor',
+                    'bgcolor',
+                    '|',
+                    'quote',
+                    'fontfamily',
+                    'fontsize',
+                    'head',
+                    'unorderlist',
+                    'orderlist',
+                    'alignleft',
+                    'aligncenter',
+                    'alignright',
+                    '|',
+                    'link',
+                    'unlink',
+                    'table',
+                    '|',
+                    'img',
+                    'video',
+                    'insertcode',
+                    '|',
+                    'undo',
+                    'redo',
+                    'fullscreen'
+                ],
+            ]
+        ]
     ],
 ];

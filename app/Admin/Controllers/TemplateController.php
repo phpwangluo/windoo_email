@@ -7,6 +7,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Jxlwqq\WangEditor2;
 
 class TemplateController extends AdminController
 {
@@ -88,13 +89,20 @@ class TemplateController extends AdminController
     protected function form()
     {
         $form = new Form(new Template());
-
-        $form->text('template_name', __('名称'));
+        $form->select('country_id', __('国家'))->options('/api/countrylist');
+        /*$form->select('country_id', __('国家'))->options(function ($id) {
+            $country = Country::find($id);
+            if ($country) {
+                return [$country->id => $country->country_name];
+            }
+        })->ajax('/api/countrylist');*/
+        $form->select('trade_id', __('行业'))->options('/api/tradelist');
+        $form->text('template_name', __('模板名称'));
         $form->text('email_title', __('标题'));
-        $form->textarea('email_content', __('内容'));
+        $form->editor('email_content', __('内容'));
+        //$form->textarea('email_content', __('内容'));
         $form->text('template_sign', __('签名'));
-        $form->number('country_id', __('国家'));
-        $form->number('trade_id', __('行业'));
+
         $form->tools(function (Form\Tools $tools) {
 
             // 去掉`列表`按钮
