@@ -8,4 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class Trade extends Model
 {
     use HasFactory;
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'id',
+        'status'
+    ];
+    public function template()
+    {
+        return $this->hasOne(Template::class);
+    }
 }

@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Country extends Model
 {
     use HasFactory;
+    public function template()
+    {
+        return $this->hasOne(Template::class);
+    }
+
 }

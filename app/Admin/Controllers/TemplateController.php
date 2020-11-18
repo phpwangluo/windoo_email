@@ -2,12 +2,16 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Diy\NewDelete;
 use App\Models\Template;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use Jxlwqq\WangEditor2;
+use App\Models\Country;
+use App\Models\Trade;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\MessageBag;
 
 class TemplateController extends AdminController
 {
@@ -26,6 +30,7 @@ class TemplateController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Template());
+        $grid->model()->where('status', '=', 1);
         $grid->disableFilter();//禁用查询
         $grid->disableExport();//禁用导出
         $grid->column('id', __('序号'));
@@ -33,21 +38,22 @@ class TemplateController extends AdminController
         //$grid->column('email_title', __('Email title'));
         //$grid->column('email_content', __('Email content'));
         //$grid->column('template_sign', __('Template sign'));
-        $grid->column('country_id', __('国家'));
-        $grid->column('trade_id', __('行业'));
-        //$grid->column('status', __('Status'));
+        $grid->column('country.country_name', __('国家'));
+        $grid->column('trade.trade_name', __('行业'));
         //$grid->column('created_at', __('Created at'));
         //$grid->column('updated_at', __('Updated at'));
         $grid->actions(function ($actions) {
 
             // 去掉删除
-            //$actions->disableDelete();
+            $actions->disableDelete();
 
             // 去掉编辑
             $actions->disableEdit();
 
             // 去掉查看
             $actions->disableView();
+            // 添加自定义删除按钮
+            $actions->add(new NewDelete());
         });
         $grid->tools(function ($tools) {
             $tools->batch(function ($batch) {
@@ -130,6 +136,22 @@ class TemplateController extends AdminController
 
             // 去掉`继续创建`checkbox
             $footer->disableCreatingCheck();
+
+        });
+
+        $form->saving(function ($model) {
+            //验证是否已经存在数据
+            $where  = [
+                'country_id' => $model->country_id,
+                'trade_id'=>$model->trade_id
+            ];
+            $is_exist = DB::table('templates')->where($where)->count();
+            if($is_exist > 0){
+                $error = new MessageBag([
+                    'title' => '同一国家和行业只能添加一套模板，如果想更新模板请先删除重复模板内容！'
+                ]);
+                return redirect(url("admin/templates/create"))->with(compact('error'));
+            }
 
         });
         return $form;

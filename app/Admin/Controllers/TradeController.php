@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Diy\NewDelete;
 use App\Models\Trade;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -27,6 +28,7 @@ class TradeController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Trade());
+        $grid->model()->where('status', '=', 1);
         $grid->disableFilter();//禁用查询
         $grid->disableExport();//禁用导出
         //$grid->column('id', __('Id'));
@@ -36,13 +38,16 @@ class TradeController extends AdminController
         $grid->actions(function ($actions) {
 
             // 去掉删除
-            //$actions->disableDelete();
+            $actions->disableDelete();
 
             // 去掉编辑
             $actions->disableEdit();
 
             // 去掉查看
             $actions->disableView();
+
+            // 添加自定义删除按钮
+            $actions->add(new NewDelete());
         });
         $grid->tools(function ($tools) {
             $tools->batch(function ($batch) {
@@ -115,7 +120,7 @@ class TradeController extends AdminController
             $is_exist = DB::table('trades')->whereIn('trade_name',$trade_name_arr)->count();
             if($is_exist > 0){
                 $error = new MessageBag([
-                    'title' => '添加的行业中有重复的行业，请保证行业唯一后再添加    '
+                    'title' => '添加的行业中有重复的行业，请保证行业唯一后再添加！'
                 ]);
                 return redirect(url("admin/trades/create"))->with(compact('error'));
             }
