@@ -72,9 +72,13 @@ class ContactController extends AdminController
 
             // 去掉查看
             $actions->disableView();
-
+            if($actions->row->task_status == 1){
+                $name = '关闭';
+            }else{
+                $name = '开启';
+            }
             // 添加自定义修改任务状态的按钮
-            $actions->add(new ChangeTaskStatusAction());
+            $actions->add(new ChangeTaskStatusAction($name));
         });
         $grid->tools(function ($tools) {
             $tools->batch(function ($batch) {
@@ -125,20 +129,41 @@ class ContactController extends AdminController
     protected function form()
     {
         $form = new Form(new Contact());
+        $form->tools(function (Form\Tools $tools) {
 
-        $form->text('email_address', __('Email address'));
-        $form->number('country_id', __('Country id'));
-        $form->number('trade_id', __('Trade id'));
-        $form->number('template_id', __('Template id'));
-        $form->text('customer_tag', __('Customer tag'));
-        $form->switch('send_start_hour', __('Send start hour'))->default(9);
-        $form->switch('send_end_hour', __('Send end hour'))->default(17);
-        $form->number('send_count', __('Send count'));
-        $form->switch('business_status', __('Business status'))->default(1);
-        $form->switch('task_status', __('Task status'))->default(1);
-        $form->switch('status', __('Status'))->default(1);
-        $form->text('remarks', __('Remarks'));
+            // 去掉`列表`按钮
+            //$tools->disableList();
 
+            // 去掉`删除`按钮
+            $tools->disableDelete();
+            // 去掉`查看`按钮
+            $tools->disableView();
+
+        });
+        $form->text('email_address', __('邮箱名称'))->readonly();
+        $form->text('country.country_name', __('国家'))->readonly();
+        $form->text('trade.trade_name', __('行业'))->readonly();
+        $form->select('template_id', __('模板名称'))->options('/api/templatelist');
+        $form->number('send_start_hour', __('发送时间'))->default(9)->min(0)->max(23);
+        $form->number('send_end_hour', __('结束时间'))->default(17)->min(0)->max(23);
+        $form->text('remarks', __('备注'));
+        $form->footer(function ($footer) {
+
+            // 去掉`重置`按钮
+            //$footer->disableReset();
+
+            // 去掉`提交`按钮
+            //$footer->disableSubmit();
+            // 去掉`查看`checkbox
+            $footer->disableViewCheck();
+
+            // 去掉`继续编辑`checkbox
+            //$footer->disableEditingCheck();
+
+            // 去掉`继续创建`checkbox
+            $footer->disableCreatingCheck();
+
+        });
         return $form;
     }
 }
