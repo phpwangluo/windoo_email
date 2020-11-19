@@ -24,6 +24,7 @@ class CreateSendersTable extends Migration
             $table->tinyInteger('email_status')->unsigned()->default(1)->comment("发件人状态，0:停用，1：使用中");
             $table->tinyInteger('status')->unsigned()->default(1)->comment("发件人状态，0:删除，1：正常");
             $table->string('remarks',512)->default('')->comment('备注');
+            $table->integer('mail_setting_id')->default(1)->unsigned()->comment('关联邮箱运营商配置');
             $table->timestamps();
         });
     }

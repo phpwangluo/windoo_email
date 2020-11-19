@@ -26,10 +26,11 @@ class ImportSenders implements ToModel,WithStartRow,WithValidation,SkipsOnFailur
 
         return new Sender([
             //
-            'email_address' => $row[0],
-            'email_pass' => $row[1],
-            'email_sign' => $row[2],
-            'remarks' => $row[3],
+            'mail_setting_id'=> $row[0],
+            'email_address' => $row[1],
+            'email_pass' => $row[2],
+            'email_sign' => $row[3],
+            'remarks' => $row[4],
         ]);
     }
 
@@ -48,16 +49,18 @@ class ImportSenders implements ToModel,WithStartRow,WithValidation,SkipsOnFailur
         return [
             '0' => 'required',
             '1' => 'required',
-            '0'=>Rule::unique('senders','email_address')->where('status',1),
+            '2' => 'required',
+            '1'=>Rule::unique('senders','email_address')->where('status',1),
         ];
     }
     // 自定义验证信息
     public function customValidationMessages()
     {
         return [
-            '0.required' => '邮箱地址必填',
-            '1.required' => '邮箱密码必填',
-            '0.unique'=>'系统中已经存在的重复的邮箱地址'
+            '0.required' => '邮箱运营商必填',
+            '1.required' => '邮箱地址必填',
+            '2.required' => '邮箱密码必填',
+            '1.unique'=>'系统中已经存在的重复的邮箱地址'
         ];
     }
 

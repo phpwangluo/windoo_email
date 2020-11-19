@@ -5,10 +5,14 @@ namespace App\Admin\Controllers;
 use App\Admin\Actions\Diy\ImportContactsAction;
 use App\Admin\Actions\Diy\ChangeTaskStatusAction;
 use App\Models\Contact;
+use App\Models\MailForSend;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\MessageBag;
 
 class ContactController extends AdminController
 {
@@ -17,7 +21,7 @@ class ContactController extends AdminController
      *
      * @var string
      */
-    protected $title = '邮件发送联系人管理';
+    protected $title = '联系人任务管理';
 
     /**
      * Make a grid builder.
@@ -140,9 +144,17 @@ class ContactController extends AdminController
             $tools->disableView();
 
         });
-        $form->text('email_address', __('邮箱名称'))->readonly();
-        $form->text('country.country_name', __('国家'))->readonly();
-        $form->text('trade.trade_name', __('行业'))->readonly();
+        if(Route::currentRouteName () == 'admin.contacts.edit'){
+            $form->text('email_address', __('邮箱名称'))->readonly();
+            $form->text('country.country_name', __('国家'))->readonly();
+            $form->text('trade.trade_name', __('行业'))->readonly();
+        }else{
+            $form->text('email_address', __('邮箱名称'));
+            $form->select('country_id', __('国家'))->options('/api/countrylist');
+            $form->select('trade_id', __('行业'))->options('/api/tradelist');
+        }
+        $form->hidden('task_status');
+        $form->hidden('id');
         $form->select('template_id', __('模板名称'))->options('/api/templatelist');
         $form->number('send_start_hour', __('发送时间'))->default(9)->min(0)->max(23);
         $form->number('send_end_hour', __('结束时间'))->default(17)->min(0)->max(23);
@@ -163,6 +175,35 @@ class ContactController extends AdminController
             // 去掉`继续创建`checkbox
             $footer->disableCreatingCheck();
 
+        });
+        $form->saved(function ($model) {
+            $task_status = $model->task_status;
+            if($task_status  == 1){
+                //验证是否已经存在数据
+                $contact_detail = Contact::join('templates','templates.id','=','contacts.template_id')
+                    ->where(['contacts.status'=>1,'task_status'=>1,'templates.id'=>$model->id])
+                    ->first()->toArray();
+                $is_exist = DB::table('mail_for_sends')->where('receiver_email',$contact_detail['email_address'])->count();
+                if($is_exist == 0){
+                    $inser_arr = [];
+                    $inser_arr['receiver_email'] = $contact_detail['email_address'];
+                    $inser_arr['title'] = $contact_detail['email_title'];
+                    $inser_arr['content'] = $contact_detail['email_content'].$contact_detail['template_sign'];
+                    $inser_arr['send_start_hour'] = $contact_detail['send_start_hour'];
+                    $inser_arr['send_end_hour'] = $contact_detail['send_end_hour'];
+                    $inser_arr['created_at'] = date('Y-m-d H:i:s',time());
+                    MailForSend::insert($inser_arr);
+                }else{
+                    MailForSend::where('receiver_email',$contact_detail['email_address'])
+                        ->update([
+                            'title' => $contact_detail['email_title'],
+                            'content' => $contact_detail['email_content'].$contact_detail['template_sign'],
+                        'send_start_hour' => $contact_detail['send_start_hour'],
+                        'send_end_hour' => $contact_detail['send_end_hour'],
+                        'updated_at' => date('Y-m-d H:i:s',time()),
+                    ]);
+                }
+            }
         });
         return $form;
     }

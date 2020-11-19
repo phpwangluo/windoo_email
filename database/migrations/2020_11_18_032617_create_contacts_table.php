@@ -29,6 +29,19 @@ class CreateContactsTable extends Migration
             $table->string('remarks',64)->default('')->comment('备注');
             $table->timestamps();
         });
+
+        Schema::create('mail_for_sends', function (Blueprint $table) { //联系人配置的发送邮件内容
+            $table->increments('id');
+            //$table->string('sender_email', 128)->default('')->comment("发送邮件的发件人地址");
+            $table->string('receiver_email', 128)->default('')->comment("发送邮件的收件人地址");
+            $table->string('title', 64)->default('')->comment("发送邮件标题");
+            $table->text('content')->comment("发送邮件内容");
+            $table->tinyInteger('send_type')->unsigned()->default(1)->comment("发送邮件类型，1:自动，2：手动");
+            $table->tinyInteger('send_start_hour')->unsigned()->default(9)->comment("联系人发送邮件开始时间点");
+            $table->tinyInteger('send_end_hour')->unsigned()->default(17)->comment("联系人发送邮件结束时间点");
+            $table->tinyInteger('send_status')->unsigned()->default(1)->comment("邮件发送状态，1:待发送，2：已发送，3：取消发送 ，4：发送失败");
+            $table->timestamps();
+        });
     }
 
     /**
@@ -39,5 +52,6 @@ class CreateContactsTable extends Migration
     public function down()
     {
         Schema::dropIfExists('contacts');
+        Schema::dropIfExists('mail_forsend');
     }
 }

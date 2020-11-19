@@ -252,7 +252,7 @@ return [
     |
     */
     'default_avatar' => '/vendor/laravel-admin/AdminLTE/dist/img/user2-160x160.jpg',
-
+    //'default_avatar' => '/public/upload/images/14563260058431.jpg',
     /*
     |--------------------------------------------------------------------------
     | Admin map field provider

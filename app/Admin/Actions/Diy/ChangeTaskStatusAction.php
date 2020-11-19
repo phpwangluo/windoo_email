@@ -4,6 +4,8 @@ namespace App\Admin\Actions\Diy;
 
 use Encore\Admin\Actions\RowAction;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\MailForSend;
+use Illuminate\Support\Facades\DB;
 
 class ChangeTaskStatusAction extends RowAction
 {
@@ -18,8 +20,12 @@ class ChangeTaskStatusAction extends RowAction
         // $request ...
         if($model->task_status == 1){
             $model->update(['task_status'=>0],['id'=>$model->id]);
+            MailForSend::where('receiver_email',$model->email_address)
+                ->update(['send_status' => 3]);
         }else{
             $model->update(['task_status'=>1],['id'=>$model->id]);
+            MailForSend::where('receiver_email',$model->email_address)
+                ->update(['send_status' => 1]);
         }
         return $this->response()->success('操作成功.')->refresh();
     }

@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 
 use Encore\Admin\Admin;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Contact;
+use App\Models\MailForSend;
 
 class ImportContactsAction extends Action
 {
@@ -23,7 +25,9 @@ class ImportContactsAction extends Action
             Excel::import(new ImportSenders(),$file);
             */
             $import = new ImportContacts();
+
             $import->import($request->file('file'));
+
             $str = "";
             foreach ($import->failures() as $failure) {
                 $str .=  ' 第'. $failure->row() . '行 失败原因：' . implode(' ', $failure->errors()) . '<br> 行数据：' . implode(' ', $failure->values()). '<br>';
@@ -31,6 +35,26 @@ class ImportContactsAction extends Action
             if ($str !== '') {
                 return $this->response()->error($str)->topFullWidth()->timeout(7000000);
             }
+            //查看导入的数据并同步生成邮件任务，邮件状态为待发送
+            $contact_detail = Contact::join('templates','templates.id','=','contacts.template_id')
+                            ->where(['contacts.status'=>1,'task_status'=>1])
+                            ->get()->toArray();
+            //发送邮件任务列表
+            $mails_forsend = MailForSend::get('receiver_email')->toArray();
+            $mails_forsend_formate = array_column($mails_forsend,'receiver_email');
+            $insert_forsend = [];
+            foreach ($contact_detail as $k => $v){
+                if(!in_array($v['email_address'],$mails_forsend_formate)){
+                    $insert_forsend[$k]['receiver_email'] = $v['email_address'];
+                    $insert_forsend[$k]['title'] = $v['email_title'];
+                    $insert_forsend[$k]['content'] = $v['email_content'].$v['template_sign'];
+                    $insert_forsend[$k]['send_start_hour'] = $v['send_start_hour'];
+                    $insert_forsend[$k]['send_end_hour'] = $v['send_end_hour'];
+                    $insert_forsend[$k]['created_at'] = date('Y-m-d H:i:s',time());
+                }
+            }
+            //写入到mail_for_sends
+            MailForSend::insert($insert_forsend);
             return $this->response()->success('数据导入成功')->refresh();
         }catch (\Exception $e){
             return $this->response()->error($e -> getMessage());

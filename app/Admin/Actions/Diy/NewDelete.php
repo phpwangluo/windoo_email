@@ -12,7 +12,7 @@ class NewDelete extends RowAction
     public function handle(Model $model)
     {
         //dd($model);
-        $model->update(['task_status'=>0],['id'=>$model->id]);
+        $model->update(['status'=>0],['id'=>$model->id]);
         $this->name = '启用';
         return $this->response()->success('操作成功.')->refresh();
     }

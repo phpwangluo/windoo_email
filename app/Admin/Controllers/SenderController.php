@@ -32,6 +32,7 @@ class SenderController extends AdminController
         $grid->disableExport();//禁用导出
         $grid->disableCreateButton(); //禁用创建
         //$grid->column('id', __('Id'));
+        $grid->column('mailsetting.support_name', __('运营商'));
         $grid->column('email_address', __('邮箱名称'));
         //$grid->column('email_pass', __('Email pass'));
         //$grid->column('email_sign', __('Email sign'));
@@ -120,6 +121,7 @@ class SenderController extends AdminController
             $tools->disableView();
 
         });
+        $form->text('mailsetting.support_name', __('运营商'))->readonly();
         $form->text('email_address', __('邮箱名称'))->readonly();
         $form->text('email_pass', __('邮箱密码'));
         //$form->text('email_sign', __('Email sign'));

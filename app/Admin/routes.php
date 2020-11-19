@@ -22,4 +22,6 @@ Route::group([
     $router->resource('senders', SenderController::class); //发件人/发件箱管理
 
     $router->resource('contacts', ContactController::class); //联系人管理
+
+    $router->resource('mail-settings', MailSettingController::class); //邮箱配置管理
 });
