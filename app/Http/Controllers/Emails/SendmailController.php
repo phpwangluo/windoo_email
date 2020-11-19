@@ -18,12 +18,6 @@ use \Exception;
 
 class SendmailController extends Controller
 {
-    //测试邮件发送
-    /*public function test(Request $request){
-        # 收件人邮箱
-        $email = '1617049813@qq.com';
-        Mail::to($email)->send(new RegisterCode($email));
-    }*/
     public function test(Request $request)
     {
         try{
