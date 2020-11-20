@@ -39,4 +39,9 @@ class Contact extends Model
     {
         return $this->belongsTo(Template::class,'template_id');
     }
+
+    public function mailreceived()
+    {
+        return $this->hasOne(MailReceived::class);
+    }
 }

@@ -17,5 +17,7 @@
  * Admin::js('/packages/prettydocs/js/main.js');
  *
  */
-
+use Encore\Admin\Show;
+use App\Admin\Extensions\Show\UnSerialize;
 //Encore\Admin\Form::forget(['map', 'editor']);
+Show::extend('unserialize', UnSerialize::class);

@@ -12,5 +12,4 @@ class Country extends Model
     {
         return $this->hasOne(Template::class);
     }
-
 }

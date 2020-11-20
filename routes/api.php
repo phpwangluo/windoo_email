@@ -20,3 +20,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('/countrylist', [App\Http\Controllers\Api\CountryController::class, 'countryList']);
 Route::get('/tradelist', [App\Http\Controllers\Api\TradeController::class, 'tradeList']);
 Route::get('/templatelist', [App\Http\Controllers\Api\TemplateController::class, 'templateList']);
+Route::get('/contactlist', [App\Http\Controllers\Api\ContactController::class, 'contactList']);
