@@ -17,13 +17,7 @@ class ImportContactsAction extends Action
 
     public function handle(Request $request)
     {
-        // $request ...
         try{
-            // $request ...
-            /*$file = $request-> file('file');
-
-            Excel::import(new ImportSenders(),$file);
-            */
             $import = new ImportContacts();
 
             $import->import($request->file('file'));
@@ -50,6 +44,7 @@ class ImportContactsAction extends Action
                     $insert_forsend[$k]['content'] = $v['email_content'].$v['template_sign'];
                     $insert_forsend[$k]['send_start_hour'] = $v['send_start_hour'];
                     $insert_forsend[$k]['send_end_hour'] = $v['send_end_hour'];
+                    $insert_forsend[$k]['send_max_num'] = env('SEND_MAIL_LIMIT_NUM');;
                     $insert_forsend[$k]['created_at'] = date('Y-m-d H:i:s',time());
                 }
             }

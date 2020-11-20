@@ -44,7 +44,7 @@ class ContactController extends AdminController
 
         });
         $grid->disableExport();//禁用导出
-        //$grid->disableCreateButton(); //禁用创建
+        $grid->disableCreateButton(); //禁用创建
         //$grid->column('id', __('Id'));
         $grid->column('email_address', __('目标邮箱'));
         $grid->column('country.country_name', __('国家'));
@@ -176,6 +176,22 @@ class ContactController extends AdminController
             $footer->disableCreatingCheck();
 
         });
+        //保存之前的验证来判断是否要重置发送次数限制
+        $form->saving(function ($model) {
+            //验证是否已经存在数据
+            $old_data = DB::table('contacts')->where(['id'=>$model->id])->first();
+            $template_id = $old_data->template_id;
+            $send_start_hour = $old_data->send_start_hour;
+            $send_end_hour = $old_data->send_end_hour;
+            if($template_id != $model->template_id
+                || $send_start_hour != $model->send_start_hour
+                || $send_end_hour != $model->send_end_hour){
+                MailForSend::where('receiver_email',$model->email_address)
+                    ->update([
+                        'send_max_num' => env('SEND_MAIL_LIMIT_NUM'),
+                    ]);
+            }
+        });
         $form->saved(function ($model) {
             $task_status = $model->task_status;
             if($task_status  == 1){
@@ -191,6 +207,7 @@ class ContactController extends AdminController
                     $inser_arr['content'] = $contact_detail['email_content'].$contact_detail['template_sign'];
                     $inser_arr['send_start_hour'] = $contact_detail['send_start_hour'];
                     $inser_arr['send_end_hour'] = $contact_detail['send_end_hour'];
+                    $inser_arr['send_max_num'] = env('SEND_MAIL_LIMIT_NUM');
                     $inser_arr['created_at'] = date('Y-m-d H:i:s',time());
                     MailForSend::insert($inser_arr);
                 }else{
@@ -198,9 +215,9 @@ class ContactController extends AdminController
                         ->update([
                             'title' => $contact_detail['email_title'],
                             'content' => $contact_detail['email_content'].$contact_detail['template_sign'],
-                        'send_start_hour' => $contact_detail['send_start_hour'],
-                        'send_end_hour' => $contact_detail['send_end_hour'],
-                        'updated_at' => date('Y-m-d H:i:s',time()),
+                            'send_start_hour' => $contact_detail['send_start_hour'],
+                            'send_end_hour' => $contact_detail['send_end_hour'],
+                            'updated_at' => date('Y-m-d H:i:s',time()),
                     ]);
                 }
             }

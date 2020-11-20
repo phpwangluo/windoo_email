@@ -21,7 +21,7 @@ class ChangeTaskStatusAction extends RowAction
         if($model->task_status == 1){
             $model->update(['task_status'=>0],['id'=>$model->id]);
             MailForSend::where('receiver_email',$model->email_address)
-                ->update(['send_status' => 3]);
+                ->update(['send_status' => 2]);
         }else{
             $model->update(['task_status'=>1],['id'=>$model->id]);
             MailForSend::where('receiver_email',$model->email_address)

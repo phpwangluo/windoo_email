@@ -40,7 +40,8 @@ class SendStarterEmail extends Command
     public function handle()
     {
         //业务逻辑
-        $job = (new SendToStarterMail($email))->onConnection('database')->onQueue('emails');
+        $send_mail = new SendToStartMail('');
+        $job = $send_mail->onConnection('database')->onQueue('emails');
         dispatch($job);//分发任务到队列
     }
 }

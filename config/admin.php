@@ -11,7 +11,7 @@ return [
     | login page.
     |
     */
-    'name' => 'GUESTS POST 邮件管理系统',
+    'name' => 'GP 邮件管理系统',
 
     /*
     |--------------------------------------------------------------------------
@@ -22,7 +22,7 @@ return [
     | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo' => 'GUESTS POST 邮件管理系统',
+    'logo' => 'GP 邮件管理系统',
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +34,7 @@ return [
     | '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo-mini' => '<b>邮件</b>',
+    'logo-mini' => '<b>GP</b>',
 
     /*
     |--------------------------------------------------------------------------
@@ -277,7 +277,7 @@ return [
     |    "skin-red", "skin-red-light", "skin-black", "skin-black-light".
     |
     */
-    'skin' => 'skin-blue-light',
+    'skin' => 'skin-red',
 
     /*
     |--------------------------------------------------------------------------
@@ -312,7 +312,7 @@ return [
     | each page
     |
     */
-    'show_version' => true,
+    'show_version' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -322,7 +322,7 @@ return [
     | Whether to display the environment at the footer of each page
     |
     */
-    'show_environment' => true,
+    'show_environment' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -438,6 +438,10 @@ return [
                     'fullscreen'
                 ],
             ]
+        ],
+        'chartjs' => [
+            // Set to `false` if you want to disable this extension
+            'enable' => true,
         ]
     ],
 ];

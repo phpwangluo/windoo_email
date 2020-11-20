@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
 
         //
+        Commands\SendStarterEmail::class, //发送邮件
     ];
 
     /**
@@ -25,7 +26,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('starter:email')->hourly();
+        $schedule->command('starter:email')->everyMinute();
         /*$schedule->command('starter:email')
             ->daily()
             ->before(function () {

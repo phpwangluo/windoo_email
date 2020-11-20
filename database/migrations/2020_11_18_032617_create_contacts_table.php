@@ -39,7 +39,9 @@ class CreateContactsTable extends Migration
             $table->tinyInteger('send_type')->unsigned()->default(1)->comment("发送邮件类型，1:自动，2：手动");
             $table->tinyInteger('send_start_hour')->unsigned()->default(9)->comment("联系人发送邮件开始时间点");
             $table->tinyInteger('send_end_hour')->unsigned()->default(17)->comment("联系人发送邮件结束时间点");
-            $table->tinyInteger('send_status')->unsigned()->default(1)->comment("邮件发送状态，1:待发送，2：已发送，3：取消发送 ，4：发送失败");
+            $table->tinyInteger('send_max_num')->unsigned()->default(5)->comment("允许给联系人发送邮件的最大次数，默认5次");
+            $table->date('send_date')->default('1990-01-01')->comment("处理发送邮件的日期");
+            $table->tinyInteger('send_status')->unsigned()->default(1)->comment("是否允许邮件发送，1:允许，2：停止");
             $table->timestamps();
         });
     }

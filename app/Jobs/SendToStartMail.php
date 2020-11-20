@@ -25,7 +25,7 @@ class SendToStartMail implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($email)
+    public function __construct($email='')
     {
         //
         $this->email = $email;
@@ -41,14 +41,26 @@ class SendToStartMail implements ShouldQueue
         try{
             //获取邮件的发送信息
             $mail_for_send = MailForSend::where('send_status',1)
-                ->orWhere('send_status',4)->get();
+                ->get(); //获取当天可以发送邮件的联系人
             foreach ($mail_for_send as $k => $v){
-                //获取有效的发件人多个的话随机选择发件人
+                //验证收件人的发送次数是否用完，用完不发送，除非修改模板内容
+                if($v['send_max_num'] <= 0){
+                    continue;
+                }
+                //今天是否已经发送邮件
+                if($v['send_date'] == date('Y-m-d',time())){
+                    continue;
+                }
+                //当前时间是否在允许发送邮件的范围内
+                $hour  = date('H',time());
+                if($hour < $v['send_start_hour'] || $hour > $v['send_end_hour']){
+                    continue;
+                }
+                //获取有效的发件人，多个的话随机选择发件人
                 $mail = Sender::join('mail_settings','mail_settings.id','=','senders.mail_setting_id')
                     ->where(['status'=>1])
                     ->whereRaw('send_count<=max_send_count')
                     ->first();
-                //$mail=DB::table('mail_settings')->first();
                 $re = explode('@', $mail->email_address);
                 $config = array(
                     'driver' => $mail->driver,
@@ -68,10 +80,15 @@ class SendToStartMail implements ShouldQueue
                 ];
                 Mail::to($v['receiver_email'])->send(new ContactSender($subject, $viewData));
                 //更新发件人发件次数
-                DB::table('senders')->increment('send_count');
+                DB::table('senders')->where(['email_address'=>$mail->email_address])->increment('send_count');
                 //更新发件箱邮件状态
+                /*MailForSend::where('receiver_email',$v['receiver_email'])
+                    ->update(['send_status' => 2]);*/
+                //更新发件箱的发送日期
                 MailForSend::where('receiver_email',$v['receiver_email'])
-                    ->update(['send_status' => 2]);
+                    ->update(['send_date' => date('Y-m-d',time())]);
+                //递减允许的发送次数
+                DB::table('mail_for_sends')->where(['receiver_email'=>$v['receiver_email']])->decrement('send_max_num');
                 //向收件箱中写入一条发件记录
                 $sended = [];
                 $sended['sender_email'] = $mail->email_address;
