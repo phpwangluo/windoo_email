@@ -26,7 +26,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('starter:email')->everyMinute();
+        $schedule->command('gp_email:send')->everyMinute();
+        $schedule->command('gp_email:createtasks')->everyMinute();
         /*$schedule->command('starter:email')
             ->daily()
             ->before(function () {

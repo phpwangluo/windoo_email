@@ -27,4 +27,5 @@ Route::group([
 
     $router->resource('mail-receiveds', MailReceivedController::class); //回复管理
 
+    $router->resource('mail-details', MailDetailController::class); //自定义详情页开发
 });

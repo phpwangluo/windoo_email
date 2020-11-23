@@ -23,3 +23,7 @@ Route::get('/sendmail', [App\Http\Controllers\Emails\SendmailController::class, 
 
 //测试接收邮件
 Route::get('/getmail', [App\Http\Controllers\Emails\GetmailController::class, 'getEmail']);
+
+Route::get('/createmail', [App\Http\Controllers\Emails\CreatemailController::class, 'test']);
+
+

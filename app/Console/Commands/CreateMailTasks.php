@@ -2,25 +2,24 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\CreateToMailTasks;
 use Illuminate\Console\Command;
 
-use App\Jobs\SendToStartMail;
-
-class SendStarterEmail extends Command
+class CreateMailTasks extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'gp_email:send';
+    protected $signature = 'gp_email:createtasks';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'gp系统客户发送邮件';
+    protected $description = 'gp系统生成邮件发送任务';
 
     /**
      * Create a new command instance.
@@ -40,9 +39,8 @@ class SendStarterEmail extends Command
     public function handle()
     {
         //业务逻辑
-        $send_mail = new SendToStartMail('');
-        $job = $send_mail->onConnection('database')->onQueue('gp_email_send');
-        dispatch($job);//分发任务到队列
+        $send_mail = new CreateToMailTasks('');
+        $job = $send_mail->onConnection('database')->onQueue('gp_email_create');
         $job_code = dispatch($job);//分发任务到队列
         return $job_code;
     }

@@ -186,13 +186,13 @@ class ContactController extends AdminController
             if($template_id != $model->template_id
                 || $send_start_hour != $model->send_start_hour
                 || $send_end_hour != $model->send_end_hour){
-                MailForSend::where('receiver_email',$model->email_address)
+                Contact::where('email_address',$model->email_address)
                     ->update([
                         'send_max_num' => env('SEND_MAIL_LIMIT_NUM'),
                     ]);
             }
         });
-        $form->saved(function ($model) {
+        /*$form->saved(function ($model) {
             $task_status = $model->task_status;
             if($task_status  == 1){
                 //验证是否已经存在数据
@@ -221,7 +221,7 @@ class ContactController extends AdminController
                     ]);
                 }
             }
-        });
+        });*/
         return $form;
     }
 }

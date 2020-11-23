@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Admin\Controllers;
-
-use App\Admin\Actions\Diy\ChangeTaskStatusAction;
 use App\Models\Country;
 use App\Models\MailReceived;
 use App\Models\Template;
@@ -14,14 +12,14 @@ use Encore\Admin\Show;
 use App\Admin\Actions\Diy\MailReceivedDetailAction;
 use Ichynul\RowTable\TableRow;
 
-class MailReceivedController extends AdminController
+class MailDetailController extends AdminController
 {
     /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = '回复管理';
+    protected $title = '回复详情';
 
     /**
      * Make a grid builder.
@@ -100,9 +98,6 @@ class MailReceivedController extends AdminController
     protected function detail($id)
     {
         $show = new Show(MailReceived::findOrFail($id));
-        $show->render('admin/home');
-        $show->field('沟通记录')->replylist('xxx');
-
         $show->divider();
         $show->field('id', __('Id'));
         $show->field('sender_email', __('Sender email'));

@@ -30,7 +30,7 @@ class ImportContactsAction extends Action
                 return $this->response()->error($str)->topFullWidth()->timeout(7000000);
             }
             //查看导入的数据并同步生成邮件任务，邮件状态为待发送
-            $contact_detail = Contact::join('templates','templates.id','=','contacts.template_id')
+            /*$contact_detail = Contact::join('templates','templates.id','=','contacts.template_id')
                             ->where(['contacts.status'=>1,'task_status'=>1])
                             ->get()->toArray();
             //发送邮件任务列表
@@ -49,7 +49,7 @@ class ImportContactsAction extends Action
                 }
             }
             //写入到mail_for_sends
-            MailForSend::insert($insert_forsend);
+            MailForSend::insert($insert_forsend);*/
             return $this->response()->success('数据导入成功')->refresh();
         }catch (\Exception $e){
             return $this->response()->error($e -> getMessage());
