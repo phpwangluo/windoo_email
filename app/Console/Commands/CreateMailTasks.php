@@ -41,7 +41,7 @@ class CreateMailTasks extends Command
         //业务逻辑
         $send_mail = new CreateToMailTasks('');
         $job = $send_mail->onConnection('database')->onQueue('gp_email_create');
-        $job_code = dispatch($job);//分发任务到队列
-        return $job_code;
+        dispatch($job);//分发任务到队列
+        return 1;
     }
 }

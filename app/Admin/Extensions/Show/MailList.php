@@ -9,6 +9,7 @@ class MailList extends AbstractField
 {
     public function render($model = [])
     {
+        $this->escape=false;
         // 返回自定义回复详情页面
         return view('admin/home');
     }

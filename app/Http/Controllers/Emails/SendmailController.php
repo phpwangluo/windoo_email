@@ -25,7 +25,6 @@ class SendmailController extends Controller
             //获取邮件的发送信息
             $mail_for_send = MailForSend::join('contacts','contacts.email_address','=','mail_for_sends.receiver_email')->where('send_status',1)
                 ->get(); //获取当天可以发送邮件的联系人
-
             foreach ($mail_for_send as $k => $v){
                 //判断联系人状态是否为：启用，否则终止发送邮件
                 if($v['task_status'] != 1){
@@ -35,6 +34,7 @@ class SendmailController extends Controller
                 if($v['send_max_num'] <= 0){
                     continue;
                 }
+
                 //今天是否已经发送邮件，自动邮件默认一天只能发一次
                 //今天已发送记录里是否有邮件记录
                 $today_sended_email = MailForSend::where([
@@ -46,11 +46,12 @@ class SendmailController extends Controller
                 if(!empty($today_sended_email)){
                     continue;
                 }
+
                 //当前时间是否在允许发送邮件的范围内
-                /*$hour  = date('H',time());
-                if($hour != date('H',$v['plan_send_time'])){
+                $hour  = date('H',time());
+                if($hour != date('H',strtotime($v['plan_send_time']))){
                     continue;
-                }*/
+                }
                 //获取有效的发件人，多个的话随机选择发件人
                 $mail = Sender::join('mail_settings','mail_settings.id','=','senders.mail_setting_id')
                     ->where(['status'=>1])
@@ -67,7 +68,7 @@ class SendmailController extends Controller
                     'username' => $mail->email_address,
                     'password' => $mail->email_pass,
                     //'sendmail' => '/usr/sbin/sendmail -bs',
-                    'pretend' => true
+                    'pretend' => false
                 );
                 Config()->set('mail',$config);
                 $subject = $v['title'];
@@ -76,8 +77,7 @@ class SendmailController extends Controller
                 ];
 
                 //发送邮件
-                Mail::to($v['receiver_email'])
-                    ->send(new ContactSender($subject, $viewData));
+                Mail::to($v['receiver_email'])->send(new ContactSender($subject, $viewData));
                 //更新发件人发件次数
                 DB::table('senders')->where(['email_address'=>$mail->email_address])->increment('send_count');
                 //更新发件箱邮件状态
@@ -87,23 +87,12 @@ class SendmailController extends Controller
                         'sender_email'=>$mail->email_address,
                         'real_send_time'=>date('Y-m-d H:i:s',time()),
                     ]);
-                //递减允许的发送次数
-                //DB::table('mail_for_sends')->where(['receiver_email'=>$v['receiver_email']])->decrement('send_max_num');
-                /*//向收件箱中写入一条发件记录
-                $sended = [];
-                $sended['sender_email'] = $mail->email_address;
-                $sended['receiver_email'] = $v['receiver_email'];
-                $sended['title'] = $v['title'];
-                $sended['content'] = $v['content'];
-                $sended['send_time'] = $sended['created_at'] = date('Y-m-d H:i:s',time());
-                $sended['send_status'] = 2;
-                MailSended::insert($sended);*/
                 //更新某个联系人的收到邮箱的次数
                 DB::table('contacts')->where(['email_address'=>$v['receiver_email']])->increment('send_count');
             }
             return ['code' => 1000, 'data' => ['message' => '邮件发送成功!']];
         }catch (\Exception $e){
-           /* MailForSend::where('receiver_email',$v['receiver_email'])
+            /*MailForSend::where('receiver_email',$v['receiver_email'])
                 ->update([
                     'send_status' => 4,
                     'sender_email'=>$mail->email_address,

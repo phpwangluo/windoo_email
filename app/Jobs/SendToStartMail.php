@@ -65,7 +65,7 @@ class SendToStartMail implements ShouldQueue
                 }
                 //当前时间是否在允许发送邮件的范围内
                 $hour  = date('H',time());
-                if($hour != date('H',$v['plan_send_time'])){
+                if($hour != date('H',strtotime($v['plan_send_time']))){
                     continue;
                 }
                 //获取有效的发件人，多个的话随机选择发件人

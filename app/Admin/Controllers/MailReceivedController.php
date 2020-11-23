@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Diy\ChangeTaskStatusAction;
 use App\Models\Country;
+use App\Models\MailForSend;
 use App\Models\MailReceived;
 use App\Models\Template;
 use App\Models\Trade;
@@ -12,6 +13,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Admin\Actions\Diy\MailReceivedDetailAction;
+use http\Env\Request;
 use Ichynul\RowTable\TableRow;
 
 class MailReceivedController extends AdminController
@@ -88,6 +90,18 @@ class MailReceivedController extends AdminController
                 $batch->disableDelete();
             });
         });
+        $states = [
+            'on' => ['text' => 'YES'],
+            'off' => ['text' => 'NO'],
+        ];
+
+        $grid->column('switch_group')->switchGroup([
+            'hot'       => '热门',
+            'new'       => '最新',
+            'recommend' => '推荐',
+        ], $states);
+
+        $grid->column('是否合作')->switch($states);
         return $grid;
     }
 
@@ -148,13 +162,29 @@ class MailReceivedController extends AdminController
     {
         $form = new Form(new MailReceived());
 
-        $form->text('sender_email', __('Sender email'));
-        $form->text('receiver_email', __('Receiver email'));
-        $form->text('title', __('Title'));
-        $form->textarea('content', __('Content'));
-        $form->datetime('receive_time', __('Receive time'))->default(date('Y-m-d H:i:s'));
-        $form->switch('receive_status', __('Receive status'))->default(1);
-
+        //$form->text('sender_email', __('Sender email'));
+        //$form->text('receiver_email', __('Receiver email'));
+        //$form->text('title', __('Title'));
+        //$form->textarea('content', __('Content'));
+        //$form->datetime('receive_time', __('Receive time'))->default(date('Y-m-d H:i:s'));
+        //$form->switch('receive_status', __('Receive status'))->default(1);
+        //获取我发已发送的邮件记录
+        $sended_list = MailForSend::where(['send_status'=>2,])->get()->toArray();
+        $reply_list  = MailReceived::get()->toArray();
+        $html = '';
+        foreach ($reply_list as $k => $v){
+            $html .= '
+        --------------------------------------------------------------------------------------------------------------
+        ---------------------------------------------------------------
+        <table border="1" width="100%">
+            <tr><td width="30%">邮箱</td><td width="70%">'.$v['sender_email'].'</td></tr>
+            <tr><td>发送时间</td><td>'.$v['receive_time'].'</td></tr>
+            <tr><td>主题</td><td>'.$v['title'].'</td></tr>
+            <tr><td>正文</td><td>'.$v['content'].'</td></tr>
+            <tr><td>签名</td><td>苏州闻道</td></tr>
+        </table>';
+        }
+        $form->html($html,  __('邮件记录：'));
         return $form;
     }
 }
