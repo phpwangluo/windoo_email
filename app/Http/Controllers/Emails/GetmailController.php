@@ -50,9 +50,10 @@ class GetmailController extends Controller
                     foreach($messages as $k => $message){
                         $reply_unseen[$k]['sender_email'] = $message->getSender()[0]->mail;
                         $reply_unseen[$k]['receiver_email'] = $message->getTo()[0]->mail;
-                        $reply_unseen[$k]['title'] = iconv('GB2312','utf-8',$message->getSubject());;
+                        $reply_unseen[$k]['title'] = $message->getSubject();
                         $reply_unseen[$k]['content'] = $message->getHTMLBody() ? $message->getHTMLBody() : $message->getTextBody();
                         $reply_unseen[$k]['receive_time'] = date('Y-m-d H:i:s',$message->getDate()->toDate()->getTimestamp());
+                        $reply_unseen[$k]['created_at'] = date('Y-m-d H:i:s',time());
                         //echo 'Attachments: '.$message->getAttachments()->count().'<br />';
                         //echo $message->getHTMLBody();
                         //Move the current Message to 'INBOX.read'

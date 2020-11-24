@@ -182,6 +182,10 @@ class MailReceivedController extends AdminController
             if(!empty($now_reply_detail)){
                 $reply_sender_email = $now_reply_detail[0]['sender_email'];
                 $reply_sreceiver_email = $now_reply_detail[0]['receiver_email'];
+                $now_reply_detail[0]['template_id'] = 0;
+                $now_reply_detail[0]['email_sign'] = '';
+                $now_reply_detail[0]['handle_time'] = $now_reply_detail[0]['receive_time'];
+                $now_reply_detail[0]['handle_type'] = $now_reply_detail[0]['receive_status'];
                 //根据收发件地址获取邮件列表
                 $replyed_list = MailReceived::where([
                     'sender_email'=>$reply_sender_email,
@@ -209,9 +213,10 @@ class MailReceivedController extends AdminController
                         return $item['template_id'] . '.' . $item['handle_time'];
                     })
                     ->all();
+                $lists_format_end = array_merge($now_reply_detail,$lists_format);
             }
             $html = '';
-            foreach ($lists_format as $k => $v){
+            foreach ($lists_format_end as $k => $v){
                 $style = '';
                 if($v['handle_type'] == 2){
                     $style = 'style="color:red"';
