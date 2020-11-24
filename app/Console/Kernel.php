@@ -28,6 +28,8 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('gp_email:send')->everyMinute();
         $schedule->command('gp_email:createtasks')->everyMinute();
+        $schedule->command('gp_email:receivemails')->everyMinute();
+
         /*$schedule->command('starter:email')
             ->daily()
             ->before(function () {

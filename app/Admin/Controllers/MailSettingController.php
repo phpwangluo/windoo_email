@@ -34,6 +34,10 @@ class MailSettingController extends AdminController
         $grid->column('sendmail', __('Sendmail'));
         $grid->column('pretend', __('Pretend'));
         $grid->column('support_name', __('Support_name'));
+        $grid->column('getmail_protocol', __('Getmail_protocol'));
+        $grid->column('getmail_host', __('Getmail_host'));
+        $grid->column('getmail_port', __('Getmail_port'));
+        $grid->column('getmail_encryption', __('Getmail_encryption'));
         //$grid->column('created_at', __('Created at'));
         //$grid->column('updated_at', __('Updated at'));
 
@@ -58,6 +62,10 @@ class MailSettingController extends AdminController
         $show->field('sendmail', __('Sendmail'));
         $show->field('pretend', __('Pretend'));
         $show->field('support_name', __('Support_name'));
+        $show->field('getmail_protocol', __('Getmail_protocol'));
+        $show->field('getmail_host', __('Getmail_host'));
+        $show->field('getmail_port', __('Getmail_port'));
+        $show->field('getmail_encryption', __('Getmail_encryption'));
         //$show->field('created_at', __('Created at'));
         //$show->field('updated_at', __('Updated at'));
 
@@ -80,7 +88,10 @@ class MailSettingController extends AdminController
         $form->text('sendmail', __('Sendmail'));
         $form->switch('pretend', __('Pretend'));
         $form->text('support_name', __('Support_name'));
-
+        $form->text('getmail_protocol', __('Getmail_protocol'));
+        $form->text('getmail_host', __('Getmail_host'));
+        $form->number('getmail_port', __('Getmail_port'));
+        $form->text('Getmail_encryption', __('Getmail_encryption'));
         return $form;
     }
 }

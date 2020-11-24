@@ -2,7 +2,9 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Diy\ChangeBusinessStatusAction;
 use App\Admin\Actions\Diy\ChangeTaskStatusAction;
+use App\Admin\Actions\Diy\DoReplyByUserAction;
 use App\Models\Country;
 use App\Models\MailForSend;
 use App\Models\MailReceived;
@@ -15,6 +17,9 @@ use Encore\Admin\Show;
 use App\Admin\Actions\Diy\MailReceivedDetailAction;
 use http\Env\Request;
 use Ichynul\RowTable\TableRow;
+use Encore\Admin\Admin;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\MessageBag;
 
 class MailReceivedController extends AdminController
 {
@@ -33,7 +38,7 @@ class MailReceivedController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new MailReceived());
-        $grid->model()->where('receive_status', '=', 1);
+        //$grid->model()->where('receive_status', '=', 1);
         $grid->filter(function($filter){
 
             // 去掉默认的id过滤器
@@ -65,7 +70,7 @@ class MailReceivedController extends AdminController
         $grid->column('receive_time', __('回复时间'));
         $grid->column('receive_status', __('回复状态'))->using([
             1 => '待处理',
-            2 => '使用中',
+            2 => '已处理',
         ], '未知')->dot([
             1 => 'warning',
             2 => 'success',
@@ -78,30 +83,20 @@ class MailReceivedController extends AdminController
             $actions->disableDelete();
 
             // 去掉编辑
-            //$actions->disableEdit();
+            $actions->disableEdit();
 
             // 去掉查看
-            //$actions->disableView();
+            $actions->disableView();
             // 添加自定义查看的按钮
             $actions->add(new MailReceivedDetailAction());
+            $actions->add(new ChangeBusinessStatusAction());
+            $actions->add(new DoReplyByUserAction());
         });
         $grid->tools(function ($tools) {
             $tools->batch(function ($batch) {
                 $batch->disableDelete();
             });
         });
-        $states = [
-            'on' => ['text' => 'YES'],
-            'off' => ['text' => 'NO'],
-        ];
-
-        $grid->column('switch_group')->switchGroup([
-            'hot'       => '热门',
-            'new'       => '最新',
-            'recommend' => '推荐',
-        ], $states);
-
-        $grid->column('是否合作')->switch($states);
         return $grid;
     }
 
@@ -114,42 +109,22 @@ class MailReceivedController extends AdminController
     protected function detail($id)
     {
         $show = new Show(MailReceived::findOrFail($id));
-        $show->render('admin/home');
-        $show->field('沟通记录')->replylist('xxx');
-
-        $show->divider();
-        $show->field('id', __('Id'));
-        $show->field('sender_email', __('Sender email'));
-        $show->field('receiver_email', __('Receiver email'));
-        $show->field('title', __('Title'));
-        $show->field('content', __('Content'));
-        $show->field('receive_time', __('Receive time'));
-        $show->field('receive_status', __('Receive status'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
-        $show->rowtable('任务信息2', function ($table) {
-            $table->row(function (TableRow $row) {
-                $row->text('text1', 'label1')->rules('required');
-                $row->text('text2', 'label2');
-                $row->text('text3', 'label3');
-            });
-            $table->row(function (TableRow $row) {
-                $row->text('text4', 'label4');
-                $row->text('text5', 'label5');
-                $row->text('text6', 'label6');
-            });
-            $table->row(function (TableRow $row) {
-                $row->text('text7', 'label7');
-                $row->text('text8', 'label8');
-                $row->text('text9', 'label9');
-            });
-            //$table->useDiv(false);
-            //$table->setHeaders(['h1','h2']);
-            //$table->useDiv(false);
-            //$table->headersTh(true);//使用table时 头部使用<th></th>，默认使用<td></td>样式有些差别
-            //$table->getTableWidget()//extends Encore\Admin\Widgets\Table
-            //->offsetSet("style", "width:1000px;");
-        });
+        $show->panel()
+            ->tools(function ($tools) {
+                $tools->disableEdit();
+                //$tools->disableList();
+                $tools->disableDelete();
+            });;
+        $show->content('邮件记录')->unescape()->replylist($id);
+        //$show->field('id', __('Id'));
+        //$show->field('sender_email', __('Sender email'));
+        //$show->field('receiver_email', __('Receiver email'));
+        //$show->field('title', __('Title'));
+        //$show->field('content', __('Content'));
+        //$show->field('receive_time', __('Receive time'));
+        //$show->field('receive_status', __('Receive status'));
+        //$show->field('created_at', __('Created at'));
+        //$show->field('updated_at', __('Updated at'));
         return $show;
     }
 
@@ -161,7 +136,35 @@ class MailReceivedController extends AdminController
     protected function form()
     {
         $form = new Form(new MailReceived());
+        $form->tools(function (Form\Tools $tools) {
 
+            // 去掉`列表`按钮
+            //$tools->disableList();
+
+            // 去掉`删除`按钮
+            $tools->disableDelete();
+
+            // 去掉`查看`按钮
+            $tools->disableView();
+
+        });
+        $form->footer(function ($footer) {
+
+            // 去掉`重置`按钮
+            $footer->disableReset();
+
+            // 去掉`提交`按钮
+            //$footer->disableSubmit();
+            // 去掉`查看`checkbox
+            $footer->disableViewCheck();
+
+            // 去掉`继续编辑`checkbox
+            $footer->disableEditingCheck();
+
+            // 去掉`继续创建`checkbox
+            $footer->disableCreatingCheck();
+
+        });
         //$form->text('sender_email', __('Sender email'));
         //$form->text('receiver_email', __('Receiver email'));
         //$form->text('title', __('Title'));
@@ -169,22 +172,104 @@ class MailReceivedController extends AdminController
         //$form->datetime('receive_time', __('Receive time'))->default(date('Y-m-d H:i:s'));
         //$form->switch('receive_status', __('Receive status'))->default(1);
         //获取我发已发送的邮件记录
-        $sended_list = MailForSend::where(['send_status'=>2,])->get()->toArray();
-        $reply_list  = MailReceived::get()->toArray();
-        $html = '';
-        foreach ($reply_list as $k => $v){
-            $html .= '
-        --------------------------------------------------------------------------------------------------------------
-        ---------------------------------------------------------------
+        if($form->isEditing()){
+            //获取ID
+            $id=request()->route()->parameters()['mail_received'];
+            //通过ID获取发件人和收件人等信息
+            $now_reply_detail = MailReceived::where([
+                'id'=>$id
+            ])->get()->toArray();
+            if(!empty($now_reply_detail)){
+                $reply_sender_email = $now_reply_detail[0]['sender_email'];
+                $reply_sreceiver_email = $now_reply_detail[0]['receiver_email'];
+                //根据收发件地址获取邮件列表
+                $replyed_list = MailReceived::where([
+                    'sender_email'=>$reply_sender_email,
+                    'receiver_email'=>$reply_sreceiver_email,
+                    'receive_status'=>2
+                ])->get()->toArray();
+                foreach ($replyed_list as $rk=>$rv){
+                    $replyed_list[$rk]['template_id'] = 0;
+                    $replyed_list[$rk]['email_sign'] = '';
+                    $replyed_list[$rk]['handle_time'] = $rv['receive_time'];
+                    $replyed_list[$rk]['handle_type'] = 2; //客户回复
+                }
+                $sended_list = MailForSend::where([
+                    'sender_email'=>$reply_sreceiver_email,
+                    'receiver_email'=>$reply_sender_email,
+                    'send_status'=>2
+                ])->get()->toArray();
+                foreach ($sended_list as $sk=>$sv){
+                    $sended_list[$sk]['handle_time'] = $sv['real_send_time'];
+                    $sended_list[$sk]['handle_type'] = 1; //回复客户
+                }
+                $lists = array_merge($replyed_list,$sended_list);
+                $lists_format = collect($lists)
+                    ->sortBy(function($item) {
+                        return $item['template_id'] . '.' . $item['handle_time'];
+                    })
+                    ->all();
+            }
+            $html = '';
+            foreach ($lists_format as $k => $v){
+                $style = '';
+                if($v['handle_type'] == 2){
+                    $style = 'style="color:red"';
+                }
+                $html .= '
         <table border="1" width="100%">
-            <tr><td width="30%">邮箱</td><td width="70%">'.$v['sender_email'].'</td></tr>
-            <tr><td>发送时间</td><td>'.$v['receive_time'].'</td></tr>
+            <tr><td width="30%">邮箱</td><td width="70%"'.$style.'>'.$v['sender_email'].'</td></tr>
+            <tr><td>发送时间</td><td>'.$v['handle_time'].'</td></tr>
             <tr><td>主题</td><td>'.$v['title'].'</td></tr>
             <tr><td>正文</td><td>'.$v['content'].'</td></tr>
-            <tr><td>签名</td><td>苏州闻道</td></tr>
-        </table>';
+            <tr><td>签名</td><td>'.$v['email_sign'].'</td></tr>
+        </table><hr>';
+                ;
+            }
+            $form->html($html,  __('邮件记录：'));
+            /*$form->select('business_status', __('联系人合作意向'))->options([
+            '0'=>'不合作',
+            '1'=>'合作中',
+            '2'=>'已合作'
+        ]);*/
+            $sended_list_thenewest = MailForSend::where([
+                'sender_email'=>$reply_sreceiver_email,
+                'receiver_email'=>$reply_sender_email,
+                'send_status'=>2
+            ])->orderBy('real_send_time','desc')->first()->toArray();
+            $form->hidden('id');
+            $form->text('email_for_send','发件箱')->default($now_reply_detail[0]['sender_email'])->readonly();
+            $form->text('title_for_send','标题');
+            $form->editor('content_for_send', '内容')->default($sended_list_thenewest['content'])->style('height','400px;');
+            $form->text('email_sign_for_send', '签名');
+
+            $form->saving(function ($model) {
+                //回去回复邮件内容，并写入发送邮件任务列表
+                $insert_forsend = [];
+                $insert_forsend['receiver_email'] = $model->email_for_send;
+                $insert_forsend['title'] = $model->title_for_send;
+                $insert_forsend['template_id'] = 0;
+                $insert_forsend['email_sign'] = $model->email_sign_for_send;
+                $insert_forsend['content'] = $model->content_for_send;;
+                $insert_forsend['plan_send_time'] = date('Y-m-d H:i:s',time());
+                $insert_forsend['send_type'] = 2;
+                $insert_forsend['send_status'] = 1;
+                $insert_forsend['created_at'] = date('Y-m-d H:i:s',time());
+                MailForSend::insert($insert_forsend);
+                //把邮件状态变成已处理
+                MailReceived::where('id',$model->id)
+                    ->update([
+                        'receive_status'=>2,
+                    ]);
+                $success = new MessageBag([
+                    'title'   => '提示',
+                    'message' => '回复成功',
+                ]);
+                return redirect(url("admin/mail-receiveds"))->with(compact('success'));
+                //return $this->response()->success('回复成功')->refresh();
+            });
+
         }
-        $form->html($html,  __('邮件记录：'));
         return $form;
     }
 }

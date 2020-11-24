@@ -14,6 +14,7 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "ichynul/row-table": "^1.1",
+        "jxlwqq/simditor": "^1.0",
         "jxlwqq/wang-editor2": "^1.0",
         "laravel-admin-ext/chartjs": "^1.0",
         "laravel/framework": "^8.12",

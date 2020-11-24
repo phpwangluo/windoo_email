@@ -105,7 +105,7 @@ class TemplateController extends AdminController
         $form->select('trade_id', __('行业'))->options('/api/tradelist');
         $form->text('template_name', __('模板名称'));
         $form->text('email_title', __('标题'));
-        $form->editor('email_content', __('内容'));
+        $form->editor('email_content', __('内容'))->style('height','400px;');
         //$form->textarea('email_content', __('内容'));
         $form->text('template_sign', __('签名'));
 
