@@ -2,11 +2,13 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Diy\ChangeTaskStatusAction;
 use App\Models\BusinessSource;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Support\Facades\Route;
 
 class BusinessSourceController extends AdminController
 {
@@ -25,21 +27,59 @@ class BusinessSourceController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new BusinessSource());
+        $grid->filter(function($filter){
 
-        $grid->column('id', __('Id'));
-        $grid->column('email_address', __('Email address'));
-        $grid->column('other_contact', __('Other contact'));
-        $grid->column('country_id', __('Country id'));
-        $grid->column('trade_id', __('Trade id'));
-        $grid->column('customer_tag', __('Customer tag'));
-        $grid->column('da', __('Da'));
-        $grid->column('score_level', __('Score level'));
-        $grid->column('home_page', __('Home page'));
-        $grid->column('business_status', __('Business status'));
-        $grid->column('remarks', __('Remarks'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+            // 去掉默认的id过滤器
+            $filter->disableIdFilter();
 
+            // 在这里添加字段过滤器
+            $filter->equal('country_id', '国家')->select('/api/countrylist');
+            $filter->equal('trade_id', '行业')->select('/api/tradelist');
+            $filter->equal('email_address', '邮箱')->email();
+            $filter->equal('score_level', '评级')->select([
+                '1'=>'低',
+                '2'=>'中',
+                '3'=>'高'
+            ]);
+        });
+        $grid->disableExport();//禁用导出
+        $grid->disableCreateButton(); //禁用创建
+        //$grid->column('id', __('Id'));
+        $grid->column('email_address', __('邮箱'));
+        $grid->column('country.country_name', __('国家'));
+        $grid->column('trade.trade_name', __('行业'));
+        $grid->column('other_contact', __('其他联系方式'));
+        //$grid->column('customer_tag', __('Customer tag'));
+        //$grid->column('da', __('Da'));
+        $grid->column('score_level', __('评级'))->using([
+            1 => '低',
+            2 => '中',
+            3 => '高',
+        ], '未知');
+        //$grid->column('home_page', __('Home page'));
+        $grid->column('business_status', __('状态'))->using([
+            0 => '不合作',
+            1 => '合作中',
+            2 => '已合作',
+        ], '未知')->dot([
+            0 => 'danger',
+            1 => 'warning',
+            2 => 'success',
+        ], 'warning');
+        //$grid->column('remarks', __('Remarks'));
+        //$grid->column('created_at', __('Created at'));
+        //$grid->column('updated_at', __('Updated at'));
+        $grid->actions(function ($actions) {
+
+            // 去掉删除
+            $actions->disableDelete();
+
+            // 去掉编辑
+            //$actions->disableEdit();
+
+            // 去掉查看
+            $actions->disableView();
+        });
         return $grid;
     }
 
@@ -53,7 +93,7 @@ class BusinessSourceController extends AdminController
     {
         $show = new Show(BusinessSource::findOrFail($id));
 
-        $show->field('id', __('Id'));
+        //$show->field('id', __('Id'));
         $show->field('email_address', __('Email address'));
         $show->field('other_contact', __('Other contact'));
         $show->field('country_id', __('Country id'));
@@ -79,16 +119,32 @@ class BusinessSourceController extends AdminController
     {
         $form = new Form(new BusinessSource());
 
-        $form->text('email_address', __('Email address'));
-        $form->text('other_contact', __('Other contact'));
-        $form->number('country_id', __('Country id'));
-        $form->number('trade_id', __('Trade id'));
-        $form->text('customer_tag', __('Customer tag'));
-        $form->number('da', __('Da'));
-        $form->switch('score_level', __('Score level'))->default(3);
-        $form->text('home_page', __('Home page'));
-        $form->switch('business_status', __('Business status'))->default(1);
-        $form->text('remarks', __('Remarks'));
+        if(Route::currentRouteName () == 'admin.business-sources.edit'){
+            $form->text('email_address', __('邮箱名称'))->readonly();
+            $form->text('country.country_name', __('国家'))->readonly();
+            $form->text('trade.trade_name', __('行业'))->readonly();
+        }else{
+            $form->text('email_address', __('邮箱名称'));
+            $form->select('country_id', __('国家'))->options('/api/countrylist');
+            $form->select('trade_id', __('行业'))->options('/api/tradelist');
+        }
+        $form->text('customer_tag', __('示例项目'))->readonly();
+
+        $form->text('other_contact', __('其他联系方式'))->required();
+        $form->number('da', __('DA值'));
+        $form->select('score_level', __('评级'))->options([
+            '1'=>'低',
+            '2'=>'中',
+            '3'=>'高'
+        ]);
+
+        $form->text('home_page', __('网址'))->required();
+        $form->select('business_status', __('合作状态'))->options([
+            '0'=>'不合作',
+            '1'=>'合作中',
+            '2'=>'已合作'
+        ])->default(1);
+        $form->text('remarks', __('备注描述'));
 
         return $form;
     }

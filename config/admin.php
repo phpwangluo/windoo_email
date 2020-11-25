@@ -197,8 +197,6 @@ return [
         'role_users_table'       => 'admin_role_users',
         'role_permissions_table' => 'admin_role_permissions',
         'role_menu_table'        => 'admin_role_menu',
-        // gp系统国家管理
-        'country_table'      =>  'gp_country',
     ],
 
     /*

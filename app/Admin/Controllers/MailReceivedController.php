@@ -74,7 +74,7 @@ class MailReceivedController extends AdminController
         ], '未知')->dot([
             1 => 'warning',
             2 => 'success',
-        ], 'danger');
+        ], 'danger')->sortable()->filter();
         //$grid->column('created_at', __('Created at'));
         //$grid->column('updated_at', __('Updated at'));
         $grid->actions(function ($actions) {
@@ -88,10 +88,13 @@ class MailReceivedController extends AdminController
             // 去掉查看
             $actions->disableView();
             // 添加自定义查看的按钮
-            $actions->add(new MailReceivedDetailAction());
-            $actions->add(new ChangeBusinessStatusAction());
-            $actions->add(new DoReplyByUserAction());
+            if($actions->row->receive_status == 1){
+                $actions->add(new MailReceivedDetailAction());
+                $actions->add(new ChangeBusinessStatusAction());
+                $actions->add(new DoReplyByUserAction());
+            }
         });
+
         $grid->tools(function ($tools) {
             $tools->batch(function ($batch) {
                 $batch->disableDelete();
@@ -198,7 +201,7 @@ class MailReceivedController extends AdminController
                     $replyed_list[$rk]['handle_time'] = $rv['receive_time'];
                     $replyed_list[$rk]['handle_type'] = 2; //客户回复
                 }
-                $sended_list = MailForSend::where([
+                /*$sended_list = MailForSend::where([
                     'sender_email'=>$reply_sreceiver_email,
                     'receiver_email'=>$reply_sender_email,
                     'send_status'=>2
@@ -213,12 +216,15 @@ class MailReceivedController extends AdminController
                         return $item['template_id'] . '.' . $item['handle_time'];
                     })
                     ->all();
-                $lists_format_end = array_merge($now_reply_detail,$lists_format);
+                $lists_format_end = array_merge($now_reply_detail,$lists_format);*/
+                $lists_format_end =  array_merge($now_reply_detail,$replyed_list);
             }
             $html = '';
             foreach ($lists_format_end as $k => $v){
                 $style = '';
                 if($v['handle_type'] == 2){
+                    $style = 'style="color:green"';
+                }elseif ($v['handle_type'] == 1){
                     $style = 'style="color:red"';
                 }
                 $html .= '

@@ -7,6 +7,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Support\Facades\Route;
 
 class CountryController extends AdminController
 {
@@ -25,7 +26,7 @@ class CountryController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Country());
-        $grid->disableCreateButton(); //禁用添加
+        //$grid->disableCreateButton(); //禁用添加
         $grid->disableFilter();//禁用查询
         $grid->disableExport();//禁用导出
         //$grid->column('id', __('Id'));
@@ -83,8 +84,11 @@ class CountryController extends AdminController
     protected function form()
     {
         $form = new Form(new Country());
-
-        $form->text('country_name', __('国家'))->readonly()->required();
+        if(Route::currentRouteName () == 'admin.contacts.edit'){
+            $form->text('country_name', __('国家'))->readonly()->required();
+        }else{
+            $form->text('country_name', __('国家'))->required();
+        }
         $form->number('send_start_hour', __('开始时间'))->required()->min(0)->max(23);
         $form->number('send_end_hour', __('结束时间'))->required()->min(0)->max(23);
         $form->tools(function (Form\Tools $tools) {

@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\ReceiveToReplyMail;
+use App\Jobs\SendToStartMail;
 use Illuminate\Console\Command;
 
 class ReceiveReplyMail extends Command
@@ -37,6 +39,11 @@ class ReceiveReplyMail extends Command
      */
     public function handle()
     {
-        return 0;
+        //业务逻辑
+        $send_mail = new ReceiveToReplyMail('');
+        $job = $send_mail->onConnection('database')->onQueue('gp_email_reply');
+        dispatch($job);//分发任务到队列
+        dispatch($job);//分发任务到队列
+        return 1;
     }
 }

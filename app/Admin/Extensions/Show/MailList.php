@@ -34,7 +34,7 @@ class MailList extends AbstractField
                 $replyed_list[$rk]['handle_time'] = $rv['receive_time'];
                 $replyed_list[$rk]['handle_type'] = 2; //客户回复
             }
-            $sended_list = MailForSend::where([
+            /*$sended_list = MailForSend::where([
                 'sender_email'=>$reply_sreceiver_email,
                 'receiver_email'=>$reply_sender_email,
                 'send_status'=>2
@@ -49,12 +49,15 @@ class MailList extends AbstractField
                     return $item['template_id'] . '.' . $item['handle_time'];
                 })
                 ->all();
-            $lists_format_end = array_merge($now_reply_detail,$lists_format);
+            $lists_format_end = array_merge($now_reply_detail,$lists_format);*/
+            $lists_format_end =  array_merge($now_reply_detail,$replyed_list);
         }
         $html = '';
         foreach ($lists_format_end as $k => $v) {
             $style = '';
-            if ($v['handle_type'] == 2) {
+            if($v['handle_type'] == 2){
+                $style = 'style="color:green"';
+            }elseif ($v['handle_type'] == 1){
                 $style = 'style="color:red"';
             }
             $html .= '

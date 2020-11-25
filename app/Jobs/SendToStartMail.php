@@ -40,9 +40,9 @@ class SendToStartMail implements ShouldQueue
     {
         try{
             //获取邮件的发送信息
-            $mail_for_send = MailForSend::join('contacts','contacts.email_address','=','mail_for_sends.receiver_email')->where('send_status',1)
+            $mail_for_send = MailForSend::select(['mail_for_sends.*', 'contacts.*','mail_for_sends.id as sendid'])
+                ->join('contacts','contacts.email_address','=','mail_for_sends.receiver_email')->where('send_status',1)
                 ->get(); //获取当天可以发送邮件的联系人
-
             foreach ($mail_for_send as $k => $v){
                 //判断联系人状态是否为：启用，否则终止发送邮件
                 if($v['task_status'] != 1){
@@ -53,7 +53,7 @@ class SendToStartMail implements ShouldQueue
                     continue;
                 }
                 //区分自动发送与手动发送的区别
-                if($v['send_type'] ==1){
+                if($v['send_type'] == 1){
                     //自动发送
                     //今天是否已经发送邮件，自动邮件默认一天只能发一次
                     //今天已发送记录里是否有邮件记录
@@ -101,7 +101,7 @@ class SendToStartMail implements ShouldQueue
                 //更新发件人发件次数
                 DB::table('senders')->where(['email_address'=>$mail->email_address])->increment('send_count');
                 //更新发件箱邮件状态
-                MailForSend::where('receiver_email',$v['receiver_email'])
+                MailForSend::where('id',$v['sendid'])
                     ->update([
                         'send_status' => 2,
                         'sender_email'=>$mail->email_address,
