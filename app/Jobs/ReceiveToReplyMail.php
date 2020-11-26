@@ -61,7 +61,8 @@ class ReceiveToReplyMail implements ShouldQueue
                     //获取邮件相关属性
                     /** @var \Webklex\PHPIMAP\Message $message */
                     //$messages = $folder->messages()->on('2020-11-25')->all()->get();
-                    $messages = $folder->messages()->unseen()->on('2020-11-25')->all()->get();
+                    //$messages = $folder->messages()->unseen()->on('2020-11-25')->all()->get();
+                    $messages = $folder->messages()->unseen()->all()->get();
                     $reply_unseen = [];
                     foreach($messages as $k => $message){
                         $reply_unseen[$k]['sender_email'] = $message->getSender()[0]->mail;
@@ -70,11 +71,6 @@ class ReceiveToReplyMail implements ShouldQueue
                         $reply_unseen[$k]['content'] = $message->getHTMLBody() ? $message->getHTMLBody() : $message->getTextBody();
                         $reply_unseen[$k]['receive_time'] = date('Y-m-d H:i:s',$message->getDate()->toDate()->getTimestamp());
                         $reply_unseen[$k]['created_at'] = date('Y-m-d H:i:s',time());
-                        /*if($message->move('INBOX.read') == true){
-                            echo 'Message has ben moved';
-                        }else{
-                            echo 'Message could not be moved';
-                        }*/
                     }
                     if(!empty($reply_unseen)){
                         MailReceived::insert($reply_unseen);

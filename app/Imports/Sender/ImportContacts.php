@@ -3,6 +3,10 @@
 namespace App\Imports\Sender;
 
 use App\Models\Contact;
+use App\Models\Country;
+use App\Models\MailSetting;
+use App\Models\Template;
+use App\Models\Trade;
 use Maatwebsite\Excel\Concerns\ToModel;
 
 use Illuminate\Validation\Rule;
@@ -23,12 +27,15 @@ class ImportContacts implements ToModel,WithStartRow,WithValidation,SkipsOnFailu
     */
     public function model(array $row)
     {
+        //数据映射处理
+        $coutry_id = Country::where(['country_name'=>trim($row[1])])->first('id');
+        $trade_id = Trade::where(['trade_name'=>trim($row[2])])->first('id');
+        $template_id = Template::where(['template_name'=>trim($row[3])])->first('id');
         return new Contact([
-            //
             'email_address' => $row[0],
-            'country_id' => $row[1],
-            'trade_id' => $row[2],
-            'template_id' => $row[3],
+            'country_id' => $coutry_id->id ? $coutry_id->id :1,
+            'trade_id' => $trade_id->id ? $trade_id->id :1,
+            'template_id' => $template_id->id ? $template_id->id :1,
             'customer_tag' => $row[4],
             'send_start_hour' => $row[5],
             'send_end_hour' => $row[6],

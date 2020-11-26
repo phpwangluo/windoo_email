@@ -26,4 +26,9 @@ Route::get('/getmail', [App\Http\Controllers\Emails\GetmailController::class, 'g
 
 Route::get('/createmail', [App\Http\Controllers\Emails\CreatemailController::class, 'test']);
 
+Route::get('/export_sender_template', [App\Http\Controllers\Emails\ExportSenderTemplateController::class, 'export']);
+
+Route::get('/export_contact_template', [App\Http\Controllers\Emails\ExportContactTemplateController::class, 'export']);
+
+
 

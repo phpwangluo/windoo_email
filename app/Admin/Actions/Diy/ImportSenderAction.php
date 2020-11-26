@@ -15,13 +15,8 @@ class ImportSenderAction extends Action
 
     public function handle(Request $request)
     {
-        // $request ...
+        // 导入逻辑处理
         try{
-            // $request ...
-            /*$file = $request-> file('file');
-
-            Excel::import(new ImportSenders(),$file);
-            */
             $import = new ImportSenders();
             $import->import($request->file('file'));
             $str = "";
@@ -35,8 +30,6 @@ class ImportSenderAction extends Action
         }catch (\Exception $e){
             return $this->response()->error($e -> getMessage());
         }
-
-        //return $this->response()->success('Success message...')->refresh();
     }
 
     public function html()
@@ -54,7 +47,7 @@ HTML;
         $this
             ->file('file', '请选择文件')
             ->options(['showPreview' => false,
-                'allowedFileExtensions'=>['xlsx','xls'],
+                'allowedFileExtensions'=>['xlsx','xls','csv'],
                 'showUpload'=>true
             ]);
     }

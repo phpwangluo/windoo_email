@@ -44,30 +44,25 @@ class GetmailController extends Controller
                 foreach($folders as $folder){
                     //获取邮件相关属性
                     /** @var \Webklex\PHPIMAP\Message $message */
-                    //$messages = $folder->messages()->on('2020-11-25')->all()->get();
-                    $messages = $folder->messages()->unseen()->on('2020-11-25')->all()->get();
+                    $messages = $folder->messages()->on('2020-11-26')->all()->get();
+                    //$messages = $folder->messages()->unseen()->on('2020-11-25')->all()->get();
+                    //$messages = $folder->messages()->unseen()->all()->get();
                     $reply_unseen = [];
                     foreach($messages as $k => $message){
+                        $charset = '';
+                        $charset = $message->getStructure()->parts[0]->charset;
                         $reply_unseen[$k]['sender_email'] = $message->getSender()[0]->mail;
                         $reply_unseen[$k]['receiver_email'] = $message->getTo()[0]->mail;
-                        $reply_unseen[$k]['title'] = iconv($message->getStructure()->parts[0]->charset,'UTF8',$message->getSubject());
-                        $reply_unseen[$k]['content'] = $message->getHTMLBody() ? $message->getHTMLBody() : $message->getTextBody();
+                        $reply_unseen[$k]['title'] = iconv($charset,'utf8',$message->getSubject());
+                        $reply_unseen[$k]['content'] = $message->getHTMLBody(true);
                         $reply_unseen[$k]['receive_time'] = date('Y-m-d H:i:s',$message->getDate()->toDate()->getTimestamp());
                         $reply_unseen[$k]['created_at'] = date('Y-m-d H:i:s',time());
-                        //echo 'Attachments: '.$message->getAttachments()->count().'<br />';
-                        //echo $message->getHTMLBody();
-                        //Move the current Message to 'INBOX.read'
-                        /*if($message->move('INBOX.read') == true){
-                            echo 'Message has ben moved';
-                        }else{
-                            echo 'Message could not be moved';
-                        }*/
                     }
+                    dd($messages);
                     if(!empty($reply_unseen)){
                         MailReceived::insert($reply_unseen);
                     }
                 }
-
             }
             return ['code' => 1000, 'data' => ['message' => '邮件发送成功!']];
         }catch (\Exception $e){

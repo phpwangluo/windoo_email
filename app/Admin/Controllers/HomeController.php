@@ -3,19 +3,25 @@
 namespace App\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Sender;
 use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Layout\Row;
 use Encore\Admin\Widgets\Box;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
+
     public function index(Content $content)
     {
+        $email = DB::table('senders')
+            ->select(DB::raw('sum(send_count) as s, sum(receive_count) as r'))
+            ->get()->toArray();
         return $content
-            ->header('首页')
-            ->body(new Box('数据统计', view('admin.home')));
+            ->header('<h1 style="text-align:center">欢迎使用GP邮件管理系统</h1>')
+            ->body(new Box('发件箱邮件统计', view('admin.home',compact('email'))));
         /*return $content
             ->title('Dashboard')
             ->description('Description...')

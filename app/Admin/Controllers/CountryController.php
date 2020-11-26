@@ -84,10 +84,13 @@ class CountryController extends AdminController
     protected function form()
     {
         $form = new Form(new Country());
-        if(Route::currentRouteName () == 'admin.contacts.edit'){
-            $form->text('country_name', __('国家'))->readonly()->required();
+        if(Route::currentRouteName () == 'admin.countries.edit'){
+            $form->text('country_name', __('国家'))->readonly();
+            $form->text('country_code', __('国家编码'))->readonly();
+
         }else{
             $form->text('country_name', __('国家'))->required();
+            $form->text('country_code', __('国家编码'))->required();
         }
         $form->number('send_start_hour', __('开始时间'))->required()->min(0)->max(23);
         $form->number('send_end_hour', __('结束时间'))->required()->min(0)->max(23);

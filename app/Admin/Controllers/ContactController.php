@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Diy\ExportTemplateContactAction;
 use App\Admin\Actions\Diy\ImportContactsAction;
 use App\Admin\Actions\Diy\ChangeTaskStatusAction;
 use App\Models\Contact;
@@ -92,6 +93,10 @@ class ContactController extends AdminController
         //导入
         $grid->tools(function (Grid\Tools $tools) {
             $tools->append(new ImportContactsAction());
+        });
+        //导出模板
+        $grid->tools(function (Grid\Tools $tools) {
+            $tools->append(new ExportTemplateContactAction());
         });
         return $grid;
     }

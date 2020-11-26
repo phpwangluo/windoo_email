@@ -2,13 +2,18 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Diy\ExportTemplateSenderAction;
 use App\Admin\Actions\Diy\NewDelete;
 use App\Admin\Actions\Diy\ImportSenderAction;
+use App\Exports\Export;
 use App\Models\Sender;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use App\Admin\Extensions\Tools\ExcelExpoter;
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SenderController extends AdminController
 {
@@ -29,7 +34,7 @@ class SenderController extends AdminController
         $grid = new Grid(new Sender());
         $grid->model()->where('status', '=', 1);
         $grid->disableFilter();//禁用查询
-        $grid->disableExport();//禁用导出
+        $grid->disableExport('false');//禁用导出
         $grid->disableCreateButton(); //禁用创建
         //$grid->column('id', __('Id'));
         $grid->column('mailsetting.support_name', __('运营商'));
@@ -72,6 +77,10 @@ class SenderController extends AdminController
         //导入
         $grid->tools(function (Grid\Tools $tools) {
             $tools->append(new ImportSenderAction());
+        });
+        //导出模板
+        $grid->tools(function (Grid\Tools $tools) {
+            $tools->append(new ExportTemplateSenderAction());
         });
         return $grid;
     }
@@ -155,5 +164,29 @@ class SenderController extends AdminController
 
         });
         return $form;
+    }
+
+    public function export()
+    {
+        //设置表头
+        $row = [[
+            "id"=>'ID',
+        ]];
+        dd('sdfs');
+        //数据
+        $list=[];
+        //导出
+        $data = $list;//要导入的数据
+        $header = $row;//导出表头
+        $excel = new Export($data, $header,'sdsd');
+        $excel->setColumnWidth(['B' => 40, 'C' => 40]);
+        $excel->setRowHeight([1 => 40, 2 => 50]);
+        $excel->setFont(['A1:Z1265' => '宋体']);
+        $excel->setFontSize(['A1:I1' => 14,'A2:Z1265' => 10]);
+        $excel->setBold(['A1:Z2' => true]);
+        $excel->setBackground(['A1:A1' => '808080','C1:C1' => '708080']);
+        $excel->setMergeCells(['A1:I1']);
+        $excel->setBorders(['A2:D5' => '#000000']);
+        return Excel::download($excel, 'asdasd.xlsx');
     }
 }

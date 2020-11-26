@@ -2,6 +2,7 @@
 
 namespace App\Imports\Sender;
 
+use App\Models\MailSetting;
 use App\Models\Sender;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -23,14 +24,15 @@ class ImportSenders implements ToModel,WithStartRow,WithValidation,SkipsOnFailur
     */
     public function model(array $row)
     {
-
+        //数据逻辑处理
+        //根据运营商名称查询邮箱配置ID
+        $mail_setting_id = MailSetting::where(['support_name'=>trim($row[0])])->first('id');
         return new Sender([
-            //
-            'mail_setting_id'=> $row[0],
+            'mail_setting_id'=> $mail_setting_id->id ? $mail_setting_id->id :1,
             'email_address' => $row[1],
             'email_pass' => $row[2],
             'email_sign' => $row[3],
-            'remarks' => $row[4],
+            'remarks' => $row[4] ? $row[4] : '',
         ]);
     }
 
