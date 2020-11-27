@@ -56,9 +56,9 @@ class ChangeBusinessStatusAction extends RowAction
     public function form()
     {
         $type = [
-            1 => '不合作',
-            2 => '合作中',
-            3 => '已合作',
+            0 => '不合作',
+            1 => '合作中',
+            2 => '已合作',
         ];
         $this->radio('business_status', '合作意向')->options($type);
         $this->textarea('remarks', '意向备注')->rules('required');

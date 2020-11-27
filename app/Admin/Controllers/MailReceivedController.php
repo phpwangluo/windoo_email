@@ -39,21 +39,27 @@ class MailReceivedController extends AdminController
     {
         $grid = new Grid(new MailReceived());
         //$grid->model()->where('receive_status', '=', 1);
+        $grid->model()->latest();
+        //$grid->model()->orderByDesc('receive_time')->groupBy(['sender_email']);
         $grid->filter(function($filter){
 
             // 去掉默认的id过滤器
             $filter->disableIdFilter();
             // 在这里添加字段过滤器
             $filter->equal('sender_email', '邮箱')->select('/api/contactlist');
-            $filter->equal('receive_status', '回复状态')->select([
+            $filter->equal('receive_status', '处理状态')->select([
                 1=>'待处理',
                 2=>'已处理'
+            ]);
+            $filter->equal('reply_status', '回复状态')->select([
+                1=>'待回复',
+                2=>'已回复'
             ]);
 
         });
         $grid->disableExport();//禁用导出
         $grid->disableCreateButton(); //禁用创建
-        //$grid->column('id', __('Id'));
+        $grid->column('id', __('Id'));
         $grid->column('sender_email', __('邮箱'));
         //$grid->column('receiver_email', __('收邮箱'));
         //$grid->column('title', __('Title'));
@@ -68,15 +74,31 @@ class MailReceivedController extends AdminController
         });
         $grid->column('contact.customer_tag', __('示例项目'));
         $grid->column('receive_time', __('回复时间'));
-        $grid->column('receive_status', __('回复状态'))->using([
+        $grid->column('reply_status', __('回复状态'))->display(function () {
+            if ($this->receive_status == 2) {
+                $this->reply_status = 0;
+            }
+            return $this->reply_status;
+        })->using([
+            0 => '任务结束',
+            1 => '待回复',
+            2 => '已回复',
+        ], '未知')->label([
+            0 => 'default',
+            1 => 'warning',
+            2 => 'success',
+        ], 'danger')->sortable()->filter();
+
+
+
+        $grid->column('receive_status', __('处理状态'))->using([
             1 => '待处理',
             2 => '已处理',
         ], '未知')->dot([
             1 => 'warning',
             2 => 'success',
         ], 'danger')->sortable()->filter();
-        //$grid->column('created_at', __('Created at'));
-        //$grid->column('updated_at', __('Updated at'));
+
         $grid->actions(function ($actions) {
 
             // 去掉删除
@@ -94,7 +116,6 @@ class MailReceivedController extends AdminController
                 $actions->add(new DoReplyByUserAction());
             }
         });
-
         $grid->tools(function ($tools) {
             $tools->batch(function ($batch) {
                 $batch->disableDelete();
@@ -188,18 +209,18 @@ class MailReceivedController extends AdminController
                 $now_reply_detail[0]['template_id'] = 0;
                 $now_reply_detail[0]['email_sign'] = '';
                 $now_reply_detail[0]['handle_time'] = $now_reply_detail[0]['receive_time'];
-                $now_reply_detail[0]['handle_type'] = $now_reply_detail[0]['receive_status'];
+                $now_reply_detail[0]['handle_type'] = $now_reply_detail[0]['reply_status'];
                 //根据收发件地址获取邮件列表
                 $replyed_list = MailReceived::where([
                     'sender_email'=>$reply_sender_email,
                     'receiver_email'=>$reply_sreceiver_email,
-                    'receive_status'=>2
+                    'reply_status'=>2
                 ])->get()->toArray();
                 foreach ($replyed_list as $rk=>$rv){
                     $replyed_list[$rk]['template_id'] = 0;
                     $replyed_list[$rk]['email_sign'] = '';
                     $replyed_list[$rk]['handle_time'] = $rv['receive_time'];
-                    $replyed_list[$rk]['handle_type'] = 2; //客户回复
+                    $replyed_list[$rk]['handle_type'] = $rv['reply_status']; //客户回复
                 }
                 /*$sended_list = MailForSend::where([
                     'sender_email'=>$reply_sreceiver_email,
@@ -270,14 +291,13 @@ class MailReceivedController extends AdminController
                 //把邮件状态变成已处理
                 MailReceived::where('id',$model->id)
                     ->update([
-                        'receive_status'=>2,
+                        'reply_status'=>2,
                     ]);
                 $success = new MessageBag([
                     'title'   => '提示',
                     'message' => '回复成功',
                 ]);
                 return redirect(url("admin/mail-receiveds"))->with(compact('success'));
-                //return $this->response()->success('回复成功')->refresh();
             });
 
         }

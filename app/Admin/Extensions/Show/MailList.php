@@ -21,18 +21,18 @@ class MailList extends AbstractField
             $now_reply_detail[0]['template_id'] = 0;
             $now_reply_detail[0]['email_sign'] = '';
             $now_reply_detail[0]['handle_time'] = $now_reply_detail[0]['receive_time'];
-            $now_reply_detail[0]['handle_type'] = $now_reply_detail[0]['receive_status'];
+            $now_reply_detail[0]['handle_type'] = $now_reply_detail[0]['reply_status'];
             //根据收发件地址获取邮件列表
             $replyed_list = MailReceived::where([
                 'sender_email'=>$reply_sender_email,
                 'receiver_email'=>$reply_sreceiver_email,
-                'receive_status'=>2
+                'reply_status'=>2
             ])->get()->toArray();
             foreach ($replyed_list as $rk=>$rv){
                 $replyed_list[$rk]['template_id'] = 0;
                 $replyed_list[$rk]['email_sign'] = '';
                 $replyed_list[$rk]['handle_time'] = $rv['receive_time'];
-                $replyed_list[$rk]['handle_type'] = 2; //客户回复
+                $replyed_list[$rk]['handle_type'] = $rv['reply_status']; //客户回复
             }
             /*$sended_list = MailForSend::where([
                 'sender_email'=>$reply_sreceiver_email,
@@ -50,7 +50,11 @@ class MailList extends AbstractField
                 })
                 ->all();
             $lists_format_end = array_merge($now_reply_detail,$lists_format);*/
-            $lists_format_end =  array_merge($now_reply_detail,$replyed_list);
+            if($now_reply_detail[0]['reply_status'] == 1){
+                $lists_format_end =  array_merge($now_reply_detail,$replyed_list);
+            }else{
+                $lists_format_end =  $replyed_list;
+            }
         }
         $html = '';
         foreach ($lists_format_end as $k => $v) {

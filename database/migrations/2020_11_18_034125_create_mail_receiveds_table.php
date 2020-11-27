@@ -20,7 +20,8 @@ class CreateMailReceivedsTable extends Migration
             $table->string('title', 64)->default('')->comment("接收邮件标题");
             $table->text('content')->comment("接收邮件内容");
             $table->dateTime('receive_time')->comment('接收邮件时间');
-            $table->tinyInteger('receive_status')->unsigned()->default(1)->comment("接收邮件状态，1:待处理，2：已处理");
+            $table->tinyInteger('receive_status')->unsigned()->default(1)->comment("联系人合作意向状态，1:待处理，2：已处理");
+            $table->tinyInteger('reply_status')->unsigned()->default(1)->comment("邮件回复状态，1:待回复，2：已回复");
             $table->timestamps();
         });
     }
