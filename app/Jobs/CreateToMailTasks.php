@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Mail\ContactSender;
 use App\Models\Contact;
+use App\Models\Country;
 use App\Models\MailForSend;
 use App\Models\Sender;
 use Illuminate\Bus\Queueable;
@@ -67,6 +68,9 @@ class CreateToMailTasks implements ShouldQueue
                     && in_array($v['email_address'],$mails_forsend_formate)){
                     continue;
                 }
+                //通过国家ID获取国家对应的时区
+                $country_detail = Country::where(['id'=>$v['country_id']])->first();
+                Config()->set('timezone',$country_detail['timezone']);
                 $insert_forsend[$k]['receiver_email'] = $v['email_address'];
                 $insert_forsend[$k]['title'] = $v['email_title'];
                 $insert_forsend[$k]['template_id'] = $v['template_id'];
@@ -75,6 +79,7 @@ class CreateToMailTasks implements ShouldQueue
                 $insert_forsend[$k]['plan_send_time'] = date('Y-m-d').' '.mt_rand($v['send_start_hour'],$v['send_end_hour']).':00:00';
                 $insert_forsend[$k]['send_type'] = 1;
                 $insert_forsend[$k]['send_status'] = 1;
+                Config()->set('timezone','Asia/Shanghai');
                 $insert_forsend[$k]['created_at'] = date('Y-m-d H:i:s',time());
             }
             //更新邮件状态为已取消

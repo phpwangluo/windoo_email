@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Country;
 use App\Models\MailForSend;
 use App\Models\MailSended;
 use App\Models\Sender;
@@ -44,6 +45,9 @@ class SendToStartMail implements ShouldQueue
                 ->join('contacts','contacts.email_address','=','mail_for_sends.receiver_email')->where('send_status',1)
                 ->get(); //获取当天可以发送邮件的联系人
             foreach ($mail_for_send as $k => $v){
+                //通过国家ID获取国家对应的时区
+                $country_detail = Country::where(['id'=>$v['country_id']])->first();
+                Config()->set('timezone',$country_detail['timezone']);
                 //判断联系人状态是否为：启用，否则终止发送邮件
                 if($v['task_status'] != 1){
                     continue;
@@ -112,12 +116,6 @@ class SendToStartMail implements ShouldQueue
             }
             return ['code' => 1000, 'data' => ['message' => '邮件发送成功!']];
         }catch (\Exception $e){
-            /*MailForSend::where('receiver_email',$v['receiver_email'])
-                ->update([
-                    'send_status' => 4,
-                    'sender_email'=>$mail->email_address,
-                    'real_send_time'=>date('Y-m-d H:i:s',time()),
-                ]);*/
             return ['code' => 1004, 'data' => ['message' => '邮件发送失败!'.$e->getMessage()]];
         }
     }

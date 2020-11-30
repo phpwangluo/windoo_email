@@ -90,10 +90,12 @@ class CountryController extends AdminController
         if(Route::currentRouteName () == 'admin.countries.edit'){
             $form->text('country_name', __('国家'))->required()->readonly();
             $form->text('country_code', __('国家编码'))->required()->readonly();
+            $form->text('timezone', __('时区'))->required()->readonly();
 
         }else{
             $form->text('country_name', __('国家'))->required();
             $form->text('country_code', __('国家编码'))->required();
+            $form->text('timezone', __('时区'))->required();
         }
         $form->number('send_start_hour', __('开始时间'))->required()->default(9)->min(0)->max(23);
         $form->number('send_end_hour', __('结束时间'))->required()->default(17)->min(0)->max(23);

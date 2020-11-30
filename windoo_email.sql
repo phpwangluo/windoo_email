@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : homestead
-Source Server Version : 80021
+Source Server         : 192.168.10.10
+Source Server Version : 50729
 Source Host           : 192.168.10.10:3306
 Source Database       : windoo_email
 
 Target Server Type    : MYSQL
-Target Server Version : 80021
+Target Server Version : 50729
 File Encoding         : 65001
 
-Date: 2020-11-30 18:12:11
+Date: 2020-11-30 23:14:29
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -20,13 +20,13 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `admin_menu`;
 CREATE TABLE `admin_menu` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `parent_id` int NOT NULL DEFAULT '0',
-  `order` int NOT NULL DEFAULT '0',
-  `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `uri` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `permission` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `parent_id` int(11) NOT NULL DEFAULT '0',
+  `order` int(11) NOT NULL DEFAULT '0',
+  `title` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `icon` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `uri` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `permission` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -56,12 +56,12 @@ INSERT INTO `admin_menu` VALUES ('15', '0', '16', '合作资源管理', 'fa-user
 -- ----------------------------
 DROP TABLE IF EXISTS `admin_operation_log`;
 CREATE TABLE `admin_operation_log` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `method` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `input` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `path` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `method` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ip` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `input` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -2626,11 +2626,11 @@ INSERT INTO `admin_operation_log` VALUES ('2549', '1', 'admin/contacts', 'GET', 
 -- ----------------------------
 DROP TABLE IF EXISTS `admin_permissions`;
 CREATE TABLE `admin_permissions` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `slug` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `http_method` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `http_path` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `http_method` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `http_path` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -2653,8 +2653,8 @@ INSERT INTO `admin_permissions` VALUES ('6', 'GP邮件系统管理员', 'gp_emai
 -- ----------------------------
 DROP TABLE IF EXISTS `admin_role_menu`;
 CREATE TABLE `admin_role_menu` (
-  `role_id` int NOT NULL,
-  `menu_id` int NOT NULL,
+  `role_id` int(11) NOT NULL,
+  `menu_id` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   KEY `admin_role_menu_role_id_menu_id_index` (`role_id`,`menu_id`)
@@ -2685,8 +2685,8 @@ INSERT INTO `admin_role_menu` VALUES ('2', '15', null, null);
 -- ----------------------------
 DROP TABLE IF EXISTS `admin_role_permissions`;
 CREATE TABLE `admin_role_permissions` (
-  `role_id` int NOT NULL,
-  `permission_id` int NOT NULL,
+  `role_id` int(11) NOT NULL,
+  `permission_id` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   KEY `admin_role_permissions_role_id_permission_id_index` (`role_id`,`permission_id`)
@@ -2703,8 +2703,8 @@ INSERT INTO `admin_role_permissions` VALUES ('2', '6', null, null);
 -- ----------------------------
 DROP TABLE IF EXISTS `admin_role_users`;
 CREATE TABLE `admin_role_users` (
-  `role_id` int NOT NULL,
-  `user_id` int NOT NULL,
+  `role_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   KEY `admin_role_users_role_id_user_id_index` (`role_id`,`user_id`)
@@ -2721,9 +2721,9 @@ INSERT INTO `admin_role_users` VALUES ('2', '2', null, null);
 -- ----------------------------
 DROP TABLE IF EXISTS `admin_roles`;
 CREATE TABLE `admin_roles` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `slug` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -2742,8 +2742,8 @@ INSERT INTO `admin_roles` VALUES ('2', 'GP邮件系统管理员', 'gp_email', '2
 -- ----------------------------
 DROP TABLE IF EXISTS `admin_user_permissions`;
 CREATE TABLE `admin_user_permissions` (
-  `user_id` int NOT NULL,
-  `permission_id` int NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `permission_id` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   KEY `admin_user_permissions_user_id_permission_id_index` (`user_id`,`permission_id`)
@@ -2760,12 +2760,12 @@ INSERT INTO `admin_user_permissions` VALUES ('2', '1', null, null);
 -- ----------------------------
 DROP TABLE IF EXISTS `admin_users`;
 CREATE TABLE `admin_users` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `remember_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(190) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -2783,17 +2783,17 @@ INSERT INTO `admin_users` VALUES ('2', 'baoding001', '$2y$10$TmHy0X.o4mfWQXac2qA
 -- ----------------------------
 DROP TABLE IF EXISTS `business_sources`;
 CREATE TABLE `business_sources` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `email_address` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '联系人邮箱地址',
-  `other_contact` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '其他联系方式',
-  `country_id` int NOT NULL DEFAULT '0' COMMENT '联系人所属国家',
-  `trade_id` int unsigned NOT NULL DEFAULT '0' COMMENT '联系人所属行业',
-  `customer_tag` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '联系人标签',
-  `da` int unsigned NOT NULL DEFAULT '0' COMMENT 'DA值',
-  `score_level` tinyint unsigned NOT NULL DEFAULT '3' COMMENT '评级，1：低，2：中，3：高',
-  `home_page` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '网址',
-  `business_status` tinyint unsigned NOT NULL DEFAULT '1' COMMENT '联系人的合作状态，0：不合作 1:合作中，2：已合作',
-  `remarks` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '备注',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `email_address` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '联系人邮箱地址',
+  `other_contact` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '其他联系方式',
+  `country_id` int(11) NOT NULL DEFAULT '0' COMMENT '联系人所属国家',
+  `trade_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '联系人所属行业',
+  `customer_tag` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '联系人标签',
+  `da` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'DA值',
+  `score_level` tinyint(3) unsigned NOT NULL DEFAULT '3' COMMENT '评级，1：低，2：中，3：高',
+  `home_page` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '网址',
+  `business_status` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '联系人的合作状态，0：不合作 1:合作中，2：已合作',
+  `remarks` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '备注',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -2809,22 +2809,22 @@ INSERT INTO `business_sources` VALUES ('3', '1617049813@qq.com', '18510508304', 
 -- ----------------------------
 DROP TABLE IF EXISTS `contacts`;
 CREATE TABLE `contacts` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `email_address` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '联系人邮箱地址',
-  `country_id` int NOT NULL DEFAULT '0' COMMENT '联系人所属国家',
-  `trade_id` int unsigned NOT NULL DEFAULT '0' COMMENT '联系人所属行业',
-  `template_id` int unsigned NOT NULL DEFAULT '0' COMMENT '要给联系人发送的邮件模板',
-  `customer_tag` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '联系人标签',
-  `send_start_hour` tinyint unsigned NOT NULL DEFAULT '9' COMMENT '联系人发送邮件开始时间点',
-  `send_end_hour` tinyint unsigned NOT NULL DEFAULT '17' COMMENT '联系人发送邮件结束时间点',
-  `send_count` int unsigned NOT NULL DEFAULT '0' COMMENT '给此联系人发送邮件次数',
-  `business_status` tinyint unsigned NOT NULL DEFAULT '1' COMMENT '联系人的合作状态，0：不合作 1:合作中，2：已合作',
-  `task_status` tinyint unsigned NOT NULL DEFAULT '1' COMMENT '联系人任务状态，0:停用，1：正常',
-  `status` tinyint unsigned NOT NULL DEFAULT '1' COMMENT '联系人状态，0:删除，1：正常',
-  `remarks` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '备注',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `email_address` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '联系人邮箱地址',
+  `country_id` int(11) NOT NULL DEFAULT '0' COMMENT '联系人所属国家',
+  `trade_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '联系人所属行业',
+  `template_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '要给联系人发送的邮件模板',
+  `customer_tag` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '联系人标签',
+  `send_start_hour` tinyint(3) unsigned NOT NULL DEFAULT '9' COMMENT '联系人发送邮件开始时间点',
+  `send_end_hour` tinyint(3) unsigned NOT NULL DEFAULT '17' COMMENT '联系人发送邮件结束时间点',
+  `send_count` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '给此联系人发送邮件次数',
+  `business_status` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '联系人的合作状态，0：不合作 1:合作中，2：已合作',
+  `task_status` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '联系人任务状态，0:停用，1：正常',
+  `status` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '联系人状态，0:删除，1：正常',
+  `remarks` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '备注',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `send_max_num` tinyint unsigned NOT NULL DEFAULT '5' COMMENT '联系人最大发送次数',
+  `send_max_num` tinyint(3) unsigned NOT NULL DEFAULT '5' COMMENT '联系人最大发送次数',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -2840,12 +2840,13 @@ INSERT INTO `contacts` VALUES ('18', '1617049813@163.com', '4', '10', '5', 'CT',
 -- ----------------------------
 DROP TABLE IF EXISTS `countries`;
 CREATE TABLE `countries` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `country_name` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '国家名称',
-  `country_code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '国家编码',
-  `send_start_hour` tinyint unsigned NOT NULL DEFAULT '9' COMMENT '默认发送邮件开始时间点',
-  `send_end_hour` tinyint unsigned NOT NULL DEFAULT '17' COMMENT '默认发送邮件结束时间点',
-  `status` tinyint unsigned NOT NULL DEFAULT '1' COMMENT '国家状态',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `country_name` varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '国家名称',
+  `timezone` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Asia/Shanghai' COMMENT '国家所在时区',
+  `country_code` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '国家编码',
+  `send_start_hour` tinyint(3) unsigned NOT NULL DEFAULT '9' COMMENT '默认发送邮件开始时间点',
+  `send_end_hour` tinyint(3) unsigned NOT NULL DEFAULT '17' COMMENT '默认发送邮件结束时间点',
+  `status` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '国家状态',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -2855,24 +2856,24 @@ CREATE TABLE `countries` (
 -- ----------------------------
 -- Records of countries
 -- ----------------------------
-INSERT INTO `countries` VALUES ('4', '美国', 'SPR', '7', '19', '1', '2020-11-26 08:49:45', '2020-11-26 08:49:45');
-INSERT INTO `countries` VALUES ('5', '德国', 'MBC', '9', '17', '1', '2020-11-26 10:18:07', '2020-11-26 10:18:07');
-INSERT INTO `countries` VALUES ('6', '俄罗斯', 'SER', '23', '17', '1', '2020-11-26 10:18:50', '2020-11-26 10:18:50');
-INSERT INTO `countries` VALUES ('7', '英国', 'BTU', '23', '17', '1', '2020-11-26 10:19:23', '2020-11-26 10:19:23');
-INSERT INTO `countries` VALUES ('8', '中国', 'CNN', '9', '17', '1', '2020-11-30 16:04:28', '2020-11-30 16:04:28');
-INSERT INTO `countries` VALUES ('9', '全部', 'ALL', '9', '17', '1', '2020-11-30 16:10:55', '2020-11-30 16:10:55');
+INSERT INTO `countries` VALUES ('4', '美国', 'Asia/Shanghai', 'SPR', '7', '19', '1', '2020-11-26 08:49:45', '2020-11-26 08:49:45');
+INSERT INTO `countries` VALUES ('5', '德国', 'Asia/Shanghai', 'MBC', '9', '17', '1', '2020-11-26 10:18:07', '2020-11-26 10:18:07');
+INSERT INTO `countries` VALUES ('6', '俄罗斯', 'Asia/Shanghai', 'SER', '23', '17', '1', '2020-11-26 10:18:50', '2020-11-26 10:18:50');
+INSERT INTO `countries` VALUES ('7', '英国', 'Asia/Shanghai', 'BTU', '23', '17', '1', '2020-11-26 10:19:23', '2020-11-26 10:19:23');
+INSERT INTO `countries` VALUES ('8', '中国', 'Asia/Shanghai', 'CNN', '9', '17', '1', '2020-11-30 16:04:28', '2020-11-30 16:04:28');
+INSERT INTO `countries` VALUES ('9', '全部', 'Asia/Shanghai', 'ALL', '9', '17', '1', '2020-11-30 16:10:55', '2020-11-30 16:10:55');
 
 -- ----------------------------
 -- Table structure for failed_jobs
 -- ----------------------------
 DROP TABLE IF EXISTS `failed_jobs`;
 CREATE TABLE `failed_jobs` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `uuid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `connection` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `queue` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `exception` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
@@ -2883,17 +2884,35 @@ CREATE TABLE `failed_jobs` (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for gp_country
+-- ----------------------------
+DROP TABLE IF EXISTS `gp_country`;
+CREATE TABLE `gp_country` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `country_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `start` int(11) NOT NULL DEFAULT '0',
+  `end` int(11) NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------
+-- Records of gp_country
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for jobs
 -- ----------------------------
 DROP TABLE IF EXISTS `jobs`;
 CREATE TABLE `jobs` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `queue` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `attempts` tinyint unsigned NOT NULL,
-  `reserved_at` int unsigned DEFAULT NULL,
-  `available_at` int unsigned NOT NULL,
-  `created_at` int unsigned NOT NULL,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `queue` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `attempts` tinyint(3) unsigned NOT NULL,
+  `reserved_at` int(10) unsigned DEFAULT NULL,
+  `available_at` int(10) unsigned NOT NULL,
+  `created_at` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `jobs_queue_index` (`queue`)
 ) ENGINE=InnoDB AUTO_INCREMENT=126 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -2907,19 +2926,19 @@ CREATE TABLE `jobs` (
 -- ----------------------------
 DROP TABLE IF EXISTS `mail_for_sends`;
 CREATE TABLE `mail_for_sends` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `sender_email` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '发送邮件的发件人地址',
-  `receiver_email` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '发送邮件的收件人地址',
-  `title` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '发送邮件标题',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `sender_email` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '发送邮件的发件人地址',
+  `receiver_email` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '发送邮件的收件人地址',
+  `title` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '发送邮件标题',
   `email_sign` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '发送邮件签名',
-  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '发送邮件内容',
-  `template_id` int unsigned NOT NULL DEFAULT '0' COMMENT '模板ID',
-  `send_type` tinyint unsigned NOT NULL DEFAULT '1' COMMENT '发送邮件类型，1:自动，2：手动',
-  `send_start_hour` tinyint NOT NULL DEFAULT '9' COMMENT '设置的邮件发送开始时间',
-  `send_end_hour` tinyint NOT NULL DEFAULT '17' COMMENT '设置的邮件发送结束时间',
-  `send_max_num` tinyint unsigned NOT NULL DEFAULT '5',
+  `content` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '发送邮件内容',
+  `template_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '模板ID',
+  `send_type` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '发送邮件类型，1:自动，2：手动',
+  `send_start_hour` tinyint(4) NOT NULL DEFAULT '9' COMMENT '设置的邮件发送开始时间',
+  `send_end_hour` tinyint(4) NOT NULL DEFAULT '17' COMMENT '设置的邮件发送结束时间',
+  `send_max_num` tinyint(3) unsigned NOT NULL DEFAULT '5',
   `send_date` date NOT NULL DEFAULT '1000-01-01',
-  `send_status` tinyint unsigned NOT NULL DEFAULT '1' COMMENT '邮件发送状态，1:待发送，2：已发送，3：取消发送 ，4：发送失败',
+  `send_status` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '邮件发送状态，1:待发送，2：已发送，3：取消发送 ，4：发送失败',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `plan_send_time` datetime NOT NULL DEFAULT '1990-01-01 00:00:00' COMMENT '联系人发送邮件计划发送时间',
@@ -2939,14 +2958,14 @@ INSERT INTO `mail_for_sends` VALUES ('44', 'z1617049813@outlook.com', '161704981
 -- ----------------------------
 DROP TABLE IF EXISTS `mail_receiveds`;
 CREATE TABLE `mail_receiveds` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `sender_email` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '接收邮件的发件人地址',
-  `receiver_email` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '接收邮件的收件人地址',
-  `title` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '接收邮件标题',
-  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '接收邮件内容',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `sender_email` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '接收邮件的发件人地址',
+  `receiver_email` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '接收邮件的收件人地址',
+  `title` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '接收邮件标题',
+  `content` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '接收邮件内容',
   `receive_time` datetime NOT NULL COMMENT '接收邮件时间',
-  `receive_status` tinyint unsigned NOT NULL DEFAULT '1' COMMENT '接收邮件状态，1:待处理，2：已处理',
-  `reply_status` tinyint unsigned NOT NULL DEFAULT '1' COMMENT '回复状态，1：待回复，2：已回复',
+  `receive_status` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '接收邮件状态，1:待处理，2：已处理',
+  `reply_status` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '回复状态，1：待回复，2：已回复',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -2963,15 +2982,15 @@ INSERT INTO `mail_receiveds` VALUES ('28', '1617049813@qq.com', 'z1617049813@out
 -- ----------------------------
 DROP TABLE IF EXISTS `mail_sendeds`;
 CREATE TABLE `mail_sendeds` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `sender_email` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '发送邮件的发件人地址',
-  `receiver_email` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '发送邮件的收件人地址',
-  `title` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '发送邮件标题',
-  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '发送邮件内容',
-  `template_id` int unsigned NOT NULL DEFAULT '0' COMMENT '要给联系人发送的邮件模板',
-  `send_type` tinyint unsigned NOT NULL DEFAULT '1' COMMENT '发送邮件类型，1:自动，2：手动',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `sender_email` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '发送邮件的发件人地址',
+  `receiver_email` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '发送邮件的收件人地址',
+  `title` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '发送邮件标题',
+  `content` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '发送邮件内容',
+  `template_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '要给联系人发送的邮件模板',
+  `send_type` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '发送邮件类型，1:自动，2：手动',
   `send_time` datetime NOT NULL COMMENT '计划发件人发送邮件时间',
-  `send_status` tinyint unsigned NOT NULL DEFAULT '1' COMMENT '邮件发送状态，1:待发送，2：已发送，3：取消发送 ，4：发送失败',
+  `send_status` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '邮件发送状态，1:待发送，2：已发送，3：取消发送 ，4：发送失败',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -2986,21 +3005,21 @@ CREATE TABLE `mail_sendeds` (
 -- ----------------------------
 DROP TABLE IF EXISTS `mail_settings`;
 CREATE TABLE `mail_settings` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `driver` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱驱动',
-  `support_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱运营商',
-  `host` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱所在主机',
-  `port` int NOT NULL DEFAULT '0' COMMENT '发件箱端口号',
-  `encryption` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '加密类型',
-  `sendmail` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '是在设置driver为sendmail时使用，用于指定sendmail命令路径',
-  `pretend` tinyint NOT NULL DEFAULT '0' COMMENT '用于配置是否将邮件发送记录到日志中，默认为false则发送邮件不记录日志，如果为true的话只记录日志不发送邮件，这一配置在本地开发中调试时很有用',
-  `type` tinyint NOT NULL DEFAULT '0' COMMENT '发送人对应的邮箱运营商类型:0：个人，1：企业',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `driver` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱驱动',
+  `support_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱运营商',
+  `host` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱所在主机',
+  `port` int(11) NOT NULL DEFAULT '0' COMMENT '发件箱端口号',
+  `encryption` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '加密类型',
+  `sendmail` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '是在设置driver为sendmail时使用，用于指定sendmail命令路径',
+  `pretend` tinyint(4) NOT NULL DEFAULT '0' COMMENT '用于配置是否将邮件发送记录到日志中，默认为false则发送邮件不记录日志，如果为true的话只记录日志不发送邮件，这一配置在本地开发中调试时很有用',
+  `type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '发送人对应的邮箱运营商类型:0：个人，1：企业',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `getmail_protocol` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '拉取邮件的邮箱驱动',
-  `getmail_host` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '拉取邮件的邮箱所在主机',
-  `getmail_port` int NOT NULL DEFAULT '0' COMMENT '拉取邮件的端口号',
-  `getmail_encryption` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '拉取邮件的加密类型',
+  `getmail_host` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '拉取邮件的邮箱所在主机',
+  `getmail_port` int(11) NOT NULL DEFAULT '0' COMMENT '拉取邮件的端口号',
+  `getmail_encryption` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '拉取邮件的加密类型',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -3014,9 +3033,9 @@ INSERT INTO `mail_settings` VALUES ('1', 'smtp', 'outlook', 'smtp.office365.com'
 -- ----------------------------
 DROP TABLE IF EXISTS `migrations`;
 CREATE TABLE `migrations` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `batch` int NOT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -3044,8 +3063,8 @@ INSERT INTO `migrations` VALUES ('15', '2020_11_19_025030_create_mail_settings_t
 -- ----------------------------
 DROP TABLE IF EXISTS `password_resets`;
 CREATE TABLE `password_resets` (
-  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   KEY `password_resets_email_index` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -3059,17 +3078,17 @@ CREATE TABLE `password_resets` (
 -- ----------------------------
 DROP TABLE IF EXISTS `senders`;
 CREATE TABLE `senders` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `email_address` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱地址',
-  `email_pass` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱密码',
-  `email_sign` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱签名',
-  `send_count` int unsigned NOT NULL DEFAULT '0' COMMENT '发送邮件次数',
-  `receive_count` int unsigned NOT NULL DEFAULT '0' COMMENT '接收邮件次数',
-  `max_send_count` int unsigned NOT NULL DEFAULT '1000' COMMENT '最大发送次数',
-  `email_status` tinyint unsigned NOT NULL DEFAULT '1' COMMENT '发件人状态，0:停用，1：使用中',
-  `status` tinyint unsigned NOT NULL DEFAULT '1' COMMENT '发件人状态，0:删除，1：正常',
-  `remarks` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '备注',
-  `mail_setting_id` int unsigned NOT NULL DEFAULT '1' COMMENT '关联邮箱运营商配置',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `email_address` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱地址',
+  `email_pass` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱密码',
+  `email_sign` varchar(512) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮箱签名',
+  `send_count` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '发送邮件次数',
+  `receive_count` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '接收邮件次数',
+  `max_send_count` int(10) unsigned NOT NULL DEFAULT '1000' COMMENT '最大发送次数',
+  `email_status` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '发件人状态，0:停用，1：使用中',
+  `status` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '发件人状态，0:删除，1：正常',
+  `remarks` varchar(512) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '备注',
+  `mail_setting_id` int(10) unsigned NOT NULL DEFAULT '1' COMMENT '关联邮箱运营商配置',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -3088,14 +3107,14 @@ INSERT INTO `senders` VALUES ('7', 'z16170498135@outlook.com', '*zs1617049813sj'
 -- ----------------------------
 DROP TABLE IF EXISTS `templates`;
 CREATE TABLE `templates` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `template_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '模板名称',
-  `email_title` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮件标题',
-  `email_content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '邮件内容',
-  `template_sign` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮件内容',
-  `country_id` int unsigned NOT NULL DEFAULT '0' COMMENT '国家ID',
-  `trade_id` int unsigned NOT NULL DEFAULT '0' COMMENT '行业ID',
-  `status` tinyint unsigned NOT NULL DEFAULT '1' COMMENT '模板状态,0:删除',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `template_name` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '模板名称',
+  `email_title` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮件标题',
+  `email_content` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '邮件内容',
+  `template_sign` varchar(512) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邮件内容',
+  `country_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '国家ID',
+  `trade_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '行业ID',
+  `status` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '模板状态,0:删除',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -3111,9 +3130,9 @@ INSERT INTO `templates` VALUES ('5', '2020-11-26美国-医疗行业模板', '医
 -- ----------------------------
 DROP TABLE IF EXISTS `trades`;
 CREATE TABLE `trades` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `trade_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '行业名称',
-  `status` tinyint unsigned NOT NULL DEFAULT '1' COMMENT '行业状态,0:删除',
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `trade_name` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '行业名称',
+  `status` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '行业状态,0:删除',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -3138,12 +3157,12 @@ INSERT INTO `trades` VALUES ('14', '全部', '1', null, null);
 -- ----------------------------
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `remember_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
