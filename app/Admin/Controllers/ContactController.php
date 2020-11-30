@@ -51,7 +51,7 @@ class ContactController extends AdminController
         $grid->column('country.country_name', __('国家'));
         $grid->column('trade.trade_name', __('行业'));
         $grid->column('template.template_name', __('模板名称'));
-        $grid->column('customer_tag', __('示例项目'));
+        $grid->column('customer_tag', __('项目'));
         //$grid->column('send_start_hour', __('Send start hour'));
         //$grid->column('send_end_hour', __('Send end hour'));
         $grid->column('send_count', __('发送次数'));
@@ -95,9 +95,9 @@ class ContactController extends AdminController
             $tools->append(new ImportContactsAction());
         });
         //导出模板
-        $grid->tools(function (Grid\Tools $tools) {
+        /*$grid->tools(function (Grid\Tools $tools) {
             $tools->append(new ExportTemplateContactAction());
-        });
+        });*/
         return $grid;
     }
 
@@ -150,19 +150,19 @@ class ContactController extends AdminController
 
         });
         if(Route::currentRouteName () == 'admin.contacts.edit'){
-            $form->text('email_address', __('邮箱名称'))->readonly();
-            $form->text('country.country_name', __('国家'))->readonly();
-            $form->text('trade.trade_name', __('行业'))->readonly();
+            $form->text('email_address', __('邮箱名称'))->readonly()->required();
+            $form->text('country.country_name', __('国家'))->readonly()->required();
+            $form->text('trade.trade_name', __('行业'))->readonly()->required();
         }else{
-            $form->text('email_address', __('邮箱名称'));
-            $form->select('country_id', __('国家'))->options('/api/countrylist');
-            $form->select('trade_id', __('行业'))->options('/api/tradelist');
+            $form->text('email_address', __('邮箱名称'))->required();
+            $form->select('country_id', __('国家'))->options('/api/countrylist')->required();
+            $form->select('trade_id', __('行业'))->options('/api/tradelist')->required();
         }
         $form->hidden('task_status');
         $form->hidden('id');
-        $form->select('template_id', __('模板名称'))->options('/api/templatelist');
-        $form->number('send_start_hour', __('发送时间'))->default(9)->min(0)->max(23);
-        $form->number('send_end_hour', __('结束时间'))->default(17)->min(0)->max(23);
+        $form->select('template_id', __('模板名称'))->options('/api/templatelist')->required();
+        $form->number('send_start_hour', __('发送时间'))->default(9)->min(0)->max(23)->required();
+        $form->number('send_end_hour', __('结束时间'))->default(17)->min(0)->max(23)->required();
         $form->text('remarks', __('备注'));
         $form->footer(function ($footer) {
 

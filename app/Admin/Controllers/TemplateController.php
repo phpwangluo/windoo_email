@@ -11,6 +11,7 @@ use Encore\Admin\Show;
 use App\Models\Country;
 use App\Models\Trade;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\MessageBag;
 
 class TemplateController extends AdminController
@@ -33,7 +34,7 @@ class TemplateController extends AdminController
         $grid->model()->where('status', '=', 1);
         $grid->disableFilter();//禁用查询
         $grid->disableExport();//禁用导出
-        $grid->column('id', __('序号'));
+        $grid->column('id', __('模板序号'));
         $grid->column('template_name', __('名称'));
         //$grid->column('email_title', __('Email title'));
         //$grid->column('email_content', __('Email content'));
@@ -48,7 +49,7 @@ class TemplateController extends AdminController
             $actions->disableDelete();
 
             // 去掉编辑
-            $actions->disableEdit();
+            //$actions->disableEdit();
 
             // 去掉查看
             $actions->disableView();
@@ -95,17 +96,19 @@ class TemplateController extends AdminController
     protected function form()
     {
         $form = new Form(new Template());
-        $form->select('country_id', __('国家'))->options('/api/countrylist');
-        /*$form->select('country_id', __('国家'))->options(function ($id) {
-            $country = Country::find($id);
-            if ($country) {
-                return [$country->id => $country->country_name];
-            }
-        })->ajax('/api/countrylist');*/
-        $form->select('trade_id', __('行业'))->options('/api/tradelist');
-        $form->text('template_name', __('模板名称'));
-        $form->text('email_title', __('标题'));
-        $form->editor('email_content', __('内容'))->style('height','400px;');
+        if(Route::currentRouteName () == 'admin.templates.edit'){
+            $form->text('country.country_name', __('国家'))->required()->readonly();
+            $form->text('trade.trade_name', __('行业'))->required()->readonly();
+            $form->text('template_name', __('模板名称'))->required()->readonly();
+
+        }else{
+            $form->select('country_id', __('国家'))->options('/api/countrylist')->required();
+            $form->select('trade_id', __('行业'))->options('/api/tradelist')->required();;
+            $form->text('template_name', __('模板名称'))->required();
+        }
+
+        $form->text('email_title', __('标题'))->required();;
+        $form->editor('email_content', __('内容'))->style('height','400px;')->required();;
         //$form->textarea('email_content', __('内容'));
         $form->text('template_sign', __('签名'));
 
@@ -140,20 +143,22 @@ class TemplateController extends AdminController
         });
 
         $form->saving(function ($model) {
-            //验证是否已经存在数据
-            $where  = [
-                'country_id' => $model->country_id,
-                'trade_id'=>$model->trade_id,
-                'status'=>1,
-            ];
-            $is_exist = DB::table('templates')->where($where)->count();
-            if($is_exist > 0){
-                $error = new MessageBag([
-                    'title' => '同一国家和行业只能添加一套模板，如果想更新模板请先删除重复模板内容！'
-                ]);
-                return redirect(url("admin/templates/create"))->with(compact('error'));
+            if($model->id == null){
+                //验证是否已经存在数据
+                $where  = [
+                    'country_id' => $model->country_id,
+                    'trade_id'=>$model->trade_id,
+                    //'template_name'=>$model->template_name,
+                    'status'=>1,
+                ];
+                $is_exist = DB::table('templates')->where($where)->count();
+                if($is_exist > 0){
+                    $error = new MessageBag([
+                        'title' => '同一国家和行业只能添加一套模板，如果想更新模板请先删除重复模板内容！'
+                    ]);
+                    return redirect(url("admin/templates/create"))->with(compact('error'));
+                }
             }
-
         });
         return $form;
     }

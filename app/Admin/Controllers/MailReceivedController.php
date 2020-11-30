@@ -38,9 +38,8 @@ class MailReceivedController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new MailReceived());
-        //$grid->model()->where('receive_status', '=', 1);
-        $grid->model()->latest();
-        //$grid->model()->orderByDesc('receive_time')->groupBy(['sender_email']);
+        //$grid->model()->groupBy('sender_email');
+        //$grid->model()->groupBy('sender_email')->orderBy('id','DESC');
         $grid->filter(function($filter){
 
             // 去掉默认的id过滤器
@@ -59,7 +58,7 @@ class MailReceivedController extends AdminController
         });
         $grid->disableExport();//禁用导出
         $grid->disableCreateButton(); //禁用创建
-        $grid->column('id', __('Id'));
+        $grid->column('id', __('Id'))->sortable();
         $grid->column('sender_email', __('邮箱'));
         //$grid->column('receiver_email', __('收邮箱'));
         //$grid->column('title', __('Title'));
@@ -72,7 +71,7 @@ class MailReceivedController extends AdminController
             $trade = Trade::where('id',$this->contact->trade_id)->first('trade_name');
             return $trade['trade_name'];
         });
-        $grid->column('contact.customer_tag', __('示例项目'));
+        $grid->column('contact.customer_tag', __('项目'));
         $grid->column('receive_time', __('回复时间'));
         $grid->column('reply_status', __('回复状态'))->display(function () {
             if ($this->receive_status == 2) {

@@ -76,7 +76,7 @@ HTML;
             ->options(['showPreview' => false,
                 'allowedFileExtensions'=>['xlsx','xls'],
                 'showUpload'=>true
-            ]);
+            ])->required();
     }
     /**
      * 上传等待

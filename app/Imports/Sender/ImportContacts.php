@@ -27,19 +27,49 @@ class ImportContacts implements ToModel,WithStartRow,WithValidation,SkipsOnFailu
     */
     public function model(array $row)
     {
+        $country = '';
+        $trade = '';
+        $template = '';
+        $send_start_hour = '';
+        $send_end_hour = '';
         //数据映射处理
-        $coutry_id = Country::where(['country_name'=>trim($row[1])])->first('id');
-        $trade_id = Trade::where(['trade_name'=>trim($row[2])])->first('id');
-        $template_id = Template::where(['template_name'=>trim($row[3])])->first('id');
+        if(trim($row[1])){
+            $country_id = Country::where(['country_name'=>trim($row[1])])->first();
+            $country = $country_id->id;
+        }
+        if(trim($row[2])){
+            $trade_id = Trade::where(['trade_name'=>trim($row[2])])->first();
+            $trade = $trade_id->id;
+        }
+
+        if(trim($row[3])){
+            $template_id = Template::where(['template_name'=>trim($row[3])])->first('id');
+            $template = $template_id->id;
+        }else{
+            //通过国家和行业获取模板ID
+            $getTemplate = Template::where([
+                'country_id'=>$country,
+                'trade_id'=>$trade
+            ])->first('id');
+            $template = $getTemplate->id;
+        }
+        if(!trim($row['5']) || !trim($row['6'])){
+            //此模板对应的国家设置的时间区间
+            $send_start_hour = $country_id->send_start_hour;
+            $send_end_hour = $country_id->send_end_hour;
+        }else{
+            $send_start_hour = trim($row['5']);
+            $send_end_hour = trim($row['6']);
+        }
         return new Contact([
-            'email_address' => $row[0],
-            'country_id' => $coutry_id->id ? $coutry_id->id :1,
-            'trade_id' => $trade_id->id ? $trade_id->id :1,
-            'template_id' => $template_id->id ? $template_id->id :1,
-            'customer_tag' => $row[4],
-            'send_start_hour' => $row[5],
-            'send_end_hour' => $row[6],
-            'remarks' => $row[7],
+            'email_address' => $row[0] ? trim($row[0]) : '',
+            'country_id' => $country,
+            'trade_id' => $trade,
+            'template_id' => $template,
+            'customer_tag' => $row[4] ? trim($row[4]) : '',
+            'send_start_hour' => $send_start_hour,
+            'send_end_hour' => $send_end_hour,
+            'remarks' => $row[7] ? trim($row[7]) : '',
         ]);
     }
     /**
@@ -58,10 +88,7 @@ class ImportContacts implements ToModel,WithStartRow,WithValidation,SkipsOnFailu
             '0' => 'required',
             '1' => 'required',
             '2' => 'required',
-            '3' => 'required',
             '4' => 'required',
-            '5' => 'required',
-            '6' => 'required',
             '0'=>Rule::unique('contacts','email_address')->where('status',1),
         ];
     }
@@ -69,8 +96,10 @@ class ImportContacts implements ToModel,WithStartRow,WithValidation,SkipsOnFailu
     public function customValidationMessages()
     {
         return [
-            '0.required' => '邮箱地址必填',
-            '1.required' => '邮箱密码必填',
+            '0.required' => '联系人邮箱必填',
+            '1.required' => '联系人所属国家必填',
+            '2.required' => '联系人所属行业必填',
+            '4.required' => '项目必填',
             '0.unique'=>'系统中已经存在的重复的邮箱地址'
         ];
     }

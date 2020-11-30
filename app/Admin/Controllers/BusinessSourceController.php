@@ -128,7 +128,7 @@ class BusinessSourceController extends AdminController
             $form->select('country_id', __('国家'))->options('/api/countrylist');
             $form->select('trade_id', __('行业'))->options('/api/tradelist');
         }
-        $form->text('customer_tag', __('示例项目'))->readonly();
+        $form->text('customer_tag', __('项目'))->readonly();
 
         $form->text('other_contact', __('其他联系方式'))->required();
         $form->number('da', __('DA值'));

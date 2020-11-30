@@ -49,7 +49,7 @@ HTML;
             ->options(['showPreview' => false,
                 'allowedFileExtensions'=>['xlsx','xls','csv'],
                 'showUpload'=>true
-            ]);
+            ])->required();
     }
     /**
      * 上传等待

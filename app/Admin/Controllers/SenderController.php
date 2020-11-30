@@ -41,8 +41,8 @@ class SenderController extends AdminController
         $grid->column('email_address', __('邮箱名称'));
         //$grid->column('email_pass', __('Email pass'));
         //$grid->column('email_sign', __('Email sign'));
-        $grid->column('send_count', __('发送次数'))->sortable()->totalRow();
-        $grid->column('receive_count', __('回收次数'));
+        $grid->column('send_count', __('发送邮件数'))->sortable()->totalRow();
+        $grid->column('receive_count', __('接收回复数'));
         //$grid->column('max_send_count', __('Max send count'));
         $grid->column('email_status', __('状态'))->using([
             0 => '停用',
@@ -79,9 +79,9 @@ class SenderController extends AdminController
             $tools->append(new ImportSenderAction());
         });
         //导出模板
-        $grid->tools(function (Grid\Tools $tools) {
+        /*$grid->tools(function (Grid\Tools $tools) {
             $tools->append(new ExportTemplateSenderAction());
-        });
+        });*/
         return $grid;
     }
 
@@ -130,9 +130,9 @@ class SenderController extends AdminController
             $tools->disableView();
 
         });
-        $form->text('mailsetting.support_name', __('运营商'))->readonly();
-        $form->text('email_address', __('邮箱名称'))->readonly();
-        $form->text('email_pass', __('邮箱密码'));
+        $form->text('mailsetting.support_name', __('运营商'))->required()->readonly();
+        $form->text('email_address', __('邮箱名称'))->required()->readonly();
+        $form->text('email_pass', __('邮箱密码'))->required();
         //$form->text('email_sign', __('Email sign'));
         //$form->number('send_count', __('Send count'));
         //$form->number('receive_count', __('Receive count'));
@@ -143,7 +143,7 @@ class SenderController extends AdminController
             'on'  => ['value' => 1, 'text' => '启用', 'color' => 'success'],
             'off' => ['value' => 0, 'text' => '关闭', 'color' => 'danger'],
         ];
-        $form->switch('email_status', __('状态'))->states($states)->default(1);
+        $form->switch('email_status', __('状态'))->states($states)->default(1)->required();
         //$form->switch('status', __('Status'))->default(1);
         $form->text('remarks', __('备注'));
         $form->footer(function ($footer) {

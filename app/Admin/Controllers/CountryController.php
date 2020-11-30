@@ -7,7 +7,9 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\MessageBag;
 
 class CountryController extends AdminController
 {
@@ -84,16 +86,17 @@ class CountryController extends AdminController
     protected function form()
     {
         $form = new Form(new Country());
+        $form->hidden('id', __('id'));
         if(Route::currentRouteName () == 'admin.countries.edit'){
-            $form->text('country_name', __('国家'))->readonly();
-            $form->text('country_code', __('国家编码'))->readonly();
+            $form->text('country_name', __('国家'))->required()->readonly();
+            $form->text('country_code', __('国家编码'))->required()->readonly();
 
         }else{
             $form->text('country_name', __('国家'))->required();
             $form->text('country_code', __('国家编码'))->required();
         }
-        $form->number('send_start_hour', __('开始时间'))->required()->min(0)->max(23);
-        $form->number('send_end_hour', __('结束时间'))->required()->min(0)->max(23);
+        $form->number('send_start_hour', __('开始时间'))->required()->default(9)->min(0)->max(23);
+        $form->number('send_end_hour', __('结束时间'))->required()->default(17)->min(0)->max(23);
         $form->tools(function (Form\Tools $tools) {
 
             // 去掉`列表`按钮
@@ -124,6 +127,20 @@ class CountryController extends AdminController
             $footer->disableCreatingCheck();
 
         });
+        $form->saving(function ($model) {
+            if($model->id == null){
+                $country_name = $model->country_name;
+                //验证是否已经存在数据
+                $is_exist = DB::table('countries')->where(['status'=>1])->where(['country_name'=>$country_name])->count();
+                if($is_exist > 0){
+                    $error = new MessageBag([
+                        'title' => '添加的国家中有重复的国家，请保证国家唯一后再添加！'
+                    ]);
+                    return redirect(url("admin/countries/create"))->with(compact('error'));
+                }
+            }
+        });
+
         return $form;
     }
     public static function boot()

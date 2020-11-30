@@ -83,7 +83,7 @@ class TradeController extends AdminController
     protected function form()
     {
         $form = new Form(new Trade());
-        $form->tags('trade_name', __('行业'));
+        $form->tags('trade_name', __('行业'))->required()->placeholder('使用英文逗号分割，可以一次添加多个！');
         //$form->text('trade_name', __('行业'));
         $form->tools(function (Form\Tools $tools) {
 

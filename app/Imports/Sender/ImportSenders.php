@@ -26,13 +26,21 @@ class ImportSenders implements ToModel,WithStartRow,WithValidation,SkipsOnFailur
     {
         //数据逻辑处理
         //根据运营商名称查询邮箱配置ID
-        $mail_setting_id = MailSetting::where(['support_name'=>trim($row[0])])->first('id');
+        //截取邮箱的@后运营商名称
+        $mail_setting_id = '';
+        if($row[0]){
+            $email_arr = explode('@',trim($row[0]));
+            $email_arr_arr = explode('.',$email_arr[1]);
+            $support_name = $email_arr_arr[0];
+            $mail_setting = MailSetting::where(['support_name'=>$support_name])->first('id');
+            $mail_setting_id = $mail_setting->id;
+        }
         return new Sender([
-            'mail_setting_id'=> $mail_setting_id->id ? $mail_setting_id->id :1,
-            'email_address' => $row[1],
-            'email_pass' => $row[2],
-            'email_sign' => $row[3],
-            'remarks' => $row[4] ? $row[4] : '',
+            'mail_setting_id'=> $mail_setting_id ? $mail_setting_id : '',
+            'email_address' => trim($row[0]),
+            'email_pass' => trim($row[1]),
+            'email_sign' => $row[2]? trim($row[2]) : '',
+            'remarks' => $row[3] ? trim($row[3]) : '',
         ]);
     }
 
@@ -51,18 +59,16 @@ class ImportSenders implements ToModel,WithStartRow,WithValidation,SkipsOnFailur
         return [
             '0' => 'required',
             '1' => 'required',
-            '2' => 'required',
-            '1'=>Rule::unique('senders','email_address')->where('status',1),
+            '0'=>Rule::unique('senders','email_address')->where('status',1),
         ];
     }
     // 自定义验证信息
     public function customValidationMessages()
     {
         return [
-            '0.required' => '邮箱运营商必填',
-            '1.required' => '邮箱地址必填',
-            '2.required' => '邮箱密码必填',
-            '1.unique'=>'系统中已经存在的重复的邮箱地址'
+            '0.required' => '邮箱地址必填',
+            '1.required' => '邮箱密码必填',
+            '0.unique'=>'系统中已经存在的重复的邮箱地址'
         ];
     }
 
@@ -70,4 +76,5 @@ class ImportSenders implements ToModel,WithStartRow,WithValidation,SkipsOnFailur
     {
         return 'email_address';
     }
+
 }
