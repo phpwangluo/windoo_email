@@ -53,11 +53,11 @@ class Export implements FromCollection,WithHeadings, WithEvents
     {
         return [
             AfterSheet::class  => function(AfterSheet $event) {
-                //设置区域单元格垂直居中
+                /*//设置区域单元格垂直居中
                 $event->sheet->getDelegate()->getStyle('A1:Z1265')->getAlignment()->setVertical('center');
                 //设置区域单元格水平居中
                 $event->sheet->getDelegate()->getStyle('A1:Z1265')->getAlignment()->setHorizontal('center');
-                //设置列宽
+                *///设置列宽
                 foreach ($this->columnWidth as $column => $width) {
                     $event->sheet->getDelegate()
                         ->getColumnDimension($column)

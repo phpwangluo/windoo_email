@@ -43,7 +43,7 @@ class ExportContactTemplateController extends Controller
             "D"=>30,
             "E"=>20,
             "F"=>30,
-            "J"=>30,
+            "G"=>30,
             "H"=>30
         ];
         $excel = new Export([], $header,'收件箱联系人导入模板.xlsx',$columnWidth);
