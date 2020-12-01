@@ -95,9 +95,9 @@ class ContactController extends AdminController
             $tools->append(new ImportContactsAction());
         });
         //导出模板
-        /*$grid->tools(function (Grid\Tools $tools) {
+        $grid->tools(function (Grid\Tools $tools) {
             $tools->append(new ExportTemplateContactAction());
-        });*/
+        });
         return $grid;
     }
 

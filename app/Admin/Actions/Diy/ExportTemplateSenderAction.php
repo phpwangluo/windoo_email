@@ -5,7 +5,7 @@ use Encore\Admin\Actions\RowAction;
 class ExportTemplateSenderAction extends RowAction
 {
     public $name = <<<HTML
-        <a class="btn btn-sm btn-default import-action" href="/export_sender_template">下载导入模板</a>
+        <a target="_blank" href="/export_sender_template" class="btn btn-sm btn-default import-action">下载导入模板</a>
 HTML;
     /**
      * @return  string

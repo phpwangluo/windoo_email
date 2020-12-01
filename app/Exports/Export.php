@@ -24,11 +24,12 @@ class Export implements FromCollection,WithHeadings, WithEvents
     protected $borders = []; //设置边框颜色  key：A1:K8  value:#000000
     //设置页面属性时如果无效   更改excel格式尝试即可
     //构造函数传值
-    public function __construct($data, $headings,$sheetName)
+    public function __construct($data, $headings,$sheetName,$columnWidth)
     {
         $this->data = $data;
         $this->headings = $headings;
         $this->sheetName = $sheetName;
+        $this->columnWidth = $columnWidth;
         $this->createData();
     }
 

@@ -47,7 +47,7 @@ class SendToStartMail implements ShouldQueue
             foreach ($mail_for_send as $k => $v){
                 //通过国家ID获取国家对应的时区
                 $country_detail = Country::where(['id'=>$v['country_id']])->first();
-                Config()->set('timezone',$country_detail['timezone']);
+                date_default_timezone_set($country_detail->timezone);
                 //判断联系人状态是否为：启用，否则终止发送邮件
                 if($v['task_status'] != 1){
                     continue;
@@ -113,6 +113,7 @@ class SendToStartMail implements ShouldQueue
                     ]);
                 //更新某个联系人的收到邮箱的次数
                 DB::table('contacts')->where(['email_address'=>$v['receiver_email']])->increment('send_count');
+                date_default_timezone_set('Asia/Shanghai');
             }
             return ['code' => 1000, 'data' => ['message' => '邮件发送成功!']];
         }catch (\Exception $e){

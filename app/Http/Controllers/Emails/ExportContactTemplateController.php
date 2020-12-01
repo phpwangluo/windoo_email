@@ -24,26 +24,29 @@ class ExportContactTemplateController extends Controller
     public function export(Request $request)
     {
         //设置表头
-        $row = [
+        $header = [
             [
-                "0"=>'联系人邮箱地址',
-                "1"=>'联系人所属国家',
-                "2"=>'联系人所属行业',
+                "0"=>'联系人邮箱地址（必填）',
+                "1"=>'联系人所属国家（必填）',
+                "2"=>'联系人所属行业（必填）',
                 "3"=>'联系人模板',
-                "4"=>'示例项目',
+                "4"=>'项目（必填）',
                 "5"=>'联系人标发送邮件开始时间点',
                 "6"=>'发送邮件结束时间点',
                 "7"=>'备注'
             ]
         ];
-
-        //数据
-        $list=[
+        $columnWidth = [
+            "A"=>30,
+            "B"=>30,
+            "C"=>30,
+            "D"=>30,
+            "E"=>20,
+            "F"=>30,
+            "J"=>30,
+            "H"=>30
         ];
-        //导出
-        $data = $list;//要导入的数据
-        $header = $row;//导出表头
-        $excel = new Export($data, $header,'contact');
-        return Excel::download($excel, "contact.xlsx");
+        $excel = new Export([], $header,'收件箱联系人导入模板.xlsx',$columnWidth);
+        return Excel::download($excel, "收件箱联系人导入模板.xlsx",'Xlsx');
     }
 }

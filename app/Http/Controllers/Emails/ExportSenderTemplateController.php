@@ -24,22 +24,21 @@ class ExportSenderTemplateController extends Controller
     public function export(Request $request)
     {
         //设置表头
-        $row = [
+        $header = [
             [
-            "support_name"=>'运营商',
-            "email_address"=>'邮箱地址',
-            "email_pass"=>'邮箱密码',
-            "email_sign"=>'邮箱签名',
-            "remarks"=>'备注']
+                "email_address"=>'邮箱地址(必填)',
+                "email_pass"=>'邮箱密码（必填）',
+                "email_sign"=>'邮箱签名',
+                "remarks"=>'备注'
+            ]
         ];
-
-        //数据
-        $list=[
+        $columnWidth = [
+            "A"=>30,
+            "B"=>30,
+            "C"=>30,
+            "D"=>30
         ];
-        //导出
-        $data = $list;//要导入的数据
-        $header = $row;//导出表头
-        $excel = new Export($data, $header,'');
-        return Excel::download($excel, 'sender.xlsx');
+        $excel = new Export([], $header,'发件箱导入模板.xlsx',$columnWidth);
+        return Excel::download($excel, '发件箱导入模板.xlsx','Xlsx');
     }
 }

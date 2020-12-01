@@ -79,9 +79,9 @@ class SenderController extends AdminController
             $tools->append(new ImportSenderAction());
         });
         //导出模板
-        /*$grid->tools(function (Grid\Tools $tools) {
+        $grid->tools(function (Grid\Tools $tools) {
             $tools->append(new ExportTemplateSenderAction());
-        });*/
+        });
         return $grid;
     }
 

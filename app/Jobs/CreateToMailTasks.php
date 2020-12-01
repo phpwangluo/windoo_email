@@ -70,7 +70,7 @@ class CreateToMailTasks implements ShouldQueue
                 }
                 //通过国家ID获取国家对应的时区
                 $country_detail = Country::where(['id'=>$v['country_id']])->first();
-                Config()->set('timezone',$country_detail['timezone']);
+                date_default_timezone_set($country_detail->timezone);
                 $insert_forsend[$k]['receiver_email'] = $v['email_address'];
                 $insert_forsend[$k]['title'] = $v['email_title'];
                 $insert_forsend[$k]['template_id'] = $v['template_id'];
@@ -79,7 +79,7 @@ class CreateToMailTasks implements ShouldQueue
                 $insert_forsend[$k]['plan_send_time'] = date('Y-m-d').' '.mt_rand($v['send_start_hour'],$v['send_end_hour']).':00:00';
                 $insert_forsend[$k]['send_type'] = 1;
                 $insert_forsend[$k]['send_status'] = 1;
-                Config()->set('timezone','Asia/Shanghai');
+                date_default_timezone_set('Asia/Shanghai');
                 $insert_forsend[$k]['created_at'] = date('Y-m-d H:i:s',time());
             }
             //更新邮件状态为已取消
