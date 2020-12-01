@@ -11,7 +11,8 @@ class TemplateController extends Controller
     public function templateList(Request $request)
     {
         $q = $request->get('q');
-        $trade_arr = Template::where('template_name', 'like', "%$q%")->paginate(null, ['id', 'template_name as text'])->toArray();
+        $trade_arr = Template::where('template_name', 'like', "%$q%")
+            ->where('status','=',1)->paginate(null, ['id', 'template_name as text'])->toArray();
         return $trade_arr['data'];
     }
 }

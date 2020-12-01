@@ -51,21 +51,31 @@ class ReceiveToReplyMail implements ShouldQueue
                     'password'      => $v['email_pass'],
                     'protocol'      => $v['getmail_protocol'],
                 ];
+                /** @var \Webklex\PHPIMAP\Client $client */
                 $client = Client::make($config);
                 //创建连接
+                /* Alternative by using the Facade
+                $client = Webklex\IMAP\Facades\Client::account('default');
+                */
+                //Connect to the IMAP Server
                 $client->connect();
                 //获取收件箱
+                //Get all Mailboxes
+                /** @var \Webklex\PHPIMAP\Support\FolderCollection $folders */
                 $folders = $client->getFolders(false,'Inbox');
                 //遍历收件箱中的邮件内容
+                //Loop through every Mailbox
+                /** @var \Webklex\PHPIMAP\Folder $folder */
                 foreach($folders as $folder){
                     //获取邮件相关属性
-                    /** @var \Webklex\PHPIMAP\Message $message */
-                    //$messages = $folder->messages()->on('2020-11-27')->all()->get();
+                    //Get all Messages of the current Mailbox $folder
+                    /** @var \Webklex\PHPIMAP\Support\MessageCollection $messages */
+                    //$messages = $folder->messages()->on('2020-12-01')->all()->get();
                     //$messages = $folder->messages()->unseen()->on('2020-11-25')->all()->get();
                     $messages = $folder->messages()->unseen()->all()->get();
+                    /** @var \Webklex\PHPIMAP\Message $message */
                     $reply_unseen = [];
-
-                    foreach($messages as $k => $message){
+                    foreach($messages as $kk => $message){
                         $content = $message->getStructure()->parts[1]->content;
                         $encoding = $message->getStructure()->parts[1]->encoding;
                         $charset = $message->getStructure()->parts[1]->charset;
@@ -74,21 +84,22 @@ class ReceiveToReplyMail implements ShouldQueue
                         }else{
                             $title = $message->getSubject();
                         }
-                        $reply_unseen[$k]['sender_email'] = $message->getSender()[0]->mail;
-                        $reply_unseen[$k]['receiver_email'] = $message->getTo()[0]->mail;
-                        $reply_unseen[$k]['title'] = $title;
-                        $reply_unseen[$k]['content'] = $this->ReCoverImapGarbled($content,$encoding,$charset);
-                        $reply_unseen[$k]['receive_time'] = date('Y-m-d H:i:s',$message->getDate()->toDate()->getTimestamp());
-                        $reply_unseen[$k]['created_at'] = date('Y-m-d H:i:s',time());
+                        $email_content = $this->ReCoverImapGarbled($content,$encoding,$charset);
+                        $reply_unseen[$kk]['sender_email'] = $message->getSender()[0]->mail;
+                        $reply_unseen[$kk]['receiver_email'] = $message->getTo()[0]->mail;
+                        $reply_unseen[$kk]['title'] = $title;
+                        $reply_unseen[$kk]['content'] = $email_content != '' ? $email_content : ($message->getHTMLBody() ? $message->getHTMLBody() : $message->getTextBody()) ;
+                        $reply_unseen[$kk]['receive_time'] = date('Y-m-d H:i:s',$message->getDate()->toDate()->getTimestamp());
+                        $reply_unseen[$kk]['created_at'] = date('Y-m-d H:i:s',time());
                     }
                     if(!empty($reply_unseen)){
                         MailReceived::insert($reply_unseen);
                     }
                 }
             }
-            return ['code' => 1000, 'data' => ['message' => '邮件发送成功!']];
+            return ['code' => 1000, 'data' => ['message' => '邮件接收成功!']];
         }catch (\Exception $e){
-            return ['code' => 1004, 'data' => ['message' => '邮件发送失败!'.$e->getMessage()]];
+            return ['code' => 1004, 'data' => ['message' => '邮件接收失败!'.$e->getMessage()]];
         }
     }
 

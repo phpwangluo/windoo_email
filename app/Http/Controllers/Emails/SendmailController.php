@@ -53,15 +53,16 @@ class SendmailController extends Controller
                     if(!empty($today_sended_email)){
                         continue;
                     }
+
                     //当前时间是否在允许发送邮件的范围内
-                    $hour  = date('H',time());
+                    /*$hour  = date('H',time());
                     if($hour != date('H',strtotime($v['plan_send_time']))){
                         continue;
-                    }
+                    }*/
                 }
                 //获取有效的发件人，多个的话随机选择发件人
                 $mail = Sender::join('mail_settings','mail_settings.id','=','senders.mail_setting_id')
-                    ->where(['status'=>1])
+                    ->where(['status'=>1,'email_status'=>1])
                     ->whereRaw('send_count<=max_send_count')
                     ->inRandomOrder()
                     ->first();

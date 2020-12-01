@@ -21,3 +21,6 @@ Route::get('/countrylist', [App\Http\Controllers\Api\CountryController::class, '
 Route::get('/tradelist', [App\Http\Controllers\Api\TradeController::class, 'tradeList']);
 Route::get('/templatelist', [App\Http\Controllers\Api\TemplateController::class, 'templateList']);
 Route::get('/contactlist', [App\Http\Controllers\Api\ContactController::class, 'contactList']);
+
+Route::get('/samemailsetiinglists', [App\Http\Controllers\Api\MailsettingController::class, 'samesettingList']);
+

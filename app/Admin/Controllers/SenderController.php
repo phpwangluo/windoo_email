@@ -130,7 +130,9 @@ class SenderController extends AdminController
             $tools->disableView();
 
         });
-        $form->text('mailsetting.support_name', __('运营商'))->required()->readonly();
+        $form->select('mail_setting_id', __('运营商'))->options('/api/samemailsetiinglists',
+            ['prefix' => 'outlook'])->required();
+        #$form->text('mailsetting.support_name', __('运营商'))->required()->readonly();
         $form->text('email_address', __('邮箱名称'))->required()->readonly();
         $form->text('email_pass', __('邮箱密码'))->required();
         //$form->text('email_sign', __('Email sign'));
@@ -143,8 +145,7 @@ class SenderController extends AdminController
             'on'  => ['value' => 1, 'text' => '启用', 'color' => 'success'],
             'off' => ['value' => 0, 'text' => '关闭', 'color' => 'danger'],
         ];
-        $form->switch('email_status', __('状态'))->states($states)->default(1)->required();
-        //$form->switch('status', __('Status'))->default(1);
+        $form->switch('email_status', __('状态'))->states($states)->default(1);
         $form->text('remarks', __('备注'));
         $form->footer(function ($footer) {
 

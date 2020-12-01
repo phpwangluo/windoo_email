@@ -13,7 +13,8 @@ class ContactController extends Controller
     public function contactList(Request $request)
     {
         $q = $request->get('q');
-        $country_data = Contact::where('email_address', 'like', "%$q%")->paginate(null, ['id', 'email_address as text'])->toArray();
+        $country_data = Contact::where('email_address', 'like', "%$q%")
+            ->where('status','=',1)->paginate(null, ['id', 'email_address as text'])->toArray();
         return $country_data['data'];
     }
 }

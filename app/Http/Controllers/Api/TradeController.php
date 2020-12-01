@@ -11,7 +11,8 @@ class TradeController extends Controller
     public function tradeList(Request $request)
     {
         $q = $request->get('q');
-        $trade_arr = Trade::where('trade_name', 'like', "%$q%")->paginate(null, ['id', 'trade_name as text'])->toArray();
+        $trade_arr = Trade::where('trade_name', 'like', "%$q%")
+            ->where('status','=',1)->paginate(null, ['id', 'trade_name as text'])->toArray();
         return $trade_arr['data'];
     }
 }

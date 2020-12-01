@@ -12,7 +12,8 @@ class CountryController extends Controller
     public function countryList(Request $request)
     {
         $q = $request->get('q');
-        $country_data = Country::where('country_name', 'like', "%$q%")->paginate(null, ['id', 'country_name as text'])->toArray();
+        $country_data = Country::where('country_name', 'like', "%$q%")
+            ->where('status','=',1)->paginate(null, ['id', 'country_name as text'])->toArray();
         return $country_data['data'];
     }
 }
