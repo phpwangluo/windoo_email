@@ -44,11 +44,10 @@ class CreateToMailTasks implements ShouldQueue
                 ->where(['contacts.status' => 1])
                 ->get()->toArray();
             //发送邮件任务列表
-            $mails_forsend = MailForSend::where([
-                //'send_status'=>2,
+            /*$mails_forsend = MailForSend::where([
                 'send_type'=>1,
             ])->whereBetween('created_at',[date('Y-m-d',time()).' 00:00:00',date('Y-m-d',time()).' 23:59:59'])->get('receiver_email')->toArray();
-            $mails_forsend_formate = array_column($mails_forsend,'receiver_email');
+            $mails_forsend_formate = array_column($mails_forsend,'receiver_email');*/
             $insert_forsend = [];
             $cancel_send = [];
             foreach ($contact_list as $k => $v){
@@ -63,11 +62,11 @@ class CreateToMailTasks implements ShouldQueue
                 if($v['send_max_num'] <= 0){
                     continue;
                 }
-                //判断今天是否已经发送,如果已经自动发送过则今天不允许发送
-                if(!empty($mails_forsend_formate)
+                //判断要发送邮件对应的日期是否已经发送,如果已经自动发送过则不创建发送任务
+                /*if(!empty($mails_forsend_formate)
                     && in_array($v['email_address'],$mails_forsend_formate)){
                     continue;
-                }
+                }*/
                 //通过国家ID获取国家对应的时区
                 $country_detail = Country::where(['id'=>$v['country_id']])->first();
                 date_default_timezone_set($country_detail->timezone);
@@ -83,6 +82,15 @@ class CreateToMailTasks implements ShouldQueue
                 //把目标联系人的要发送时间转化成当地服务器的时间
                 date_default_timezone_set(\config('app.timezone'));
                 $sender_time_server = date('Y-m-d H:i:s',strtotime($sender_time.' '.$country_detail->timezone));
+                $sender_time_server_date = date('Y-m-d',strtotime($sender_time.' '.$country_detail->timezone));
+                //判断要发送邮件对应的日期是否已经发送,如果已经自动发送过则不创建发送任务
+                $mails_forsend = MailForSend::where([
+                    'send_type'=>1,
+                    'receiver_email'=>$v['email_address']
+                ])->whereBetween('plan_send_time',[$sender_time_server_date.' 00:00:00',$sender_time_server_date.' 23:59:59'])->get('receiver_email')->toArray();
+                if(!empty($mails_forsend)){
+                    continue;
+                }
                 $insert_forsend[$k]['receiver_email'] = $v['email_address'];
                 $insert_forsend[$k]['title'] = $v['email_title'];
                 $insert_forsend[$k]['template_id'] = $v['template_id'];
