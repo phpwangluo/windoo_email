@@ -47,7 +47,7 @@ class CreateToMailTasks implements ShouldQueue
             $mails_forsend = MailForSend::where([
                 //'send_status'=>2,
                 'send_type'=>1,
-            ])->whereBetween('plan_send_time',[date('Y-m-d',time()).' 00:00:00',date('Y-m-d',time()).' 23:59:59'])->get('receiver_email')->toArray();
+            ])->whereBetween('created_at',[date('Y-m-d',time()).' 00:00:00',date('Y-m-d',time()).' 23:59:59'])->get('receiver_email')->toArray();
             $mails_forsend_formate = array_column($mails_forsend,'receiver_email');
             $insert_forsend = [];
             $cancel_send = [];
