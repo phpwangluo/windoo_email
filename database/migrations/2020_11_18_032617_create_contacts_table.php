@@ -42,7 +42,7 @@ class CreateContactsTable extends Migration
             $table->tinyInteger('send_type')->unsigned()->default(1)->comment("发送邮件类型，1:自动，2：手动");
             $table->dateTime('plan_send_time')->default('1990-01-01 00:00:00')->comment("联系人发送邮件计划发送时间");
             $table->dateTime('real_send_time')->default('1990-01-01 00:00:00')->comment("实际发送邮件的时间");
-            //$table->date('send_date')->default('1990-01-01')->comment("处理发送邮件的日期");
+            $table->dateTime('sender_local_time')->default('1990-01-01 00:00:00')->comment("收件人所在国家时区时间");
             $table->tinyInteger('send_status')->unsigned()->default(1)->comment("邮件发送状态，1:待发送，2：已发送，3：取消发送，4：发送失败");
             $table->timestamps();
         });

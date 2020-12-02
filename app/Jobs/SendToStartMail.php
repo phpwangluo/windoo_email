@@ -42,12 +42,11 @@ class SendToStartMail implements ShouldQueue
         try{
             //获取邮件的发送信息
             $mail_for_send = MailForSend::select(['mail_for_sends.*', 'contacts.*','mail_for_sends.id as sendid'])
-                ->join('contacts','contacts.email_address','=','mail_for_sends.receiver_email')->where('send_status',1)
+                ->join('contacts','contacts.email_address','=','mail_for_sends.receiver_email')
+                ->where('send_status',1)
+                ->where('plan_send_time','<=',date('Y-m-d H',time()))
                 ->get(); //获取当天可以发送邮件的联系人
             foreach ($mail_for_send as $k => $v){
-                //通过国家ID获取国家对应的时区
-                $country_detail = Country::where(['id'=>$v['country_id']])->first();
-                date_default_timezone_set($country_detail->timezone);
                 //判断联系人状态是否为：启用，否则终止发送邮件
                 if($v['task_status'] != 1){
                     continue;
@@ -70,11 +69,11 @@ class SendToStartMail implements ShouldQueue
                     if(!empty($today_sended_email)){
                         continue;
                     }
-                    //当前时间是否在允许发送邮件的范围内
+                    /*//当前时间是否在允许发送邮件的范围内
                     $hour  = date('H',time());
                     if($hour != date('H',strtotime($v['plan_send_time']))){
                         continue;
-                    }
+                    }*/
                 }
                 //获取有效的发件人，多个的话随机选择发件人
                 $mail = Sender::join('mail_settings','mail_settings.id','=','senders.mail_setting_id')
@@ -113,7 +112,6 @@ class SendToStartMail implements ShouldQueue
                     ]);
                 //更新某个联系人的收到邮箱的次数
                 DB::table('contacts')->where(['email_address'=>$v['receiver_email']])->increment('send_count');
-                date_default_timezone_set('Asia/Shanghai');
             }
             return ['code' => 1000, 'data' => ['message' => '邮件发送成功!']];
         }catch (\Exception $e){
