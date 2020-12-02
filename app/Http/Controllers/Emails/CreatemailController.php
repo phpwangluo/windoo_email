@@ -56,16 +56,29 @@ class CreatemailController extends Controller
                 //通过国家ID获取国家对应的时区
                 $country_detail = Country::where(['id'=>$v['country_id']])->first();
                 date_default_timezone_set($country_detail->timezone);
+                //随机获取当地大于当前的一个时间
+                $sender_H = date('G',time());
+                if($sender_H > $v['send_start_hour'] && $sender_H < $v['send_end_hour']){
+                    $sender_time = date('Y-m-d').' '.mt_rand($sender_H,$v['send_end_hour']).':00:00';
+                }else if($sender_H > $v['send_end_hour']){
+                    $sender_time = date('Y-m-d',strtotime("+1 day")).' '.mt_rand($v['send_start_hour'],$v['send_end_hour']).':00:00';
+                }else{
+                    $sender_time = date('Y-m-d').' '.mt_rand($v['send_start_hour'],$v['send_end_hour']).':00:00';
+                }
+                //把目标联系人的要发送时间转化成当地服务器的时间
+                date_default_timezone_set(\config('app.timezone'));
+                $sender_time_server = date('Y-m-d H:i:s',strtotime($sender_time.' '.$country_detail->timezone));
                 $insert_forsend[$k]['receiver_email'] = $v['email_address'];
                 $insert_forsend[$k]['title'] = $v['email_title'];
                 $insert_forsend[$k]['template_id'] = $v['template_id'];
                 $insert_forsend[$k]['email_sign'] = $v['template_sign'];
                 $insert_forsend[$k]['content'] = $v['email_content'];
-                $insert_forsend[$k]['plan_send_time'] = date('Y-m-d').' '.mt_rand($v['send_start_hour'],$v['send_end_hour']).':00:00';
+                $insert_forsend[$k]['plan_send_time'] = $sender_time_server;
+                $insert_forsend[$k]['sender_local_time'] = $sender_time;
                 $insert_forsend[$k]['send_type'] = 1;
                 $insert_forsend[$k]['send_status'] = 1;
-                date_default_timezone_set('Asia/Shanghai');
                 $insert_forsend[$k]['created_at'] = date('Y-m-d H:i:s',time());
+                dd($insert_forsend);
             }
             //更新邮件状态为已取消
             if(!empty($cancel_send)){
@@ -81,7 +94,6 @@ class CreatemailController extends Controller
             }
             return ['code' => 1000, 'data' => ['message' => '任务写入成功!']];
         }catch (\Exception $e){
-            dd($e);
             return ['code' => 1004, 'data' => ['message' => '任务写入失败!'.$e->getMessage()]];
         }
     }
