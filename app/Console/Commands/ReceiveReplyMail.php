@@ -43,7 +43,6 @@ class ReceiveReplyMail extends Command
         $send_mail = new ReceiveToReplyMail('');
         $job = $send_mail->onConnection('database')->onQueue('gp_email_reply');
         dispatch($job);//分发任务到队列
-        dispatch($job);//分发任务到队列
         return 1;
     }
 }
