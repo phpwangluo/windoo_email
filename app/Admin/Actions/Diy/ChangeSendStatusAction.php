@@ -21,7 +21,11 @@ class ChangeSendStatusAction extends RowAction
         if($model->send_status == 1){
             $model->update(['send_status'=>3],['id'=>$model->id]);
         }elseif($model->send_status == 3){
-            $model->update(['send_status'=>1,'send_type'=>2],['id'=>$model->id]);
+            $model->update([
+                'send_status'=>1,
+                'send_type'=>2,
+                'plan_send_time'=>date('Y-m-d H:i:s',time())
+            ],['id'=>$model->id]);
         }
         return $this->response()->success('操作成功.')->refresh();
     }
