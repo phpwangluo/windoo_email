@@ -44,7 +44,7 @@ class SendToStartMail implements ShouldQueue
             $mail_for_send = MailForSend::select(['mail_for_sends.*', 'contacts.*','mail_for_sends.id as sendid'])
                 ->join('contacts','contacts.email_address','=','mail_for_sends.receiver_email')
                 ->where('send_status',1)
-                ->where('plan_send_time','<=',date('Y-m-d H',time()))
+                ->where('plan_send_time','<=',date('Y-m-d H:i:s',time()))
                 ->get(); //获取当天可以发送邮件的联系人
             foreach ($mail_for_send as $k => $v){
                 //判断联系人状态是否为：启用，否则终止发送邮件
