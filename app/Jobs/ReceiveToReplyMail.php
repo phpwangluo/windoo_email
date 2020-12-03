@@ -115,21 +115,21 @@ class ReceiveToReplyMail implements ShouldQueue
             return $str;
         }
         if($encoding == 3) {
-            if($charset != 'utf-8') {
-                $email_content = iconv($charset, 'utf-8', imap_base64($str));
+            if($charset != 'UTF-8') {
+                $email_content = iconv($charset, 'UTF-8', imap_base64($str));
             }else{
                 $email_content = imap_base64($str);
             }
         } else if($encoding == 4) {
-            if($charset != 'utf-8') {
-                $email_content = iconv($charset, 'utf-8', imap_qprint($str));
+            if($charset != 'UTF-8') {
+                $email_content = iconv($charset, 'UTF-8', imap_qprint($str));
             }else{
                 $email_content = imap_qprint($str);
             }
         } else
         {
-            if($charset != 'utf-8') {
-                $email_content = iconv($charset, 'utf-8', $str);
+            if($charset != 'UTF-8') {
+                $email_content = iconv($charset, 'UTF-8', $str);
             }else{
                 $email_content = $str;
             }
