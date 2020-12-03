@@ -80,6 +80,37 @@ class GetmailController extends Controller
                     }
                     if(!empty($reply_unseen)){
                         MailReceived::insert($reply_unseen);
+                        //将收到回复的联系人的状态变更成停用
+                        $batch_update_contact = [];
+                        foreach ($reply_unseen as $ck =>$cv){
+                            $batch_update_contact[$ck]['email_address'] = $cv['sender_email'];
+                            $batch_update_contact[$ck]['task_status'] = 0;
+                            $batch_update_contact[$ck]['updated_at'] = date('Y-m-d H:i:s',time());
+                        }
+                        $firstRow = current($batch_update_contact);
+                        $updateColumn = array_keys($firstRow);
+                        $referenceColumn =  current($updateColumn);
+                        unset($updateColumn[0]);
+                        // 拼接sql语句
+                        $updateSql = "UPDATE contacts SET ";
+                        $sets = [];
+                        $bindings = [];
+                        foreach ($updateColumn as $uColumn) {
+                            $setSql = "`" . $uColumn . "` = CASE ";
+                            foreach ($batch_update_contact as $data) {
+                                $setSql .= "WHEN `" . $referenceColumn . "` = ? THEN ? ";
+                                $bindings[] = $data[$referenceColumn];
+                                $bindings[] = $data[$uColumn];
+                            }
+                            $setSql .= "ELSE `" . $uColumn . "` END ";
+                            $sets[] = $setSql;
+                        }
+                        $updateSql .= implode(', ', $sets);
+                        $whereIn = collect($batch_update_contact)->pluck($referenceColumn)->values()->all();
+                        $bindings = array_merge($bindings, $whereIn);
+                        $whereIn = rtrim(str_repeat('?,', count($whereIn)), ',');
+                        $updateSql = rtrim($updateSql, ", ") . " WHERE `" . $referenceColumn . "` IN (" . $whereIn . ")";
+                        DB::update($updateSql, $bindings);
                     }
                 }
             }

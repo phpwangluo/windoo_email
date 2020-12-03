@@ -39,9 +39,8 @@ class MailForSendController extends AdminController
                 '3'=>'已取消'
             ]);
             $filter->equal('send_type', '发送类型')->select([
-                '1'=>'待发送',
-                '2'=>'已发送',
-                '3'=>'已取消'
+                '1'=>'自动',
+                '2'=>'手动',
             ]);
         });
         $grid->disableExport();//禁用导出
