@@ -2,6 +2,9 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Diy\ChangeSendStatusAction;
+use App\Admin\Actions\Diy\ChangeTaskStatusAction;
+use App\Admin\Actions\Diy\NewDelete;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -25,27 +28,82 @@ class MailForSendController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new MailForSend());
-        $grid->disableFilter();//禁用查询
+        $grid->filter(function($filter){
+            // 去掉默认的id过滤器
+            //$filter->disableIdFilter();
+            // 在这里添加字段过滤器
+            $filter->equal('receiver_email', '收件箱')->email();
+            $filter->equal('send_status', '发送状态')->select([
+                '1'=>'待发送',
+                '2'=>'已发送',
+                '3'=>'已取消'
+            ]);
+            $filter->equal('send_type', '发送类型')->select([
+                '1'=>'待发送',
+                '2'=>'已发送',
+                '3'=>'已取消'
+            ]);
+        });
         $grid->disableExport();//禁用导出
-
-        $grid->column('id', __('Id'));
-        $grid->column('sender_email', __('发件箱地址'));
+        $grid->disableCreateButton();
+        $grid->column('id', __('Id'))->hide();
+        $grid->column('sender_email', __('发件箱地址'))->hide();
         $grid->column('receiver_email', __('收件箱地址'));
         $grid->column('title', __('发送标题'));
         //$grid->column('email_sign', __('发送签名'));
         //$grid->column('content', __('Content'));
         //$grid->column('template_id', __('Template id'));
-        $grid->column('send_type', __('发送类型'));
+        $grid->column('send_type', __('发送类型'))->using([
+            1 => '自动',
+            2 => '手动',
+        ], '未知')->label([
+            1 => 'info',
+            2 => 'info',
+        ], 'warning');
         //$grid->column('send_start_hour', __('Send start hour'));
         //$grid->column('send_end_hour', __('Send end hour'));
         //$grid->column('send_max_num', __('Send max num'));
-        $grid->column('sender_local_time', __('收件人当地时间'));
-        $grid->column('send_status', __('发送状态'));
+        $grid->column('sender_local_time', __('收件人当地时间'))->hide();
+        $grid->column('send_status', __('发送类型'))->using([
+            1 => '待发送',
+            2 => '已发送',
+            3 => '已取消',
+        ], '未知')->dot([
+            1 => 'warning',
+            2 => 'success',
+            3 => 'info',
+        ], 'warning');
         //$grid->column('created_at', __('Created at'));
         //$grid->column('updated_at', __('Updated at'));
         $grid->column('plan_send_time', __('服务器计划发送时间'));
         $grid->column('real_send_time', __('邮件实际发送时间'));
+        $grid->actions(function ($actions) {
 
+            // 去掉删除
+            $actions->disableDelete();
+
+            // 去掉编辑
+            $actions->disableEdit();
+
+            // 去掉查看
+            //$actions->disableView();
+
+            // 添加自定义删除按钮
+            if($actions->row->send_status != 2){
+                if($actions->row->send_status == 1){
+                    $name = '取消发送';
+                }else{
+                    $name = '恢复发送';
+                }
+                // 添加自定义修改任务状态的按钮
+                $actions->add(new ChangeSendStatusAction($name));
+            }
+        });
+        $grid->tools(function ($tools) {
+            $tools->batch(function ($batch) {
+                $batch->disableDelete();
+            });
+        });
         return $grid;
     }
 
@@ -58,25 +116,23 @@ class MailForSendController extends AdminController
     protected function detail($id)
     {
         $show = new Show(MailForSend::findOrFail($id));
-
-        $show->field('id', __('Id'));
-        $show->field('sender_email', __('Sender email'));
-        $show->field('receiver_email', __('Receiver email'));
-        $show->field('title', __('Title'));
-        $show->field('email_sign', __('Email sign'));
-        $show->field('content', __('Content'));
-        $show->field('template_id', __('Template id'));
-        $show->field('send_type', __('Send type'));
-        $show->field('send_start_hour', __('Send start hour'));
-        $show->field('send_end_hour', __('Send end hour'));
-        $show->field('send_max_num', __('Send max num'));
-        $show->field('sender_local_time', __('Sender local time'));
-        $show->field('send_status', __('Send status'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
-        $show->field('plan_send_time', __('Plan send time'));
-        $show->field('real_send_time', __('Real send time'));
-
+        $show->panel()
+            ->tools(function ($tools) {
+                $tools->disableEdit();
+                //$tools->disableList();
+                $tools->disableDelete();
+            });;
+        $show->field('sender_email', __('发送邮箱地址'));
+        $show->field('receiver_email', __('接收邮件地址'));
+        $show->field('title', __('邮件标题'));
+        $show->field('email_sign', __('邮件签名'));
+        $show->content('邮件内容')->unescape()->mailforsendcontent($id);
+        $show->field('template_id', __('邮件模板'));
+        $show->field('send_type', __('发送类型'))->using([1=> '自动', 2 => '手动']);
+        $show->field('sender_local_time', __('收件人当地接收邮件时间'));
+        $show->field('send_status', __('发送状态'))->using([1=> '待发送', 2 => '已发送',3 => '已取消']);
+        $show->field('plan_send_time', __('当地计划发送时间'));
+        $show->field('real_send_time', __('当地实际发送时间'));
         return $show;
     }
 
