@@ -30,5 +30,7 @@ Route::group([
     $router->resource('mail-details', MailDetailController::class);
 
     $router->resource('business-sources', BusinessSourceController::class);//合作资源管理
+
+    $router->resource('mail-for-sends', MailForSendController::class);
 //自定义详情页开发
 });

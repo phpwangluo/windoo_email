@@ -74,7 +74,7 @@ class GetmailController extends Controller
                         $reply_unseen[$kk]['sender_email'] = $message->getSender()[0]->mail;
                         $reply_unseen[$kk]['receiver_email'] = $message->getTo()[0]->mail;
                         $reply_unseen[$kk]['title'] = $title;
-                        $reply_unseen[$kk]['content'] = $email_content != '' ? $email_content : ($message->getHTMLBody() ? $message->getHTMLBody() : $message->getTextBody()) ;
+                        $reply_unseen[$kk]['content'] = $email_content != '' ? $email_content : ($message->getHTMLBody() ? $message->getHTMLBody() : $this->code_to_string($message->getTextBody()));
                         $reply_unseen[$kk]['receive_time'] = date('Y-m-d H:i:s',$message->getDate()->toDate()->getTimestamp());
                         $reply_unseen[$kk]['created_at'] = date('Y-m-d H:i:s',time());
                     }
@@ -87,6 +87,20 @@ class GetmailController extends Controller
         }catch (\Exception $e){
             return ['code' => 1004, 'data' => ['message' => '邮件接收失败!'.$e->getMessage()]];
         }
+    }
+    /**
+     * 换行符等转换成html格式输出
+     **/
+    function code_to_string($str)
+    {
+        /*
+        * \t:水平制表（跳到下一个Tab位置）意思是按一个tab
+        * \n:换行
+        * \r:回车，将当前位置移到本行开头
+        */
+        $pre = array( " " , "　" , "\t" , "\n" , "\r" );
+        $to = array( '&nbsp;' , '&nbsp;&nbsp;' , '&nbsp;&nbsp;&nbsp;&nbsp;' , '<br>' , '<br>' );
+        return str_replace ( $pre , $to , $str );
     }
     function ReCoverImapGarbled($str,$encoding,$charset){
         if($str == ''){
