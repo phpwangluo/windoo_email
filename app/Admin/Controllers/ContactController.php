@@ -47,7 +47,7 @@ class ContactController extends AdminController
         $grid->disableExport();//禁用导出
         $grid->disableCreateButton(); //禁用创建
         //$grid->column('id', __('Id'));
-        $grid->column('email_address', __('目标邮箱'));
+        $grid->column('email_address', __('联系人'));
         $grid->column('country.country_name', __('国家'));
         $grid->column('trade.trade_name', __('行业'));
         $grid->column('template.template_name', __('模板名称'));
@@ -56,7 +56,7 @@ class ContactController extends AdminController
         //$grid->column('send_end_hour', __('Send end hour'));
         $grid->column('send_count', __('发送次数'));
         //$grid->column('business_status', __('Business status'));
-        $grid->column('task_status', __('任务状态'))->using([
+        $grid->column('task_status', __('联系人状态'))->using([
             0 => '停用',
             1 => '使用中',
         ], '未知')->dot([
@@ -150,18 +150,18 @@ class ContactController extends AdminController
 
         });
         if(Route::currentRouteName () == 'admin.contacts.edit'){
-            $form->text('email_address', __('邮箱名称'))->readonly()->required();
+            $form->text('email_address', __('联系人'))->readonly()->required();
             $form->text('country.country_name', __('国家'))->readonly()->required();
             $form->text('trade.trade_name', __('行业'))->readonly()->required();
         }else{
-            $form->text('email_address', __('邮箱名称'))->required();
+            $form->text('email_address', __('联系人'))->required();
             $form->select('country_id', __('国家'))->options('/api/countrylist')->required();
             $form->select('trade_id', __('行业'))->options('/api/tradelist')->required();
         }
         $form->hidden('task_status');
         $form->hidden('id');
         $form->select('template_id', __('模板名称'))->options('/api/templatelist')->required();
-        $form->number('send_start_hour', __('发送时间'))->default(9)->min(0)->max(23)->required();
+        $form->number('send_start_hour', __('开始时间'))->default(9)->min(0)->max(23)->required();
         $form->number('send_end_hour', __('结束时间'))->default(17)->min(0)->max(23)->required();
         $form->text('remarks', __('备注'));
         $form->footer(function ($footer) {

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 class ChangeBusinessStatusAction extends RowAction
 {
-    public $name = '是否合作';
+    public $name = '合作意向';
 
     public function handle(Model $model, Request $request)
     {

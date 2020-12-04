@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MailReceivedDetailAction extends RowAction
 {
-    public $name = '邮件记录';
+    public $name = '回复记录';
 
 //    public function handle(Model $model, Request $request)
 //    {

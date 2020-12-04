@@ -26,14 +26,14 @@ class ExportSenderTemplateController extends Controller
         //设置表头
         $header = [
             [
-                "email_address"=>'邮箱地址(必填)',
-                "email_pass"=>'邮箱密码（必填）',
-                "email_sign"=>'邮箱签名',
-                "remarks"=>'备注'
+                "email_address"=>'发件人(必填比如：123@outlook.com)',
+                "email_pass"=>'密码（必填）',
+                "email_sign"=>'签名（选填）',
+                "remarks"=>'备注（选填）'
             ]
         ];
         $columnWidth = [
-            "A"=>30,
+            "A"=>50,
             "B"=>30,
             "C"=>30,
             "D"=>30

@@ -30,7 +30,7 @@ class MailForSendController extends AdminController
         $grid = new Grid(new MailForSend());
         $grid->filter(function($filter){
             // 去掉默认的id过滤器
-            //$filter->disableIdFilter();
+            $filter->disableIdFilter();
             // 在这里添加字段过滤器
             $filter->equal('receiver_email', '联系人')->email();
             $filter->equal('send_status', '发送状态')->select([
@@ -48,7 +48,7 @@ class MailForSendController extends AdminController
         $grid->column('id', __('Id'))->hide();
         $grid->column('sender_email', __('发件人'))->hide();
         $grid->column('receiver_email', __('联系人'))->filter();
-        $grid->column('title', __('邮件标题'));
+        $grid->column('title', __('标题'));
         //$grid->column('email_sign', __('发送签名'));
         //$grid->column('content', __('Content'));
         //$grid->column('template_id', __('Template id'));
@@ -123,9 +123,9 @@ class MailForSendController extends AdminController
             });;
         $show->field('sender_email', __('发件人'));
         $show->field('receiver_email', __('联系人'));
-        $show->field('title', __('邮件标题'));
-        $show->field('email_sign', __('邮件签名'));
-        $show->content('邮件内容')->unescape()->mailforsendcontent($id);
+        $show->field('title', __('标题'));
+        $show->field('email_sign', __('签名'));
+        $show->content('正文')->unescape()->mailforsendcontent($id);
         $show->field('template.template_name', __('邮件模板'));
         $show->field('send_type', __('发送类型'))->using([1=> '自动', 2 => '手动']);
         $show->field('sender_local_time', __('当地邮件时间'));

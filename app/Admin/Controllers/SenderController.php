@@ -38,13 +38,13 @@ class SenderController extends AdminController
         $grid->disableCreateButton(); //禁用创建
         //$grid->column('id', __('Id'));
         $grid->column('mailsetting.support_name', __('运营商'));
-        $grid->column('email_address', __('邮箱名称'));
+        $grid->column('email_address', __('发件人'));
         //$grid->column('email_pass', __('Email pass'));
         //$grid->column('email_sign', __('Email sign'));
         $grid->column('send_count', __('发送邮件数'))->sortable()->totalRow();
         $grid->column('receive_count', __('接收回复数'));
         //$grid->column('max_send_count', __('Max send count'));
-        $grid->column('email_status', __('状态'))->using([
+        $grid->column('email_status', __('邮箱状态'))->using([
             0 => '停用',
             1 => '使用中',
         ], '未知')->dot([
@@ -133,8 +133,8 @@ class SenderController extends AdminController
         $form->select('mail_setting_id', __('运营商'))->options('/api/samemailsetiinglists',
             ['prefix' => 'outlook'])->required();
         #$form->text('mailsetting.support_name', __('运营商'))->required()->readonly();
-        $form->text('email_address', __('邮箱名称'))->required()->readonly();
-        $form->text('email_pass', __('邮箱密码'))->required();
+        $form->text('email_address', __('发件人'))->required()->readonly();
+        $form->text('email_pass', __('密码'))->required();
         //$form->text('email_sign', __('Email sign'));
         //$form->number('send_count', __('Send count'));
         //$form->number('receive_count', __('Receive count'));
@@ -145,7 +145,7 @@ class SenderController extends AdminController
             'on'  => ['value' => 1, 'text' => '启用', 'color' => 'success'],
             'off' => ['value' => 0, 'text' => '关闭', 'color' => 'danger'],
         ];
-        $form->switch('email_status', __('状态'))->states($states)->default(1);
+        $form->switch('email_status', __('邮箱状态'))->states($states)->default(1);
         $form->text('remarks', __('备注'));
         $form->footer(function ($footer) {
 

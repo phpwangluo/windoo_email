@@ -66,9 +66,9 @@ class MailList extends AbstractField
             }
             $html .= '
         <table border="1" width="100%">
-            <tr><td width="30%">邮箱</td><td width="70%"' . $style . '>' . $v['sender_email'] . '</td></tr>
-            <tr><td>发送时间</td><td>' . $v['handle_time'] . '</td></tr>
-            <tr><td>主题</td><td>' . $v['title'] . '</td></tr>
+            <tr><td width="30%">联系人</td><td width="70%"' . $style . '>' . $v['sender_email'] . '</td></tr>
+            <tr><td>回复时间</td><td>' . $v['handle_time'] . '</td></tr>
+            <tr><td>标题</td><td>' . $v['title'] . '</td></tr>
             <tr><td>正文</td><td>' . $v['content'] . '</td></tr>
             <tr><td>签名</td><td>' . $v['email_sign'] . '</td></tr>
         </table><hr>';;

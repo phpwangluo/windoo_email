@@ -35,7 +35,7 @@ class TemplateController extends AdminController
         $grid->disableFilter();//禁用查询
         $grid->disableExport();//禁用导出
         $grid->column('id', __('模板序号'));
-        $grid->column('template_name', __('名称'));
+        $grid->column('template_name', __('模板名称'));
         //$grid->column('email_title', __('Email title'));
         //$grid->column('email_content', __('Email content'));
         //$grid->column('template_sign', __('Template sign'));
@@ -108,7 +108,7 @@ class TemplateController extends AdminController
         }
 
         $form->text('email_title', __('标题'))->required();;
-        $form->editor('email_content', __('内容'))->style('height','400px;')->required();;
+        $form->editor('email_content', __('正文'))->style('height','400px;')->required();;
         //$form->textarea('email_content', __('内容'));
         $form->text('template_sign', __('签名'));
 

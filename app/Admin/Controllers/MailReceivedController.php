@@ -46,7 +46,7 @@ class MailReceivedController extends AdminController
             // 去掉默认的id过滤器
             $filter->disableIdFilter();
             // 在这里添加字段过滤器
-            $filter->equal('sender_email', '邮箱')->select('/api/contactlist');
+            $filter->equal('sender_email', '联系人')->email();
             $filter->equal('receive_status', '处理状态')->select([
                 1=>'待处理',
                 2=>'已处理'
@@ -59,8 +59,7 @@ class MailReceivedController extends AdminController
         });
         $grid->disableExport();//禁用导出
         $grid->disableCreateButton(); //禁用创建
-        $grid->column('id', __('Id'))->sortable();
-        $grid->column('sender_email', __('邮箱'));
+        $grid->column('sender_email', __('联系人'));
         $grid->column('contact.country_id', __('国家'))->display(function () {
             $country = Country::where('id',$this->contact->country_id)->first('country_name');
             return $country['country_name'];
@@ -85,9 +84,6 @@ class MailReceivedController extends AdminController
             1 => 'warning',
             2 => 'success',
         ], 'info')->sortable();
-
-
-
         $grid->column('receive_status', __('处理状态'))->using([
             1 => '待处理',
             2 => '已处理',
@@ -136,7 +132,7 @@ class MailReceivedController extends AdminController
                 //$tools->disableList();
                 $tools->disableDelete();
             });;
-        $show->content('邮件记录')->unescape()->replylist($id);
+        $show->content('回复记录')->unescape()->replylist($id);
         //$show->field('id', __('Id'));
         //$show->field('sender_email', __('Sender email'));
         //$show->field('receiver_email', __('Receiver email'));
@@ -247,15 +243,15 @@ class MailReceivedController extends AdminController
                 }
                 $html .= '
         <table border="1" width="100%">
-            <tr><td width="30%">邮箱</td><td width="70%"'.$style.'>'.$v['sender_email'].'</td></tr>
-            <tr><td>发送时间</td><td>'.$v['handle_time'].'</td></tr>
-            <tr><td>主题</td><td>'.$v['title'].'</td></tr>
+            <tr><td width="30%">联系人</td><td width="70%"'.$style.'>'.$v['sender_email'].'</td></tr>
+            <tr><td>回复时间</td><td>'.$v['handle_time'].'</td></tr>
+            <tr><td>标题</td><td>'.$v['title'].'</td></tr>
             <tr><td>正文</td><td>'.$v['content'].'</td></tr>
             <tr><td>签名</td><td>'.$v['email_sign'].'</td></tr>
         </table><hr>';
                 ;
             }
-            $form->html($html,  __('邮件记录：'));
+            $form->html($html,  __('回复记录：'));
             /*$form->select('business_status', __('联系人合作意向'))->options([
             '0'=>'不合作',
             '1'=>'合作中',
@@ -272,7 +268,7 @@ class MailReceivedController extends AdminController
             $form->hidden('id');
             $form->text('email_for_send','联系人')->default($now_reply_detail[0]['sender_email'])->readonly();
             $form->text('title_for_send','标题');
-            $form->editor('content_for_send', '内容')->default($content)->style('height','400px;');
+            $form->editor('content_for_send', '正文')->default($content)->style('height','400px;');
             $form->text('email_sign_for_send', '签名');
             $form->saving(function ($model) {
                 //回去回复邮件内容，并写入发送邮件任务列表
