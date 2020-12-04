@@ -264,14 +264,16 @@ class MailReceivedController extends AdminController
             $sended_list_thenewest = MailForSend::where([
                 'sender_email'=>$reply_sreceiver_email,
                 'receiver_email'=>$reply_sender_email,
-                'send_status'=>2
-            ])->orderBy('real_send_time','desc')->first()->toArray();
+            ])->orderBy('real_send_time','desc')->first();
+            $content = '';
+            if($sended_list_thenewest){
+                $content = $sended_list_thenewest->content;
+            }
             $form->hidden('id');
             $form->text('email_for_send','发件箱')->default($now_reply_detail[0]['sender_email'])->readonly();
             $form->text('title_for_send','标题');
-            $form->editor('content_for_send', '内容')->default($sended_list_thenewest['content'])->style('height','400px;');
+            $form->editor('content_for_send', '内容')->default($content)->style('height','400px;');
             $form->text('email_sign_for_send', '签名');
-
             $form->saving(function ($model) {
                 //回去回复邮件内容，并写入发送邮件任务列表
                 $insert_forsend = [];
