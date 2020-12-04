@@ -47,7 +47,7 @@ class MailForSendController extends AdminController
         $grid->disableCreateButton();
         $grid->column('id', __('Id'))->hide();
         $grid->column('sender_email', __('发件箱地址'))->hide();
-        $grid->column('receiver_email', __('收件箱地址'))->sortable()->filter();
+        $grid->column('receiver_email', __('收件箱地址'))->filter();
         $grid->column('title', __('发送标题'));
         //$grid->column('email_sign', __('发送签名'));
         //$grid->column('content', __('Content'));
