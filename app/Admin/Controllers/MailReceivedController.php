@@ -81,10 +81,10 @@ class MailReceivedController extends AdminController
             1 => '待回复',
             2 => '已回复',
         ], '未知')->label([
-            0 => 'default',
+            0 => 'info',
             1 => 'warning',
             2 => 'success',
-        ], 'danger')->sortable()->filter();
+        ], 'info')->sortable();
 
 
 
@@ -94,7 +94,7 @@ class MailReceivedController extends AdminController
         ], '未知')->dot([
             1 => 'warning',
             2 => 'success',
-        ], 'danger')->sortable()->filter();
+        ], 'danger')->sortable();
 
         $grid->actions(function ($actions) {
 
@@ -270,7 +270,7 @@ class MailReceivedController extends AdminController
                 $content = $sended_list_thenewest->content;
             }
             $form->hidden('id');
-            $form->text('email_for_send','发件箱')->default($now_reply_detail[0]['sender_email'])->readonly();
+            $form->text('email_for_send','联系人')->default($now_reply_detail[0]['sender_email'])->readonly();
             $form->text('title_for_send','标题');
             $form->editor('content_for_send', '内容')->default($content)->style('height','400px;');
             $form->text('email_sign_for_send', '签名');
