@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\MailForSend;
 use App\Models\MailReceived;
 use App\Models\Sender;
 use Illuminate\Bus\Queueable;
@@ -86,6 +87,15 @@ class ReceiveToReplyMail implements ShouldQueue
                             $title = $message->getSubject();
                         }
                         $email_content = $this->ReCoverImapGarbled($content,$encoding,$charset);
+                        //对拉取的邮箱结果做判断，过滤不是系统发出去的邮件的回复
+                        $is_from_gp_email_reply = MailForSend::where([
+                            'receiver_email'=>$message->getSender()[0]->mail,
+                            'sender_email'=>$message->getTo()[0]->mail,
+                            'send_status'=>2
+                        ]);
+                        if(empty($is_from_gp_email_reply)){
+                            continue;
+                        }
                         $reply_unseen[$kk]['sender_email'] = $message->getSender()[0]->mail;
                         $reply_unseen[$kk]['receiver_email'] = $message->getTo()[0]->mail;
                         $reply_unseen[$kk]['title'] = $title;
