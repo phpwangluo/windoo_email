@@ -47,7 +47,7 @@ class MailForSendController extends AdminController
         $grid->disableCreateButton();
         $grid->column('id', __('Id'))->hide();
         $grid->column('sender_email', __('发件箱地址'))->hide();
-        $grid->column('receiver_email', __('收件箱地址'));
+        $grid->column('receiver_email', __('收件箱地址'))->sortable()->filter();
         $grid->column('title', __('发送标题'));
         //$grid->column('email_sign', __('发送签名'));
         //$grid->column('content', __('Content'));
@@ -74,8 +74,8 @@ class MailForSendController extends AdminController
         ], 'warning');
         //$grid->column('created_at', __('Created at'));
         //$grid->column('updated_at', __('Updated at'));
-        $grid->column('plan_send_time', __('服务器计划发送时间'));
-        $grid->column('real_send_time', __('邮件实际发送时间'));
+        $grid->column('plan_send_time', __('服务器计划发送时间'))->sortable();
+        $grid->column('real_send_time', __('邮件实际发送时间'))->sortable();
         $grid->actions(function ($actions) {
 
             // 去掉删除
