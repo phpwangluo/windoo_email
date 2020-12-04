@@ -92,7 +92,7 @@ class ReceiveToReplyMail implements ShouldQueue
                             'receiver_email'=>$message->getSender()[0]->mail,
                             'sender_email'=>$message->getTo()[0]->mail,
                             'send_status'=>2
-                        ]);
+                        ])->get()->toArray();
                         if(empty($is_from_gp_email_reply)){
                             continue;
                         }
