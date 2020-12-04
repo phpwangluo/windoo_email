@@ -64,8 +64,8 @@ class GetmailController extends Controller
                         $content = $message->getStructure()->parts[1]->content;
                         $encoding = $message->getStructure()->parts[1]->encoding;
                         $charset = $message->getStructure()->parts[1]->charset;
-                        if($charset != 'utf-8'){
-                            $title = iconv($charset,'utf-8',$message->getSubject());
+                        if($charset != 'utf-8' && $charset != 'gb2312' && $charset != 'gbk'){
+                            $title = iconv($charset,'utf-8//IGNORE',$message->getSubject());
                         }else{
                             $title = $message->getSubject();
                         }
@@ -76,9 +76,9 @@ class GetmailController extends Controller
                             'sender_email'=>$message->getTo()[0]->mail,
                             'send_status'=>2
                         ])->get()->toArray();
-                        if(empty($is_from_gp_email_reply)){
+                        /*if(empty($is_from_gp_email_reply)){
                             continue;
-                        }
+                        }*/
                         $reply_unseen[$kk]['sender_email'] = $message->getSender()[0]->mail;
                         $reply_unseen[$kk]['receiver_email'] = $message->getTo()[0]->mail;
                         $reply_unseen[$kk]['title'] = $title;
@@ -147,20 +147,20 @@ class GetmailController extends Controller
         }
         if($encoding == 3) {
             if($charset != 'UTF-8') {
-                $email_content = iconv($charset, 'UTF-8', imap_base64($str));
+                $email_content = iconv($charset, 'UTF-8//IGNORE', imap_base64($str));
             }else{
                 $email_content = imap_base64($str);
             }
         } else if($encoding == 4) {
             if($charset != 'UTF-8') {
-                $email_content = iconv($charset, 'UTF-8', imap_qprint($str));
+                $email_content = iconv($charset, 'UTF-8//IGNORE', imap_qprint($str));
             }else{
                 $email_content = imap_qprint($str);
             }
         } else
         {
             if($charset != 'UTF-8') {
-                $email_content = iconv($charset, 'UTF-8', $str);
+                $email_content = iconv($charset, 'UTF-8//IGNORE', $str);
             }else{
                 $email_content = $str;
             }
