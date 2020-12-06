@@ -373,8 +373,9 @@ return [
     | The global Grid action display class.
     |--------------------------------------------------------------------------
     */
-    'grid_action_class' => \Encore\Admin\Grid\Displayers\DropdownActions::class,
-
+    //'grid_action_class' => \Encore\Admin\Grid\Displayers\DropdownActions::class,
+    // 最原始的`按钮图标`形式
+    'grid_action_class' => \Encore\Admin\Grid\Displayers\Actions::class,
     /*
     |--------------------------------------------------------------------------
     | Extension Directory

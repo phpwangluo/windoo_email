@@ -13,6 +13,7 @@ use App\Models\Trade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\MessageBag;
+use App\Admin\Extensions\DiyHandle\TemplateDelete;
 
 class TemplateController extends AdminController
 {
@@ -34,7 +35,7 @@ class TemplateController extends AdminController
         $grid->model()->where('status', '=', 1);
         $grid->disableFilter();//禁用查询
         $grid->disableExport();//禁用导出
-        $grid->column('id', __('模板序号'));
+        $grid->column('id', __('模板ID'));
         $grid->column('template_name', __('模板名称'));
         //$grid->column('email_title', __('Email title'));
         //$grid->column('email_content', __('Email content'));
@@ -54,7 +55,9 @@ class TemplateController extends AdminController
             // 去掉查看
             $actions->disableView();
             // 添加自定义删除按钮
-            $actions->add(new NewDelete());
+            //  $actions->add(new NewDelete());
+            // 老版本添加自定义删除按钮
+            $actions->append(new TemplateDelete($actions->getKey()));
         });
         $grid->tools(function ($tools) {
             $tools->batch(function ($batch) {

@@ -2,9 +2,7 @@
 
 namespace App\Admin\Controllers;
 
-use App\Admin\Actions\Diy\ChangeSendStatusAction;
-use App\Admin\Actions\Diy\ChangeTaskStatusAction;
-use App\Admin\Actions\Diy\NewDelete;
+use App\Admin\Extensions\DiyHandle\ChangeMailForSendStatus;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -91,11 +89,15 @@ class MailForSendController extends AdminController
             if($actions->row->send_status != 2){
                 if($actions->row->send_status == 1){
                     $name = '取消发送';
+                    $to_send_status = 3;
                 }else{
                     $name = '恢复发送';
+                    $to_send_status = 1;
                 }
                 // 添加自定义修改任务状态的按钮
-                $actions->add(new ChangeSendStatusAction($name));
+                //$actions->add(new ChangeSendStatusAction($name));
+                // 老版本添加自定义删除按钮
+                $actions->append(new ChangeMailForSendStatus($actions->getKey(),$to_send_status));
             }
         });
         $grid->tools(function ($tools) {

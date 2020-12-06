@@ -18,9 +18,22 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::get('/countrylist', [App\Http\Controllers\Api\CountryController::class, 'countryList']);
+
 Route::get('/tradelist', [App\Http\Controllers\Api\TradeController::class, 'tradeList']);
+Route::post('/tradedelete', [App\Http\Controllers\Api\TradeController::class, 'deleteTrade']);
+
 Route::get('/templatelist', [App\Http\Controllers\Api\TemplateController::class, 'templateList']);
+Route::post('/templatedelete', [App\Http\Controllers\Api\TemplateController::class, 'deleteTemplate']);
+
 Route::get('/contactlist', [App\Http\Controllers\Api\ContactController::class, 'contactList']);
+Route::post('/contactstatus', [App\Http\Controllers\Api\ContactController::class, 'changeStatus']);
 
 Route::get('/samemailsetiinglists', [App\Http\Controllers\Api\MailsettingController::class, 'samesettingList']);
 
+Route::post('/senderdelete', [App\Http\Controllers\Api\SenderController::class, 'deleteSender']);
+
+
+Route::post('/businessstatus', [App\Http\Controllers\Api\MailReceivedController::class, 'changeBusinessStatus']);
+
+
+Route::post('/mailforsendstatus', [App\Http\Controllers\Api\MailForSendController::class, 'changeMailForSendStatus']);

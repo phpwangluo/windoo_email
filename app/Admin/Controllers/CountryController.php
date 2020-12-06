@@ -48,6 +48,9 @@ class CountryController extends AdminController
 
             // 去掉查看
             $actions->disableView();
+            if ($actions->row->country_name == '全部') {
+                $actions->disableEdit();
+            }
         });
 
         $grid->tools(function ($tools) {

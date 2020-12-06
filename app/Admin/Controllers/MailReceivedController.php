@@ -5,6 +5,8 @@ namespace App\Admin\Controllers;
 use App\Admin\Actions\Diy\ChangeBusinessStatusAction;
 use App\Admin\Actions\Diy\ChangeTaskStatusAction;
 use App\Admin\Actions\Diy\DoReplyByUserAction;
+use App\Admin\Extensions\DiyHandle\ChangeResourceStatus;
+use App\Admin\Extensions\DiyHandle\SenderDelete;
 use App\Models\Country;
 use App\Models\MailForSend;
 use App\Models\MailReceived;
@@ -91,7 +93,8 @@ class MailReceivedController extends AdminController
             1 => 'warning',
             2 => 'success',
         ], 'danger')->sortable();
-
+        /*$grid->column('resource_status', __('合作意向'))
+            ->editable('select', [0 => '不合作', 2 => '合作中', 3 => '已合作']);*/
         $grid->actions(function ($actions) {
 
             // 去掉删除
@@ -103,11 +106,20 @@ class MailReceivedController extends AdminController
             // 去掉查看
             $actions->disableView();
             // 添加自定义查看的按钮
-            if($actions->row->receive_status == 1){
+            /*if($actions->row->receive_status == 1){
                 $actions->add(new MailReceivedDetailAction());
                 $actions->add(new ChangeBusinessStatusAction());
                 $actions->add(new DoReplyByUserAction());
+            }*/
+            // prepend一个操作
+            if($actions->row->receive_status == 1){
+                if($actions->row->reply_status == 1){
+                    $actions->prepend('<a title="回复" href="'.$this->getResource().'/'.$actions->getKey().'/edit"><i class="fa fa-mail-reply"></i></a>&nbsp;&nbsp;');
+                }
+                $actions->prepend('<a title="回复记录" href="'.$this->getResource().'/'.$actions->getKey().'"><i class="fa fa-list-alt"></i></a>&nbsp;&nbsp;');
+                $actions->append(new ChangeResourceStatus($actions->getKey()));
             }
+
         });
         $grid->tools(function ($tools) {
             $tools->batch(function ($batch) {

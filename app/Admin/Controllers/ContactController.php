@@ -5,6 +5,7 @@ namespace App\Admin\Controllers;
 use App\Admin\Actions\Diy\ExportTemplateContactAction;
 use App\Admin\Actions\Diy\ImportContactsAction;
 use App\Admin\Actions\Diy\ChangeTaskStatusAction;
+use App\Admin\Extensions\DiyHandle\ChangeContactStatus;
 use App\Models\Contact;
 use App\Models\MailForSend;
 use Encore\Admin\Controllers\AdminController;
@@ -79,11 +80,15 @@ class ContactController extends AdminController
             $actions->disableView();
             if($actions->row->task_status == 1){
                 $name = '关闭';
+                $to_task_status = 0;
             }else{
                 $name = '开启';
+                $to_task_status = 1;
             }
             // 添加自定义修改任务状态的按钮
-            $actions->add(new ChangeTaskStatusAction($name));
+            //$actions->add(new ChangeTaskStatusAction($name));
+            // 老版本添加自定义删除按钮
+            $actions->append(new ChangeContactStatus($actions->getKey(),$to_task_status));
         });
         $grid->tools(function ($tools) {
             $tools->batch(function ($batch) {

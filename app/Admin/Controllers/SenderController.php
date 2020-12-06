@@ -14,6 +14,7 @@ use Encore\Admin\Show;
 use App\Admin\Extensions\Tools\ExcelExpoter;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Admin\Extensions\DiyHandle\SenderDelete;
 
 class SenderController extends AdminController
 {
@@ -67,7 +68,11 @@ class SenderController extends AdminController
             $actions->disableView();
 
             // 添加自定义删除按钮
-            $actions->add(new NewDelete());
+            //$actions->add(new NewDelete());
+            // 老版本添加自定义删除按钮
+            if($actions->row->email_status == 0){
+                $actions->append(new SenderDelete($actions->getKey()));
+            }
         });
         $grid->tools(function ($tools) {
             $tools->batch(function ($batch) {
@@ -130,8 +135,8 @@ class SenderController extends AdminController
             $tools->disableView();
 
         });
-        $form->select('mail_setting_id', __('运营商'))->options('/api/samemailsetiinglists',
-            ['prefix' => 'outlook'])->required();
+       /* $form->select('mail_setting_id', __('运营商'))->options('/api/samemailsetiinglists',
+            ['prefix' => 'outlook'])->required();*/
         #$form->text('mailsetting.support_name', __('运营商'))->required()->readonly();
         $form->text('email_address', __('发件人'))->required()->readonly();
         $form->text('email_pass', __('密码'))->required();

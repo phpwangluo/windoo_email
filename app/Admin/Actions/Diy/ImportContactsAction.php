@@ -62,7 +62,7 @@ class ImportContactsAction extends Action
     public function html()
     {
         return <<<HTML
-        <a class="btn btn-sm btn-default import-action">导入</a>
+        <a class="btn btn-sm btn-default import-action">联系人导入</a>
 HTML;
     }
 
@@ -76,7 +76,7 @@ HTML;
             ->options(['showPreview' => false,
                 'allowedFileExtensions'=>['xlsx','xls'],
                 'showUpload'=>true
-            ])->required();
+            ])->required()->help('导入的文件必须是excel，具体格式请先下载导入模版，按模版文件中标题行的提示正确填写。其中，国家、行业必须按国家管理、行业管理中查询的值填写；模板名称是选填字段，如果要设置请填写模版管理中查询到的模版名称；开始和结束时间，是联系人所属国家的当地时间');
     }
     /**
      * 上传等待
