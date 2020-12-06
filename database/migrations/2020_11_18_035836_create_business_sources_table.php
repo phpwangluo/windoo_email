@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateBusinessSourcesTable extends Migration
 {
@@ -25,7 +26,9 @@ class CreateBusinessSourcesTable extends Migration
             $table->string('home_page', 256)->default('')->comment("网址");
             $table->tinyInteger('business_status')->unsigned()->default(1)->comment("联系人的合作状态，0：不合作 1:合作中，2：已合作");
             $table->string('remarks',64)->default('')->comment('备注');
-            $table->timestamps();
+            //$table->timestamps();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }
 

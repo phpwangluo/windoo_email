@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateMailSendedsTable extends Migration
 {
@@ -23,7 +24,9 @@ class CreateMailSendedsTable extends Migration
             $table->tinyInteger('send_type')->unsigned()->default(1)->comment("发送邮件类型，1:自动，2：手动");
             $table->dateTime('send_time')->comment('发件人发送邮件时间');
             $table->tinyInteger('send_status')->unsigned()->default(1)->comment("邮件发送状态，1:待发送?，2：已发送，3：取消发送 ，4：发送失败");
-            $table->timestamps();
+            //$table->timestamps();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }
 
