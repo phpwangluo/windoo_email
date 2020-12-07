@@ -116,6 +116,9 @@ class GetmailController extends Controller
                         $whereIn = rtrim(str_repeat('?,', count($whereIn)), ',');
                         $updateSql = rtrim($updateSql, ", ") . " WHERE `" . $referenceColumn . "` IN (" . $whereIn . ")";
                         DB::update($updateSql, $bindings);
+                        //更新发件人收到的回复数量
+                        $sender_emails = array_unique(array_column($reply_unseen,'receiver_email'));
+                        Sender::whereIn('email_address',$sender_emails)->increment('receive_count');
                     }
                 }
             }

@@ -47,13 +47,18 @@ class TemplateController extends AdminController
             $actions->disableDelete();
 
             // 去掉编辑
-            //$actions->disableEdit();
+            $actions->disableEdit();
 
             // 去掉查看
             $actions->disableView();
             // 添加自定义删除按钮
             //  $actions->add(new NewDelete());
             // 老版本添加自定义删除按钮
+            $actions->prepend('<a
+                title="编辑"
+                href="'.$this->getResource().'/'.$this->getRouteKey().'/edit"
+                class="'.$this->grid->getGridRowName().'-edit">
+                <i class="fa fa-edit"></i>&nbsp;&nbsp;');
             $actions->append(new TemplateDelete($actions->getKey()));
         });
         $grid->tools(function ($tools) {

@@ -24,16 +24,9 @@ use App\Admin\Extensions\Tools\Simditor;
 use Encore\Admin\Form;
 use App\Admin\Extensions\Show\MailContentDiyShow;
 use Encore\Admin\Grid;
+use Grid\Displayers\Actions;
 //Encore\Admin\Form::forget(['map', 'editor']);
 Form::extend('seditor', Simditor::class);
 Show::extend('unserialize', UnSerialize::class);
 show::extend('replylist',MailList::class);
 show::extend('mailforsendcontent',MailContentDiyShow::class);
-
-Grid::init(function (Grid $grid) {
-    $grid->actions(function (Grid\Displayers\Actions $actions) {
-        $actions->disableView();
-        $actions->disableEdit();
-        $actions->disableDelete();
-    });
-});

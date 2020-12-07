@@ -71,7 +71,7 @@ class ContactController extends AdminController
             $actions->disableDelete();
 
             // 去掉编辑
-            //$actions->disableEdit();
+            $actions->disableEdit();
 
             // 去掉查看
             $actions->disableView();
@@ -84,6 +84,11 @@ class ContactController extends AdminController
             }
             // 添加自定义修改任务状态的按钮
             //$actions->add(new ChangeTaskStatusAction($name));
+            $actions->prepend('<a
+                title="编辑"
+                href="'.$this->getResource().'/'.$this->getRouteKey().'/edit"
+                class="'.$this->grid->getGridRowName().'-edit">
+                <i class="fa fa-edit"></i>&nbsp;&nbsp;');
             // 老版本添加自定义删除按钮
             $actions->append(new ChangeContactStatus($actions->getKey(),$to_task_status));
         });

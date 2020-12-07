@@ -44,12 +44,17 @@ class CountryController extends AdminController
             $actions->disableDelete();
 
             // 去掉编辑
-            //$actions->disableEdit();
+            $actions->disableEdit();
 
             // 去掉查看
             $actions->disableView();
-            if ($actions->row->country_name == '全部') {
-                $actions->disableEdit();
+            if ($actions->row->country_name != '全部') {
+                //$actions->disableEdit();
+                $actions->prepend('<a
+                title="编辑"
+                href="'.$this->getResource().'/'.$this->getRouteKey().'/edit"
+                class="'.$this->grid->getGridRowName().'-edit">
+                <i class="fa fa-edit"></i>');
             }
         });
 

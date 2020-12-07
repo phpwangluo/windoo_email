@@ -83,8 +83,14 @@ class MailForSendController extends AdminController
             $actions->disableEdit();
 
             // 去掉查看
-            //$actions->disableView();
+            $actions->disableView();
 
+            $actions->prepend('<a
+                    title="查看"
+                    href="'.$this->getResource().'/'.$this->getRouteKey().'"
+                    class="'.$this->grid->getGridRowName().'-view">
+                    <i class="fa fa-eye"></i>
+                </a>&nbsp;&nbsp;');
             // 添加自定义删除按钮
             if($actions->row->send_status != 2){
                 if($actions->row->send_status == 1){

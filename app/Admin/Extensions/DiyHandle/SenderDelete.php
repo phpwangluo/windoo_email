@@ -43,7 +43,7 @@ SCRIPT;
     {
         Admin::script($this->script());
 
-        return "<a class='grid-row-delete sender-delete-{$this->id}' data-id='{$this->id}'><i class='fa fa-trash'></i></a>";
+        return "<a title='删除' class='grid-row-delete sender-delete-{$this->id}' data-id='{$this->id}'><i class='fa fa-trash'></i></a>";
     }
 
     public function __toString()

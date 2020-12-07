@@ -40,7 +40,7 @@ class SenderController extends AdminController
         //$grid->column('email_pass', __('Email pass'));
         //$grid->column('email_sign', __('Email sign'));
         $grid->column('send_count', __('发送邮件数'))->sortable()->totalRow();
-        $grid->column('receive_count', __('接收回复数'));
+        $grid->column('receive_count', __('接收回复数'))->sortable()->totalRow();;
         //$grid->column('max_send_count', __('Max send count'));
         $grid->column('email_status', __('邮箱状态'))->using([
             0 => '停用',
@@ -59,13 +59,18 @@ class SenderController extends AdminController
             $actions->disableDelete();
 
             // 去掉编辑
-            //$actions->disableEdit();
+            $actions->disableEdit();
 
             // 去掉查看
             $actions->disableView();
 
             // 添加自定义删除按钮
             //$actions->add(new NewDelete());
+            $actions->prepend('<a
+                title="编辑"
+                href="'.$this->getResource().'/'.$this->getRouteKey().'/edit"
+                class="'.$this->grid->getGridRowName().'-edit">
+                <i class="fa fa-edit"></i>&nbsp;&nbsp;');
             // 老版本添加自定义删除按钮
             if($actions->row->email_status == 0){
                 $actions->append(new SenderDelete($actions->getKey()));
