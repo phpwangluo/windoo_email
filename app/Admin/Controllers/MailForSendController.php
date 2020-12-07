@@ -54,7 +54,7 @@ class MailForSendController extends AdminController
             1 => '自动',
             2 => '手动',
         ], '未知')->label([
-            1 => 'info',
+            1 => 'success',
             2 => 'info',
         ], 'warning');
         //$grid->column('send_start_hour', __('Send start hour'));
@@ -68,7 +68,7 @@ class MailForSendController extends AdminController
         ], '未知')->dot([
             1 => 'warning',
             2 => 'success',
-            3 => 'info',
+            3 => 'default',
         ], 'warning');
         //$grid->column('created_at', __('Created at'));
         //$grid->column('updated_at', __('Updated at'));
