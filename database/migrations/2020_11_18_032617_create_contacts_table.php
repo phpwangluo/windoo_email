@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateContactsTable extends Migration
 {
@@ -28,7 +29,9 @@ class CreateContactsTable extends Migration
             $table->tinyInteger('status')->unsigned()->default(1)->comment("联系人状态，0:删除，1：正常");
             $table->tinyInteger('send_max_num')->unsigned()->default(5)->comment("联系人最大发送次数");
             $table->string('remarks',64)->default('')->comment('备注');
-            $table->timestamps();
+            //$table->timestamps();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
 
         Schema::create('mail_for_sends', function (Blueprint $table) { //联系人配置的发送邮件内容

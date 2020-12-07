@@ -283,7 +283,7 @@ class MailReceivedController extends AdminController
                 $insert_forsend['plan_send_time'] = date('Y-m-d H:i:s',time());
                 $insert_forsend['send_type'] = 2;
                 $insert_forsend['send_status'] = 1;
-                $insert_forsend['created_at'] = date('Y-m-d H:i:s',time());
+                //$insert_forsend['created_at'] = date('Y-m-d H:i:s',time());
                 MailForSend::insert($insert_forsend);
                 //把邮件状态变成已处理
                 MailReceived::where('id',$model->id)

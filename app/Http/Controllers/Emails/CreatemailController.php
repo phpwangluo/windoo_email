@@ -25,7 +25,7 @@ class CreatemailController extends Controller
                 if($v['task_status'] == 0){
                     $cancel_send[$k]['receiver_email'] = $v['email_address'];
                     $cancel_send[$k]['send_status'] = 3;
-                    $cancel_send[$k]['updated_at'] = date('Y-m-d H:i:s',time());
+                    //$cancel_send[$k]['updated_at'] = date('Y-m-d H:i:s',time());
                     continue;
                 }
                 //判断是否还有发送次数,发送次数不够的时候不允许创建邮件任务
@@ -69,12 +69,15 @@ class CreatemailController extends Controller
                 $insert_forsend[$k]['sender_local_time'] = $sender_time;
                 $insert_forsend[$k]['send_type'] = 1;
                 $insert_forsend[$k]['send_status'] = 1;
-                $insert_forsend[$k]['created_at'] = date('Y-m-d H:i:s',time());
+                //$insert_forsend[$k]['created_at'] = date('Y-m-d H:i:s',time());
             }
             //更新邮件状态为已取消
             if(!empty($cancel_send)){
                 $receiver_email_arrs = array_column($cancel_send,'receiver_email');
-                MailForSend::whereIn('receiver_email', $receiver_email_arrs)->update(['send_status' => 3,'updated_at'=>date('Y-m-d H:i:s',time())]);
+                MailForSend::whereIn('receiver_email', $receiver_email_arrs)->update([
+                    'send_status' => 3,
+                    //'updated_at'=>date('Y-m-d H:i:s',time())
+                ]);
             }
             //写入到mail_for_sends
             if(!empty($insert_forsend)){

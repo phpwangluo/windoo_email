@@ -53,7 +53,7 @@ class MailReceivedController extends Controller
                 'customer_tag'=>$contact_detail['customer_tag'],
                 'business_status'=>$business_status,
                 'remarks'=>$remarks,
-                'created_at'=>date('Y-m-d H:i:s',time()),
+                //'created_at'=>date('Y-m-d H:i:s',time()),
             ];
             BusinessSource::insert($insert_data);
         }else{

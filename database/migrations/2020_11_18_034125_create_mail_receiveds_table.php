@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateMailReceivedsTable extends Migration
 {
@@ -22,7 +23,9 @@ class CreateMailReceivedsTable extends Migration
             $table->dateTime('receive_time')->comment('接收邮件时间');
             $table->tinyInteger('receive_status')->unsigned()->default(1)->comment("联系人合作意向状态，1:待处理，2：已处理");
             $table->tinyInteger('reply_status')->unsigned()->default(1)->comment("邮件回复状态，1:待回复，2：已回复");
-            $table->timestamps();
+            //$table->timestamps();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }
 

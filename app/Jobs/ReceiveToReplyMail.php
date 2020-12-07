@@ -100,7 +100,7 @@ class ReceiveToReplyMail implements ShouldQueue
                         $reply_unseen[$kk]['title'] = $title;
                         $reply_unseen[$kk]['content'] = $email_content != '' ? $email_content : ($message->getHTMLBody() ? $message->getHTMLBody() : $this->code_to_string($message->getTextBody())) ;
                         $reply_unseen[$kk]['receive_time'] = date('Y-m-d H:i:s',$message->getDate()->toDate()->getTimestamp());
-                        $reply_unseen[$kk]['created_at'] = date('Y-m-d H:i:s',time());
+                        //$reply_unseen[$kk]['created_at'] = date('Y-m-d H:i:s',time());
                     }
                     if(!empty($reply_unseen)){
                         MailReceived::insert($reply_unseen);
@@ -109,7 +109,7 @@ class ReceiveToReplyMail implements ShouldQueue
                         foreach ($reply_unseen as $ck =>$cv){
                             $batch_update_contact[$ck]['email_address'] = $cv['sender_email'];
                             $batch_update_contact[$ck]['task_status'] = 0;
-                            $batch_update_contact[$ck]['updated_at'] = date('Y-m-d H:i:s',time());
+                            //$batch_update_contact[$ck]['updated_at'] = date('Y-m-d H:i:s',time());
                         }
                         $firstRow = current($batch_update_contact);
                         $updateColumn = array_keys($firstRow);

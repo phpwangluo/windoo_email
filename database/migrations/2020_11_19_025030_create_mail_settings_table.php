@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateMailSettingsTable extends Migration
 {
@@ -33,7 +34,9 @@ class CreateMailSettingsTable extends Migration
             $table->string('getmail_host', 100)->default('')->comment("拉取邮件的邮箱所在主机");
             $table->integer('getmail_port')->default(0)->comment('拉取邮件的端口号');
             $table->string('getmail_encryption',10)->default('')->comment('拉取邮件的加密类型');
-            $table->timestamps();
+            //$table->timestamps();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }
 

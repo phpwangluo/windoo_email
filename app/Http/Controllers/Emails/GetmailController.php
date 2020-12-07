@@ -90,7 +90,7 @@ class GetmailController extends Controller
                         foreach ($reply_unseen as $ck =>$cv){
                             $batch_update_contact[$ck]['email_address'] = $cv['sender_email'];
                             $batch_update_contact[$ck]['task_status'] = 0;
-                            $batch_update_contact[$ck]['updated_at'] = date('Y-m-d H:i:s',time());
+                            //$batch_update_contact[$ck]['updated_at'] = date('Y-m-d H:i:s',time());
                         }
                         $firstRow = current($batch_update_contact);
                         $updateColumn = array_keys($firstRow);
