@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Mail\ContactSender;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use App\Models\Sender;
@@ -58,37 +59,42 @@ class SendmailController extends Controller
                     ->whereRaw('send_count<=max_send_count')
                     ->inRandomOrder()
                     ->first();
-                $re = explode('@', $mail->email_address);
-                $config = array(
-                    'driver' => $mail->driver,
-                    'host' => $mail->host,
-                    'port' => $mail->port,
-                    'from' => array('address' => $mail->email_address, 'name' => $re[0]),
-                    'encryption' => $mail->encryption,
-                    'username' => $mail->email_address,
-                    'password' => $mail->email_pass,
-                    //'sendmail' => '/usr/sbin/sendmail -bs',
-                    'pretend' => false
-                );
-                Config()->set('mail',$config);
-                $subject = $v['title'];
-                $viewData = [
-                    'content' => $v['content'],
-                ];
+                if(empty($mail)){
+                    $message = '发件箱发送次数用完,联系人邮件无法发送！';
+                    Log::channel('info_send_email')->info($message, $v);
+                }else{
+                    $re = explode('@', $mail->email_address);
+                    $config = array(
+                        'driver' => $mail->driver,
+                        'host' => $mail->host,
+                        'port' => $mail->port,
+                        'from' => array('address' => $mail->email_address, 'name' => $re[0]),
+                        'encryption' => $mail->encryption,
+                        'username' => $mail->email_address,
+                        'password' => $mail->email_pass,
+                        //'sendmail' => '/usr/sbin/sendmail -bs',
+                        'pretend' => false
+                    );
+                    Config()->set('mail',$config);
+                    $subject = $v['title'];
+                    $viewData = [
+                        'content' => $v['content'],
+                    ];
 
-                //发送邮件
-                Mail::to($v['receiver_email'])->send(new ContactSender($subject, $viewData));
-                //更新发件人发件次数
-                DB::table('senders')->where(['email_address'=>$mail->email_address])->increment('send_count');
-                //更新发件箱邮件状态
-                MailForSend::where('id',$v['sendid'])
-                    ->update([
-                        'send_status' => 2,
-                        'sender_email'=>$mail->email_address,
-                        'real_send_time'=>date('Y-m-d H:i:s',time()),
-                    ]);
-                //更新某个联系人的收到邮箱的次数
-                DB::table('contacts')->where(['email_address'=>$v['receiver_email']])->increment('send_count');
+                    //发送邮件
+                    Mail::to($v['receiver_email'])->send(new ContactSender($subject, $viewData));
+                    //更新发件人发件次数
+                    DB::table('senders')->where(['email_address'=>$mail->email_address])->increment('send_count');
+                    //更新发件箱邮件状态
+                    MailForSend::where('id',$v['sendid'])
+                        ->update([
+                            'send_status' => 2,
+                            'sender_email' => $mail->email_address,
+                            'real_send_time' => date('Y-m-d H:i:s',time()),
+                        ]);
+                    //更新某个联系人的收到邮箱的次数
+                    DB::table('contacts')->where(['email_address'=>$v['receiver_email']])->increment('send_count');
+                }
             }
             return ['code' => 1000, 'data' => ['message' => '邮件发送成功!']];
         }catch (\Exception $e){

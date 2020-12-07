@@ -8,6 +8,7 @@ use App\Models\MailReceived;
 use App\Models\Sender;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Webklex\IMAP\Facades\Client;
 
 class GetmailController extends Controller
@@ -124,6 +125,8 @@ class GetmailController extends Controller
             }
             return ['code' => 1000, 'data' => ['message' => '邮件接收成功!']];
         }catch (\Exception $e){
+            $message = '拉取邮件失败';
+            Log::channel('error_gp_email')->error($message, $e->getMessage());
             return ['code' => 1004, 'data' => ['message' => '邮件接收失败!'.$e->getMessage()]];
         }
     }

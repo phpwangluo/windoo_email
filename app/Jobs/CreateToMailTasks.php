@@ -5,11 +5,13 @@ namespace App\Jobs;
 use App\Models\Contact;
 use App\Models\Country;
 use App\Models\MailForSend;
+use App\Models\Sender;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class CreateToMailTasks implements ShouldQueue
 {
@@ -99,13 +101,27 @@ class CreateToMailTasks implements ShouldQueue
             }
             //写入到mail_for_sends
             if(!empty($insert_forsend)){
-                MailForSend::insert($insert_forsend);
-                $insert_email_arrs = array_column($insert_forsend,'receiver_email');
-                //写入成功以后需要递减联系人最大使用次数
-                Contact::whereIn('email_address',$insert_email_arrs)->decrement('send_max_num');
+                //验证是否还有符合要求的发件箱
+                $mail = Sender::join('mail_settings','mail_settings.id','=','senders.mail_setting_id')
+                    ->where(['status'=>1,'email_status'=>1])
+                    ->whereRaw('send_count<=max_send_count')
+                    ->inRandomOrder()
+                    ->first();
+                if(empty($mail)){
+                    $message = '发件箱发送次数用完，联系人发送任务无法创建';
+                    Log::channel('info_create_task')->info($message, $insert_forsend);
+                }else{
+                    MailForSend::insert($insert_forsend);
+                    $insert_email_arrs = array_column($insert_forsend,'receiver_email');
+                    //写入成功以后需要递减联系人最大使用次数
+                    Contact::whereIn('email_address',$insert_email_arrs)->decrement('send_max_num');
+                }
+
             }
             return ['code' => 1000, 'data' => ['message' => '任务写入成功!']];
         }catch (\Exception $e){
+            $message = '创建任务失败';
+            Log::channel('error_gp_email')->error($message, $e->getMessage());
             return ['code' => 1004, 'data' => ['message' => '任务写入失败!'.$e->getMessage()]];
         }
     }

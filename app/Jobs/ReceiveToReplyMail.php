@@ -11,6 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Webklex\IMAP\Facades\Client;
 
 class ReceiveToReplyMail implements ShouldQueue
@@ -143,6 +144,8 @@ class ReceiveToReplyMail implements ShouldQueue
             }
             return ['code' => 1000, 'data' => ['message' => '邮件接收成功!']];
         }catch (\Exception $e){
+            $message = '拉取邮件失败';
+            Log::channel('error_gp_email')->error($message, $e->getMessage());
             return ['code' => 1004, 'data' => ['message' => '邮件接收失败!'.$e->getMessage()]];
         }
     }
