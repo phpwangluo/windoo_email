@@ -3,7 +3,6 @@
 
 namespace App\Admin\Extensions\Show;
 
-use App\Models\MailForSend;
 use App\Models\MailReceived;
 use Encore\Admin\Show\AbstractField;
 

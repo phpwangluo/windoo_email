@@ -3,7 +3,6 @@
 namespace App\Admin\Extensions\DiyHandle;
 
 use Encore\Admin\Admin;
-use App\Models\MailReceived;
 
 class ChangeResourceStatus
 {

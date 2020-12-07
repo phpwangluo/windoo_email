@@ -2,19 +2,14 @@
 
 namespace App\Jobs;
 
-use App\Mail\ContactSender;
 use App\Models\Contact;
 use App\Models\Country;
 use App\Models\MailForSend;
-use App\Models\Sender;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 class CreateToMailTasks implements ShouldQueue
 {

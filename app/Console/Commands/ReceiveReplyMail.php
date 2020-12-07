@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Jobs\ReceiveToReplyMail;
-use App\Jobs\SendToStartMail;
 use Illuminate\Console\Command;
 
 class ReceiveReplyMail extends Command

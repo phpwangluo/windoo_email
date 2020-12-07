@@ -5,18 +5,8 @@ namespace App\Http\Controllers\Emails;
 use App\Http\Controllers\Controller;
 use App\Models\Contact;
 use App\Models\Country;
-use App\Models\MailSended;
 use Illuminate\Http\Request;
-
-use App\Mail\ContactSender;
-
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\DB;
-use App\Models\Sender;
 use App\Models\MailForSend;
-use League\Flysystem\Config;
-use \Exception;
-use Illuminate\Support\Facades\Response;
 
 class CreatemailController extends Controller
 {

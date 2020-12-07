@@ -3,7 +3,6 @@
 namespace App\Admin\Controllers;
 use App\Models\Country;
 use App\Models\MailReceived;
-use App\Models\Template;
 use App\Models\Trade;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;

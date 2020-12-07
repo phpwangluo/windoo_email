@@ -3,14 +3,11 @@
 namespace App\Http\Controllers\Emails;
 
 use App\Http\Controllers\Controller;
-use App\Mail\ContactSender;
 use App\Models\MailForSend;
 use App\Models\MailReceived;
 use App\Models\Sender;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
-use PhpParser\Builder\Class_;
 use Webklex\IMAP\Facades\Client;
 
 class GetmailController extends Controller

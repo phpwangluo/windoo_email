@@ -7,7 +7,6 @@ use Encore\Admin\Actions\Action;
 use Illuminate\Http\Request;
 
 use Encore\Admin\Admin;
-use Maatwebsite\Excel\Facades\Excel;
 
 class ImportSenderAction extends Action
 {

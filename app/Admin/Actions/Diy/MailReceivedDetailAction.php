@@ -3,7 +3,6 @@
 namespace App\Admin\Actions\Diy;
 
 use Encore\Admin\Actions\RowAction;
-use Illuminate\Database\Eloquent\Model;
 
 class MailReceivedDetailAction extends RowAction
 {

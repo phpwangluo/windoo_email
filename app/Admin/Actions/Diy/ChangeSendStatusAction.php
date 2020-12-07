@@ -4,8 +4,6 @@ namespace App\Admin\Actions\Diy;
 
 use Encore\Admin\Actions\RowAction;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\MailForSend;
-use Illuminate\Support\Facades\DB;
 
 class ChangeSendStatusAction extends RowAction
 {

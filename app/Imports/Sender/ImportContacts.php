@@ -4,7 +4,6 @@ namespace App\Imports\Sender;
 
 use App\Models\Contact;
 use App\Models\Country;
-use App\Models\MailSetting;
 use App\Models\Template;
 use App\Models\Trade;
 use Maatwebsite\Excel\Concerns\ToModel;
