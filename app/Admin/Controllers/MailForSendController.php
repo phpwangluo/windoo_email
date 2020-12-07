@@ -132,8 +132,8 @@ class MailForSendController extends AdminController
         $show->field('sender_email', __('发件人'));
         $show->field('receiver_email', __('联系人'));
         $show->field('title', __('标题'));
-        $show->field('email_sign', __('签名'));
         $show->content('正文')->unescape()->mailforsendcontent($id);
+        $show->field('email_sign', __('签名'));
         $show->field('template.template_name', __('邮件模板'));
         $show->field('send_type', __('发送类型'))->using([1=> '自动', 2 => '手动']);
         $show->field('sender_local_time', __('当地邮件时间'));
