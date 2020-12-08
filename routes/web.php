@@ -30,5 +30,7 @@ Route::get('/export_sender_template', [App\Http\Controllers\Emails\ExportSenderT
 
 Route::get('/export_contact_template', [App\Http\Controllers\Emails\ExportContactTemplateController::class, 'export']);
 
+Route::get('/use_redis', [App\Http\Controllers\Emails\RedisController::class, 'test_redis']);
+
 
 

@@ -121,7 +121,7 @@ class CreateToMailTasks implements ShouldQueue
             return ['code' => 1000, 'data' => ['message' => '任务写入成功!']];
         }catch (\Exception $e){
             $message = '创建任务失败';
-            Log::channel('error_gp_email')->error($message, $e->getMessage());
+            Log::channel('error_gp_email')->error($message, [$e->getMessage()]);
             return ['code' => 1004, 'data' => ['message' => '任务写入失败!'.$e->getMessage()]];
         }
     }

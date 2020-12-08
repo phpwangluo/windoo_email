@@ -126,7 +126,7 @@ class GetmailController extends Controller
             return ['code' => 1000, 'data' => ['message' => '邮件接收成功!']];
         }catch (\Exception $e){
             $message = '拉取邮件失败';
-            Log::channel('error_gp_email')->error($message, $e->getMessage());
+            Log::channel('error_gp_email')->error($message, [$e->getMessage()]);
             return ['code' => 1004, 'data' => ['message' => '邮件接收失败!'.$e->getMessage()]];
         }
     }
