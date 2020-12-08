@@ -2,12 +2,14 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\Diy\EmailException;
 use App\Models\MailForSend;
 use App\Models\MailReceived;
 use App\Models\Sender;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Http\Request;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +37,7 @@ class ReceiveToReplyMail implements ShouldQueue
      */
     public function handle()
     {
+        $request_data = [];
         //拉取邮件的业务逻辑
         try{
             //获取有效的可以拉取邮件的邮箱
@@ -43,6 +46,7 @@ class ReceiveToReplyMail implements ShouldQueue
                 ->whereRaw('send_count<=max_send_count')
                 ->inRandomOrder()
                 ->get()->toArray();
+            $request_data['data']['receive_mail_detail'] = $mail;
             foreach ($mail as $k=>$v){
                 $config = [
                     'host'          => $v['getmail_host'],
@@ -53,6 +57,9 @@ class ReceiveToReplyMail implements ShouldQueue
                     'password'      => $v['email_pass'],
                     'protocol'      => $v['getmail_protocol'],
                 ];
+
+                $request_data['data']['email_connect'] = $config;
+
                 /** @var \Webklex\PHPIMAP\Client $client */
                 $client = Client::make($config);
                 //创建连接
@@ -60,7 +67,7 @@ class ReceiveToReplyMail implements ShouldQueue
                 $client = Webklex\IMAP\Facades\Client::account('default');
                 */
                 //Connect to the IMAP Server
-                $client->connect();
+                $client->connect()->setTimeout(5000);
                 //获取收件箱
                 //Get all Mailboxes
                 /** @var \Webklex\PHPIMAP\Support\FolderCollection $folders */
@@ -68,6 +75,7 @@ class ReceiveToReplyMail implements ShouldQueue
                 //遍历收件箱中的邮件内容
                 //Loop through every Mailbox
                 /** @var \Webklex\PHPIMAP\Folder $folder */
+                $request_data['data']['email_folders '] = $folders;
                 foreach($folders as $folder){
                     //获取邮件相关属性
                     //Get all Messages of the current Mailbox $folder
@@ -78,6 +86,7 @@ class ReceiveToReplyMail implements ShouldQueue
                     /** @var \Webklex\PHPIMAP\Message $message */
                     $reply_unseen = [];
                     foreach($messages as $kk => $message){
+                        $request_data['data']['email_message'] = $message;
                         $content = $message->getStructure()->parts[1]->content;
                         $encoding = $message->getStructure()->parts[1]->encoding;
                         $charset = $message->getStructure()->parts[1]->charset;
@@ -103,6 +112,7 @@ class ReceiveToReplyMail implements ShouldQueue
                         $reply_unseen[$kk]['receive_time'] = date('Y-m-d H:i:s',$message->getDate()->toDate()->getTimestamp());
                         //$reply_unseen[$kk]['created_at'] = date('Y-m-d H:i:s',time());
                     }
+                    $request_data['data']['get_email_for_insert'] = $reply_unseen;
                     if(!empty($reply_unseen)){
                         MailReceived::insert($reply_unseen);
                         //将收到回复的联系人的状态变更成停用
@@ -142,11 +152,11 @@ class ReceiveToReplyMail implements ShouldQueue
                     }
                 }
             }
-            return ['code' => 1000, 'data' => ['message' => '邮件接收成功!']];
+            return 1;
         }catch (\Exception $e){
-            $message = '拉取邮件失败';
-            Log::channel('error_gp_email')->error($message, [$e->getMessage()]);
-            return ['code' => 1004, 'data' => ['message' => '邮件接收失败!'.$e->getMessage()]];
+            $message = '拉取邮件失败:'.$e->getMessage();
+            Log::channel('error_gp_email')->error($message, [$request_data['data']]);
+            //throw new EmailException($message);
         }
     }
     /**

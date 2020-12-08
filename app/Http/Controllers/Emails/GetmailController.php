@@ -10,12 +10,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Webklex\IMAP\Facades\Client;
+use App\Exceptions\Diy\EmailException;
 
 class GetmailController extends Controller
 {
     //获取某个邮箱的邮件内容
 
     public function getEmail(Request $request){
+
         //拉取邮件的业务逻辑
         try{
             //获取有效的可以拉取邮件的邮箱
@@ -34,14 +36,16 @@ class GetmailController extends Controller
                     'password'      => $v['email_pass'],
                     'protocol'      => $v['getmail_protocol'],
                 ];
+                request()->offsetSet('data', $config);
                 /** @var \Webklex\PHPIMAP\Client $client */
                 $client = Client::make($config);
                 //创建连接
                 /* Alternative by using the Facade
                 $client = Webklex\IMAP\Facades\Client::account('default');
                 */
-                //Connect to the IMAP Server
-                $client->connect();
+                //Connect to the IMAP Server;
+                $client->connect()->setTimeout(5000);
+
                 //获取收件箱
                 //Get all Mailboxes
                 /** @var \Webklex\PHPIMAP\Support\FolderCollection $folders */
@@ -123,11 +127,10 @@ class GetmailController extends Controller
                     }
                 }
             }
-            return ['code' => 1000, 'data' => ['message' => '邮件接收成功!']];
         }catch (\Exception $e){
-            $message = '拉取邮件失败';
-            Log::channel('error_gp_email')->error($message, [$e->getMessage()]);
-            return ['code' => 1004, 'data' => ['message' => '邮件接收失败!'.$e->getMessage()]];
+            $message = '拉取邮件失败:'.$e->getMessage();
+            Log::channel('error_gp_email')->error($message, [$request->get('mail_data')]);
+            throw new EmailException($message);
         }
     }
     /**

@@ -34,6 +34,7 @@ class CreateToMailTasks implements ShouldQueue
      */
     public function handle()
     {
+        $request_data = [];
         try{
             //获取联系人信息
             //验证是否已经存在数据
@@ -42,6 +43,7 @@ class CreateToMailTasks implements ShouldQueue
                 ->get()->toArray();
             $insert_forsend = [];
             $cancel_send = [];
+            $request_data['data']['sender_mail_detail'] = $contact_list;
             foreach ($contact_list as $k => $v){
                 //当联系人状态已经变更为停用时，更新已有的还没有对联系人发送的邮件，修改状态为已取消
                 if($v['task_status'] == 0){
@@ -77,6 +79,11 @@ class CreateToMailTasks implements ShouldQueue
                 if(!empty($mails_forsend)){
                     continue;
                 }
+                if(empty($v['email_title']) || empty($v['template_id']) || empty($v['email_content'])){
+                    $message = '联系人没有绑定邮件模板，无法创建发送任务';
+                    Log::channel('info_create_task')->info($message, $v);
+                    continue;
+                }
                 //把目标联系人的要发送时间转化成当地服务器的时间
                 date_default_timezone_set(\config('app.timezone'));
                 $sender_time_server = date('Y-m-d H:i:s',strtotime($sender_time.' '.$country_detail->timezone));
@@ -98,6 +105,8 @@ class CreateToMailTasks implements ShouldQueue
                     'send_status' => 3,
                     //'updated_at'=>date('Y-m-d H:i:s',time())
                 ]);
+                $message = '联系人状态被停用，发送任务全部被取消';
+                Log::channel('info_create_task')->info($message, $receiver_email_arrs);
             }
             //写入到mail_for_sends
             if(!empty($insert_forsend)){
@@ -118,11 +127,10 @@ class CreateToMailTasks implements ShouldQueue
                 }
 
             }
-            return ['code' => 1000, 'data' => ['message' => '任务写入成功!']];
+            return 1;
         }catch (\Exception $e){
-            $message = '创建任务失败';
-            Log::channel('error_gp_email')->error($message, [$e->getMessage()]);
-            return ['code' => 1004, 'data' => ['message' => '任务写入失败!'.$e->getMessage()]];
+            $message = '创建任务失败:'.$e->getMessage();
+            Log::channel('error_gp_email')->error($message, [$request_data['data']]);
         }
     }
 }
