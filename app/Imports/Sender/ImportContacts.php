@@ -80,6 +80,7 @@ class ImportContacts implements ToModel,WithStartRow,WithValidation,SkipsOnFailu
             'send_start_hour' => $send_start_hour,
             'send_end_hour' => $send_end_hour,
             'remarks' => $row[7] ? trim($row[7]) : '',
+            'task_status'=> $template ? 1 : 0,
         ]);
     }
     /**

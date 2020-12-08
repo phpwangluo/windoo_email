@@ -39,6 +39,11 @@ class ContactController extends AdminController
             // 在这里添加字段过滤器
             $filter->equal('country_id', '国家')->select('/api/countrylist');
             $filter->equal('trade_id', '行业')->select('/api/tradelist');
+            $filter->equal('email_address', '联系人')->email();
+            $filter->equal('task_status', '联系人状态')->select([
+                '0'=>'停用',
+                '1'=>'正常',
+            ]);
             $filter->equal('send_count', '发送次数')->integer();
 
         });

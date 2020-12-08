@@ -31,6 +31,25 @@ class ContactController extends Controller
                 'error'=>0,'message'=>'参数不合法'
             ];
         }
+        //当启用联系人的时候验证联系人的必要条件是否满足
+        if($task_status == 1){
+            $contact_detail_obj = Contact::where([
+                'id'=>$id
+            ])->get()->first();
+            if($contact_detail_obj){
+                $contact_detail = $contact_detail_obj->toArray();
+                if($contact_detail['template_id'] == ''){
+                    return [
+                        'error'=>0,'message'=>'联系人未绑定模板不能启用'
+                    ];
+                }
+                if($contact_detail['send_max_num'] <= 0){
+                    return [
+                        'error'=>0,'message'=>'联系人发送次数已用完请修改联系人信息以后再启用'
+                    ];
+                }
+            }
+        }
         Contact::where('id',$id)
             ->update([
                 'task_status'=>$task_status,
