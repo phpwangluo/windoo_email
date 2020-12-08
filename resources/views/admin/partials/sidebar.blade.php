@@ -4,7 +4,7 @@
     <section class="sidebar">
 
         <!-- Sidebar user panel (optional) -->
-        <div class="user-panel">
+        <div class="user-panel" style="height: 52px">
             <div class="pull-left image">
                 <img src="{{ Admin::user()->avatar }}" class="img-circle" alt="User Image">
             </div>
