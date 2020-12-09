@@ -56,6 +56,8 @@ class CreateToMailTasks implements ShouldQueue
                     $cancel_send[$k]['receiver_email'] = $v['email_address'];
                     $cancel_send[$k]['send_status'] = 3;
                     //$cancel_send[$k]['updated_at'] = date('Y-m-d H:i:s',time());
+                    $message = '联系人状态被停用，发送任务被取消';
+                    Log::channel('info_create_task')->info($message, $v);
                     continue;
                 }
                 //联系人已经变成合作资源时不创建自动发送任务
@@ -119,8 +121,8 @@ class CreateToMailTasks implements ShouldQueue
                     'send_status' => 3,
                     //'updated_at'=>date('Y-m-d H:i:s',time())
                 ]);
-                $message = '联系人状态被停用，发送任务全部被取消';
-                Log::channel('info_create_task')->info($message, $receiver_email_arrs);
+                /*$message = '联系人状态被停用，发送任务全部被取消';
+                Log::channel('info_create_task')->info($message, $receiver_email_arrs);*/
             }
             //写入到mail_for_sends
             if(!empty($insert_forsend)){
