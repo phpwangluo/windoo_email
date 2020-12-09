@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\BusinessSource;
 use App\Models\Contact;
 use App\Models\Country;
 use App\Models\MailForSend;
@@ -43,13 +44,24 @@ class CreateToMailTasks implements ShouldQueue
                 ->get()->toArray();
             $insert_forsend = [];
             $cancel_send = [];
+            $buiness_source_arr = [];
             $request_data['data']['sender_mail_detail'] = $contact_list;
+            $buiness_source = BusinessSource::get();
+            if($buiness_source){
+                $buiness_source_arr = array_column($buiness_source->toArray(),'email_address');
+            }
             foreach ($contact_list as $k => $v){
                 //当联系人状态已经变更为停用时，更新已有的还没有对联系人发送的邮件，修改状态为已取消
                 if($v['task_status'] == 0){
                     $cancel_send[$k]['receiver_email'] = $v['email_address'];
                     $cancel_send[$k]['send_status'] = 3;
                     //$cancel_send[$k]['updated_at'] = date('Y-m-d H:i:s',time());
+                    continue;
+                }
+                //联系人已经变成合作资源时不创建自动发送任务
+                if(in_array($v['email_address'],$buiness_source_arr)){
+                    $message = '联系人已经变成合作资源，无法创建发送任务';
+                    Log::channel('info_create_task')->info($message, $v);
                     continue;
                 }
                 //判断是否还有发送次数,发送次数不够的时候不允许创建邮件任务

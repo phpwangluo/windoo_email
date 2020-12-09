@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Emails;
 
 use App\Http\Controllers\Controller;
+use App\Models\BusinessSource;
 use App\Models\Contact;
 use App\Models\Country;
 use App\Models\Sender;
@@ -22,6 +23,11 @@ class CreatemailController extends Controller
                 ->get()->toArray();
             $insert_forsend = [];
             $cancel_send = [];
+            $buiness_source_arr = [];
+            $buiness_source = BusinessSource::get();
+            if($buiness_source){
+                $buiness_source_arr = array_column($buiness_source->toArray(),'email_address');
+            }
             foreach ($contact_list as $k => $v){
                 //当联系人状态已经变更为停用时，更新已有的还没有对联系人发送的邮件，修改状态为已取消
                 if($v['task_status'] == 0){
@@ -32,6 +38,12 @@ class CreatemailController extends Controller
                 }
                 //判断是否还有发送次数,发送次数不够的时候不允许创建邮件任务
                 if($v['send_max_num'] <= 0){
+                    continue;
+                }
+                //联系人已经变成合作资源时不创建自动发送任务
+                if(in_array($v['email_address'],$buiness_source_arr)){
+                    $message = '联系人已经变成合作资源，无法创建发送任务';
+                    Log::channel('info_create_task')->info($message, $v);
                     continue;
                 }
                 //通过国家ID获取国家对应的时区
