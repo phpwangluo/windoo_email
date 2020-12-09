@@ -54,6 +54,8 @@ class CreateToMailTasks implements ShouldQueue
                 }
                 //判断是否还有发送次数,发送次数不够的时候不允许创建邮件任务
                 if($v['send_max_num'] <= 0){
+                    $message = '联系人剩余发送次数用完，无法创建发送任务';
+                    Log::channel('info_create_task')->info($message, $v);
                     continue;
                 }
                 //通过国家ID获取国家对应的时区

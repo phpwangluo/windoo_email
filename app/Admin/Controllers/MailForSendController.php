@@ -26,6 +26,7 @@ class MailForSendController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new MailForSend());
+        $grid->model()->orderByDesc('plan_send_time');
         $grid->filter(function($filter){
             // 去掉默认的id过滤器
             $filter->disableIdFilter();
