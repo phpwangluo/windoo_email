@@ -64,12 +64,37 @@ class MailList extends AbstractField
                 $style = 'style="color:red"';
             }
             $html .= '
-        <table border="1" width="100%">
-            <tr><td width="30%">联系人</td><td width="70%"' . $style . '>' . $v['sender_email'] . '</td></tr>
-            <tr><td>回复时间</td><td>' . $v['handle_time'] . '</td></tr>
-            <tr><td>标题</td><td>' . $v['title'] . '</td></tr>
-            <tr><td>正文</td><td>' . $v['content'] . '</td></tr>
-            <tr><td>签名</td><td>' . $v['email_sign'] . '</td></tr>
+            <style>
+            table {
+                width: 100%;
+                border-spacing: 0;/**设置相邻单元格的边框间的距离**/
+                border-collapse: collapse;/**边框会合并为一个单一的边框**/
+                color:#5a5a5a;
+                /**table-layout: fixed;/**固定table表格**/
+            }
+            table  thead {
+                background-color: #d9edf7;
+            }
+            table td,table th{
+                border:1px solid #ccc;
+                /**overflow: hidden;/**溢出隐藏**/
+                /**white-space: nowrap;/**不换行**/
+                text-overflow: ellipsis;/**溢出不可见部分使用...代替**/
+            }
+        </style>
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="2" style="text-align: center">邮件回复内容</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr><td style="padding: 10px;">联系人</td><td style="padding: 10px;" ' . $style . '>' . $v['sender_email'] . '</td></tr>
+            <tr><td style="padding: 10px;">回复时间</td><td style="padding: 10px;">' . $v['handle_time'] . '</td></tr>
+            <tr><td style="padding: 10px;">标题</td><td style="padding: 10px;">' . $v['title'] . '</td></tr>
+            <tr><td style="padding: 10px;">正文</td><td style="padding: 10px;">' . $v['content'] . '</td></tr>
+            <tr><td style="padding: 10px;">签名</td><td style="padding: 10px;">' . $v['email_sign'] . '</td></tr>
+            </tbody>
         </table><hr>';;
         }
         // 返回自定义回复详情页面
