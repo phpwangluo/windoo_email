@@ -92,7 +92,7 @@ class MailList extends AbstractField
             <tr style="width: 800px;"><td style="padding: 10px;width: 80px;">联系人</td><td style="padding: 10px;width: 700px;' . $style . '">' . $v['sender_email'] . '</td></tr>
             <tr><td style="padding: 10px;">回复时间</td><td style="padding: 10px;">' . $v['handle_time'] . '</td></tr>
             <tr><td style="padding: 10px;">标题</td><td style="padding: 10px;">' . $v['title'] . '</td></tr>
-            <tr><td style="padding: 10px;">正文</td><td style="padding: 10px;width: 600px;">' . $v['content'] . '</td></tr>
+            <tr><td style="padding: 10px;">正文</td><td style="padding: 10px;">' . $v['content'] . '</td></tr>
             <tr><td style="padding: 10px;">签名</td><td style="padding: 10px;">' . $v['email_sign'] . '</td></tr>
             </tbody>
         </table><hr>';;

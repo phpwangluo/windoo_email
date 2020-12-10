@@ -247,7 +247,7 @@ class MailReceivedController extends AdminController
                 $html .= '
         <style>
             table {
-                width: 100%;
+                width: 95%;
                 border-spacing: 0;/**设置相邻单元格的边框间的距离**/
                 border-collapse: collapse;/**边框会合并为一个单一的边框**/
                 color:#5a5a5a;
@@ -270,7 +270,7 @@ class MailReceivedController extends AdminController
                 </tr>
             </thead>
             <tbody>
-            <tr><td style="padding: 10px;">联系人</td><td style="padding: 10px;' . $style . '">' . $v['sender_email'] . '</td></tr>
+            <tr style="width: 800px;"><td style="padding: 10px;width: 80px;">联系人</td><td style="padding: 10px;width: 700px;' . $style . '">' . $v['sender_email'] . '</td></tr>
             <tr><td style="padding: 10px;">回复时间</td><td style="padding: 10px;">' . $v['handle_time'] . '</td></tr>
             <tr><td style="padding: 10px;">标题</td><td style="padding: 10px;">' . $v['title'] . '</td></tr>
             <tr><td style="padding: 10px;">正文</td><td style="padding: 10px;">' . $v['content'] . '</td></tr>
