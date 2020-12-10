@@ -32,7 +32,8 @@ class MailReceivedController extends AdminController
         $grid = new Grid(new MailReceived());
         $grid->model()
             ->fromSub('select * from mail_receiveds order by sender_email,receive_time DESC limit 11111','a')
-            ->groupBy(['a.sender_email','a.receiver_email']);
+            ->groupBy(['a.sender_email','a.receiver_email'])
+            ->orderBy('receive_status','asc');
         $grid->filter(function($filter){
 
             // 去掉默认的id过滤器
