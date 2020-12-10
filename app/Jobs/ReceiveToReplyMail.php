@@ -169,8 +169,8 @@ class ReceiveToReplyMail implements ShouldQueue
         * \n:换行
         * \r:回车，将当前位置移到本行开头
         */
-        $pre = array( " " , "　" , "\t" , "\n" , "\r" );
-        $to = array( '&nbsp;' , '&nbsp;&nbsp;' , '&nbsp;&nbsp;&nbsp;&nbsp;' , '<br>' , '<br>' );
+        $pre = array( "\t" , "\n" , "\r" );
+        $to = array('&nbsp;&nbsp;&nbsp;&nbsp;' , '<br>' , '<br>' );
         return str_replace ( $pre , $to , $str );
     }
     /**

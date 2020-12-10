@@ -240,9 +240,9 @@ class MailReceivedController extends AdminController
             foreach ($lists_format_end as $k => $v){
                 $style = '';
                 if($v['handle_type'] == 2){
-                    $style = 'style="color:green"';
+                    $style = 'color:green';
                 }elseif ($v['handle_type'] == 1){
-                    $style = 'style="color:red"';
+                    $style = 'color:red';
                 }
                 $html .= '
         <style>
@@ -270,7 +270,7 @@ class MailReceivedController extends AdminController
                 </tr>
             </thead>
             <tbody>
-            <tr><td style="padding: 10px;">联系人</td><td style="padding: 10px;" ' . $style . '>' . $v['sender_email'] . '</td></tr>
+            <tr><td style="padding: 10px;">联系人</td><td style="padding: 10px;' . $style . '">' . $v['sender_email'] . '</td></tr>
             <tr><td style="padding: 10px;">回复时间</td><td style="padding: 10px;">' . $v['handle_time'] . '</td></tr>
             <tr><td style="padding: 10px;">标题</td><td style="padding: 10px;">' . $v['title'] . '</td></tr>
             <tr><td style="padding: 10px;">正文</td><td style="padding: 10px;">' . $v['content'] . '</td></tr>
