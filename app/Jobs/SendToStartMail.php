@@ -48,16 +48,16 @@ class SendToStartMail implements ShouldQueue
                 ->get(); //获取当天可以发送邮件的联系人
             $request_data['data']['sender_mail_detail'] = $mail_for_send;
             foreach ($mail_for_send as $k => $v){
-                //判断联系人状态是否为：启用，否则终止发送邮件
-                if($v['task_status'] != 1){
-                    continue;
-                }
                 //验证收件人的发送次数是否用完，用完不发送，除非修改模板内容
                 /*if($v['send_max_num'] <= 0){
                     continue;
                 }*/
                 //区分自动发送与手动发送的区别
                 if($v['send_type'] == 1){
+                    //判断联系人状态是否为：启用，否则终止发送邮件
+                    if($v['task_status'] != 1){
+                        continue;
+                    }
                     //自动发送
                     //今天是否已经发送邮件，自动邮件默认一天只能发一次
                     //今天已发送记录里是否有邮件记录

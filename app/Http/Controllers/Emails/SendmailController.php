@@ -17,6 +17,8 @@ class SendmailController extends Controller
 {
     public function test(Request $request)
     {
+        $request_data = [];
+
         try{
             //获取邮件的发送信息
             $mail_for_send = MailForSend::select(['mail_for_sends.*', 'contacts.*','mail_for_sends.id as sendid'])
@@ -24,6 +26,7 @@ class SendmailController extends Controller
                 ->where('send_status',1)
                 ->where('plan_send_time','<=',date('Y-m-d H:i:s',time()))
                 ->get(); //获取当天可以发送邮件的联系人
+            $request_data['data']['sender_mail_detail'] = $mail_for_send;
             foreach ($mail_for_send as $k => $v){
                 //判断联系人状态是否为：启用，否则终止发送邮件
                 if($v['task_status'] != 1){
@@ -75,12 +78,14 @@ class SendmailController extends Controller
                         //'sendmail' => '/usr/sbin/sendmail -bs',
                         'pretend' => false
                     );
+                    $request_data['data']['sender_config'] = $config;
                     Config()->set('mail',$config);
                     $subject = $v['title'];
                     $viewData = [
                         'content' => $v['content'],
                     ];
-
+                    $request_data['data']['title'] = $subject;
+                    $request_data['data']['content'] = $viewData;
                     //发送邮件
                     Mail::to($v['receiver_email'])->send(new ContactSender($subject, $viewData));
                     //更新发件人发件次数
@@ -89,16 +94,18 @@ class SendmailController extends Controller
                     MailForSend::where('id',$v['sendid'])
                         ->update([
                             'send_status' => 2,
-                            'sender_email' => $mail->email_address,
-                            'real_send_time' => date('Y-m-d H:i:s',time()),
+                            'sender_email'=>$mail->email_address,
+                            'real_send_time'=>date('Y-m-d H:i:s',time()),
                         ]);
                     //更新某个联系人的收到邮箱的次数
                     DB::table('contacts')->where(['email_address'=>$v['receiver_email']])->increment('send_count');
                 }
             }
-            return ['code' => 1000, 'data' => ['message' => '邮件发送成功!']];
+            return 1;
         }catch (\Exception $e){
-            return ['code' => 1004, 'data' => ['message' => '邮件发送失败!'.$e->getMessage()]];
+            $message = '邮件发送失败:'.$e->getMessage();
+            Log::channel('error_gp_email')->error($message, [$request_data['data']]);
+            //throw new EmailException($message);
         }
     }
 }
