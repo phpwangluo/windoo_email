@@ -464,4 +464,5 @@ return [
             'enable' => true,
         ]
     ],
+    'send_max_num'=>env('SEND_MAIL_LIMIT_NUM',5),
 ];
