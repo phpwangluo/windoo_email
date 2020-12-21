@@ -42,7 +42,7 @@ class ReceiveToReplyMail implements ShouldQueue
         try{
             //获取有效的可以拉取邮件的邮箱
             $mail = Sender::join('mail_settings','mail_settings.id','=','senders.mail_setting_id')
-                ->where(['status'=>1])
+                ->where(['status'=>1,'email_status'=>1])
                 ->whereRaw('send_count<=max_send_count')
                 ->inRandomOrder()
                 ->get()->toArray();

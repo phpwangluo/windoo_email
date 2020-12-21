@@ -22,7 +22,10 @@ class GetmailController extends Controller
         try{
             //获取有效的可以拉取邮件的邮箱
             $mail = Sender::join('mail_settings','mail_settings.id','=','senders.mail_setting_id')
-                ->where(['status'=>1])
+                ->where([
+                    'status'=>1,
+                    'email_status'=>1
+                ])
                 ->whereRaw('send_count<=max_send_count')
                 ->inRandomOrder()
                 ->get()->toArray();
@@ -38,6 +41,7 @@ class GetmailController extends Controller
                 ];
                 request()->offsetSet('data', $config);
                 /** @var \Webklex\PHPIMAP\Client $client */
+
                 $client = Client::make($config);
                 //创建连接
                 /* Alternative by using the Facade
@@ -45,7 +49,6 @@ class GetmailController extends Controller
                 */
                 //Connect to the IMAP Server;
                 $client->connect()->setTimeout(5000);
-
                 //获取收件箱
                 //Get all Mailboxes
                 /** @var \Webklex\PHPIMAP\Support\FolderCollection $folders */
@@ -53,12 +56,14 @@ class GetmailController extends Controller
                 //遍历收件箱中的邮件内容
                 //Loop through every Mailbox
                 /** @var \Webklex\PHPIMAP\Folder $folder */
+
                 foreach($folders as $folder){
                     //获取邮件相关属性
                     //Get all Messages of the current Mailbox $folder
                     /** @var \Webklex\PHPIMAP\Support\MessageCollection $messages */
                     //$messages = $folder->messages()->on('2020-12-01')->all()->get();
                     //$messages = $folder->messages()->unseen()->on('2020-11-25')->all()->get();
+
                     $messages = $folder->messages()->unseen()->all()->get();
                     /** @var \Webklex\PHPIMAP\Message $message */
                     $reply_unseen = [];
@@ -127,6 +132,7 @@ class GetmailController extends Controller
                     }
                 }
             }
+            return 1;
         }catch (\Exception $e){
             $message = '拉取邮件失败:'.$e->getMessage();
             Log::channel('error_gp_email')->error($message, [$request->get('mail_data')]);
