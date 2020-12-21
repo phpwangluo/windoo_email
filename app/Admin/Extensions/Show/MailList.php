@@ -81,6 +81,7 @@ class MailList extends AbstractField
                 /**white-space: nowrap;/**不换行**/
                 text-overflow: ellipsis;/**溢出不可见部分使用...代替**/
             }
+            p{ word-wrap:break-word; width:520px;}
         </style>
         <table>
             <thead>
