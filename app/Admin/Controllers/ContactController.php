@@ -31,6 +31,7 @@ class ContactController extends AdminController
     {
         $grid = new Grid(new Contact());
         $grid->model()->where('status', '=', 1);
+        $grid->model()->orderBy('task_status','desc');
         $grid->filter(function($filter){
 
             // 去掉默认的id过滤器
