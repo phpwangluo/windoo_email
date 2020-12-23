@@ -24,7 +24,7 @@ class SenderController extends Controller
            'id'=>$id,
            'email_status'=>1
         ])->get()->first();
-        if($isOnUse->id){
+        if($isOnUse){
             return [
                 'error'=>0,'message'=>'发件人处于启用状态，不可删除！'
             ];
