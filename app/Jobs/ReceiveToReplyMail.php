@@ -66,7 +66,6 @@ class ReceiveToReplyMail implements ShouldQueue
                 */
                 //Connect to the IMAP Server
                 $client->connect()->setTimeout(5000);
-                dd('sdfsdfs');
                 //获取收件箱
                 //Get all Mailboxes
                 /** @var \Webklex\PHPIMAP\Support\FolderCollection $folders */
