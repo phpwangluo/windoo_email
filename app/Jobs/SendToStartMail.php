@@ -87,6 +87,7 @@ class SendToStartMail implements ShouldQueue
                     Log::channel('info_send_email')->info($message, $v);
                 }else{
                     $re = explode('@', $mail->email_address);
+                    /*
                     $config = array(
                         'driver' => $mail->driver,
                         'host' => $mail->host,
@@ -99,7 +100,25 @@ class SendToStartMail implements ShouldQueue
                         'pretend' => false
                     );
                     $request_data['data']['sender_config'] = $config;
-                    Config()->set('mail',$config);
+                    Config()->set('mail',$config);*/
+                    $config_smtp = [
+                        'transport' => $mail->driver,
+                        'host' => $mail->host,
+                        'port' => $mail->port,
+                        'encryption' => $mail->encryption,
+                        'username' => $mail->email_address,
+                        'password' => $mail->email_pass,
+                        'timeout' => null,
+                        'auth_mode' => null
+                    ];
+                    $config_from= [
+                        'address' => $mail->email_address,
+                        'name'=>$re[0]
+                    ];
+                    $request_data['data']['sender_config_stmp'] = $config_smtp;
+                    $request_data['data']['sender_config_from'] = $config_from;
+                    Config()->set('mail.mailers.smtp',$config_smtp);
+                    Config()->set('mail.from',$config_from);
                     $subject = $v['title'];
                     $viewData = [
                         'content' => $v['content'],

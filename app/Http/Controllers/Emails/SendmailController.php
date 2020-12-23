@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use App\Models\Sender;
 use App\Models\MailForSend;
+use League\Flysystem\Config;
 
 class SendmailController extends Controller
 {
@@ -67,19 +68,24 @@ class SendmailController extends Controller
                     Log::channel('info_send_email')->info($message, $v);
                 }else{
                     $re = explode('@', $mail->email_address);
-                    $config = array(
-                        'driver' => $mail->driver,
+                    $config_smtp = [
+                        'transport' => $mail->driver,
                         'host' => $mail->host,
                         'port' => $mail->port,
-                        'from' => array('address' => $mail->email_address, 'name' => $re[0]),
                         'encryption' => $mail->encryption,
                         'username' => $mail->email_address,
                         'password' => $mail->email_pass,
-                        //'sendmail' => '/usr/sbin/sendmail -bs',
-                        'pretend' => false
-                    );
-                    $request_data['data']['sender_config'] = $config;
-                    Config()->set('mail',$config);
+                        'timeout' => null,
+                        'auth_mode' => null
+                    ];
+                    $config_from= [
+                        'address' => $mail->email_address,
+                        'name'=>$re[0]
+                    ];
+                    $request_data['data']['sender_config_stmp'] = $config_smtp;
+                    $request_data['data']['sender_config_from'] = $config_from;
+                    Config()->set('mail.mailers.smtp',$config_smtp);
+                    Config()->set('mail.from',$config_from);
                     $subject = $v['title'];
                     $viewData = [
                         'content' => $v['content'],

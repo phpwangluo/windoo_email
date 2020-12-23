@@ -2,14 +2,12 @@
 
 namespace App\Jobs;
 
-use App\Exceptions\Diy\EmailException;
-use App\Models\MailForSend;
+use App\Models\Contact;
 use App\Models\MailReceived;
 use App\Models\Sender;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Http\Request;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
@@ -68,6 +66,7 @@ class ReceiveToReplyMail implements ShouldQueue
                 */
                 //Connect to the IMAP Server
                 $client->connect()->setTimeout(5000);
+                dd('sdfsdfs');
                 //获取收件箱
                 //Get all Mailboxes
                 /** @var \Webklex\PHPIMAP\Support\FolderCollection $folders */
@@ -97,10 +96,9 @@ class ReceiveToReplyMail implements ShouldQueue
                         }
                         $email_content = $this->ReCoverImapGarbled($content,$encoding,$charset);
                         //对拉取的邮箱结果做判断，过滤不是系统发出去的邮件的回复
-                        $is_from_gp_email_reply = MailForSend::where([
-                            'receiver_email'=>$message->getSender()[0]->mail,
-                            'sender_email'=>$message->getTo()[0]->mail,
-                            'send_status'=>2
+                        $is_from_gp_email_reply = Contact::where([
+                            'email_address'=>$message->getSender()[0]->mail,
+                            'status'=>1
                         ])->get()->toArray();
                         if(empty($is_from_gp_email_reply)){
                             continue;
@@ -111,6 +109,17 @@ class ReceiveToReplyMail implements ShouldQueue
                         $reply_unseen[$kk]['content'] = $email_content != '' ? $email_content : ($message->getHTMLBody() ? $message->getHTMLBody() : $this->code_to_string($message->getTextBody())) ;
                         $reply_unseen[$kk]['receive_time'] = date('Y-m-d H:i:s',$message->getDate()->toDate()->getTimestamp());
                         //$reply_unseen[$kk]['created_at'] = date('Y-m-d H:i:s',time());
+
+                        //对拉取的回复做去重验证
+                        $is_repeat_reply = MailReceived::query()->where([
+                            'sender_email'=>$reply_unseen[$kk]['sender_email'],
+                            'receiver_email'=>$reply_unseen[$kk]['receiver_email'],
+                            'title'=>$reply_unseen[$kk]['title'],
+                            'content'=>$reply_unseen[$kk]['content']
+                        ])->exists();
+                        if($is_repeat_reply){
+                            unset($reply_unseen[$kk]);
+                        }
                     }
                     $request_data['data']['get_email_for_insert'] = $reply_unseen;
                     if(!empty($reply_unseen)){
@@ -170,7 +179,7 @@ class ReceiveToReplyMail implements ShouldQueue
         * \r:回车，将当前位置移到本行开头
         */
         $pre = array( "\t" , "\n" , "\r" );
-        $to = array('&nbsp;&nbsp;&nbsp;&nbsp;' , '<br>' , '<br>' );
+        $to = array('<br>' , '<br>' , '<br>' );
         return str_replace ( $pre , $to , $str );
     }
     /**

@@ -31,7 +31,7 @@ class MailReceivedController extends AdminController
     {
         $grid = new Grid(new MailReceived());
         $grid->model()
-            ->fromSub('select * from mail_receiveds order by sender_email,receive_time DESC limit 11111','a')
+            ->fromSub('select * from mail_receiveds order by sender_email,receive_time DESC,id desc limit 11111','a')
             ->groupBy(['a.sender_email','a.receiver_email'])
             ->orderBy('receive_status','asc');
         $grid->filter(function($filter){
@@ -207,11 +207,11 @@ class MailReceivedController extends AdminController
                 $now_reply_detail[0]['handle_time'] = $now_reply_detail[0]['receive_time'];
                 $now_reply_detail[0]['handle_type'] = $now_reply_detail[0]['reply_status'];
                 //根据收发件地址获取邮件列表
-                $replyed_list = MailReceived::where([
+                $replyed_list = MailReceived::query()->where([
                     'sender_email'=>$reply_sender_email,
                     'receiver_email'=>$reply_sreceiver_email,
-                    'reply_status'=>2
-                ])->orderBy('receive_time','desc')->get()->toArray();
+                    //'reply_status'=>2
+                ])->where('id','<>',$id)->orderBy('receive_time','desc')->get()->toArray();
                 foreach ($replyed_list as $rk=>$rv){
                     $replyed_list[$rk]['template_id'] = 0;
                     $replyed_list[$rk]['email_sign'] = '';
@@ -271,10 +271,10 @@ class MailReceivedController extends AdminController
                 </tr>
             </thead>
             <tbody>
-            <tr style="width: 800px;"><td style="padding: 10px;width: 80px;">联系人</td><td style="padding: 10px;width: 700px;' . $style . '">' . $v['sender_email'] . '</td></tr>
+            <tr><td style="padding: 10px;">联系人</td><td style="padding: 10px;width: 700px;' . $style . '">' . $v['sender_email'] . '</td></tr>
             <tr><td style="padding: 10px;">回复时间</td><td style="padding: 10px;">' . $v['handle_time'] . '</td></tr>
             <tr><td style="padding: 10px;">标题</td><td style="padding: 10px;">' . $v['title'] . '</td></tr>
-            <tr><td style="padding: 10px;">正文</td><td style="padding: 10px;white-space:normal; width:200px;">' .$v['content']. '</td></tr>
+            <tr><td style="padding: 10px;">正文</td><td style="padding: 10px;">' .$v['content']. '</td></tr>
             <tr><td style="padding: 10px;">签名</td><td style="padding: 10px;">' . $v['email_sign'] . '</td></tr>
             </tbody>
         </table><hr>';

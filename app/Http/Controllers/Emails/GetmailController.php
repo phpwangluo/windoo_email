@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Emails;
 
 use App\Http\Controllers\Controller;
+use App\Models\Contact;
 use App\Models\MailForSend;
 use App\Models\MailReceived;
 use App\Models\Sender;
@@ -68,9 +69,9 @@ class GetmailController extends Controller
                     /** @var \Webklex\PHPIMAP\Message $message */
                     $reply_unseen = [];
                     foreach($messages as $kk => $message){
-                        $content = $message->getStructure()->parts[1]->content;
-                        $encoding = $message->getStructure()->parts[1]->encoding;
-                        $charset = $message->getStructure()->parts[1]->charset;
+                        $content = $message->getStructure()->parts[2]->content;
+                        $encoding = $message->getStructure()->parts[2]->encoding;
+                        $charset = $message->getStructure()->parts[2]->charset;
                         if($charset != 'utf-8' && $charset != 'gb2312' && $charset != 'gbk'){
                             $title = iconv($charset,'utf-8//IGNORE',$message->getSubject());
                         }else{
@@ -78,20 +79,30 @@ class GetmailController extends Controller
                         }
                         $email_content = $this->ReCoverImapGarbled($content,$encoding,$charset);
                         //对拉取的邮箱结果做判断，过滤不是系统发出去的邮件的回复
-                        $is_from_gp_email_reply = MailForSend::where([
-                            'receiver_email'=>$message->getSender()[0]->mail,
-                            'sender_email'=>$message->getTo()[0]->mail,
-                            'send_status'=>2
+                        $is_from_gp_email_reply = Contact::where([
+                            'email_address'=>$message->getSender()[0]->mail,
+                            'status'=>1
                         ])->get()->toArray();
-                        /*if(empty($is_from_gp_email_reply)){
+                        if(empty($is_from_gp_email_reply)){
                             continue;
-                        }*/
+                        }
                         $reply_unseen[$kk]['sender_email'] = $message->getSender()[0]->mail;
                         $reply_unseen[$kk]['receiver_email'] = $message->getTo()[0]->mail;
                         $reply_unseen[$kk]['title'] = $title;
                         $reply_unseen[$kk]['content'] = $email_content != '' ? $email_content : ($message->getHTMLBody() ? $message->getHTMLBody() : $this->code_to_string($message->getTextBody()));
                         $reply_unseen[$kk]['receive_time'] = date('Y-m-d H:i:s',$message->getDate()->toDate()->getTimestamp());
                         $reply_unseen[$kk]['created_at'] = date('Y-m-d H:i:s',time());
+
+                        //对拉取的回复做去重验证
+                        $is_repeat_reply = MailReceived::query()->where([
+                            'sender_email'=>$reply_unseen[$kk]['sender_email'],
+                            'receiver_email'=>$reply_unseen[$kk]['receiver_email'],
+                            'title'=>$reply_unseen[$kk]['title'],
+                            'content'=>$reply_unseen[$kk]['content']
+                        ])->exists();
+                        if($is_repeat_reply){
+                            unset($reply_unseen[$kk]);
+                        }
                     }
                     if(!empty($reply_unseen)){
                         MailReceived::insert($reply_unseen);
@@ -149,8 +160,8 @@ class GetmailController extends Controller
         * \n:换行
         * \r:回车，将当前位置移到本行开头
         */
-        $pre = array( "\t" , "\n" , "\r" );
-        $to = array( '&nbsp;&nbsp;&nbsp;&nbsp;' , '<br>' , '<br>' );
+        $pre = array("\t" , "\n" , "\r" );
+        $to = array( '<br>' , '<br>' , '<br>' );
         return str_replace ( $pre , $to , $str );
     }
     function ReCoverImapGarbled($str,$encoding,$charset){
