@@ -89,8 +89,8 @@ class CreateToMailTasks implements ShouldQueue
                 $sender_local_time_date = date('Y-m-d',time());
                 $mails_forsend = MailForSend::where([
                     'send_type'=>1,
-                    'receiver_email'=>$v['email_address']
-                ])->whereBetween('sender_local_time',[$sender_local_time_date.' 00:00:00',$sender_local_time_date.' 23:59:59'])->get('receiver_email')->toArray();
+                    'receiver_email'=>$v['email_address'],
+                ])->where('send_status','<>',3)->whereBetween('sender_local_time',[$sender_local_time_date.' 00:00:00',$sender_local_time_date.' 23:59:59'])->get('receiver_email')->toArray();
                 if(!empty($mails_forsend)){
                     continue;
                 }
