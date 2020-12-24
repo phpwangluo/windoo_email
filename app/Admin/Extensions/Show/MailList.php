@@ -25,8 +25,7 @@ class MailList extends AbstractField
             $replyed_list = MailReceived::where([
                 'sender_email'=>$reply_sender_email,
                 'receiver_email'=>$reply_sreceiver_email,
-                'reply_status'=>2
-            ])->orderBy('receive_time','desc')->get()->toArray();
+            ])->where('id','<>',$id)->orderBy('receive_time','desc')->orderBy('id','desc')->get()->toArray();
             foreach ($replyed_list as $rk=>$rv){
                 $replyed_list[$rk]['template_id'] = 0;
                 $replyed_list[$rk]['email_sign'] = '';
