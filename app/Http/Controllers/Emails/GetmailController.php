@@ -86,7 +86,8 @@ class GetmailController extends Controller
                         if(empty($is_from_gp_email_reply)){
                             continue;
                         }
-                        $reply_unseen[$kk]['sender_email'] = $message->getSender()[0]->mail;
+                        $reply_unseen[$kk]['sender_email'] = $is_from_gp_email_reply[0]['email_address'] ? $is_from_gp_email_reply[0]['email_address'] :$message->getSender()[0]->mail;
+                        //$reply_unseen[$kk]['sender_email'] = $message->getSender()[0]->mail;
                         $reply_unseen[$kk]['receiver_email'] = $message->getTo()[0]->mail;
                         $reply_unseen[$kk]['title'] = $title;
                         $reply_unseen[$kk]['content'] = $email_content != '' ? $email_content : ($message->getHTMLBody() ? $message->getHTMLBody() : $this->code_to_string($message->getTextBody()));
