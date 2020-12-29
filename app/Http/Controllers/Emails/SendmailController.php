@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Emails;
 
+use App\Facades\Common;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -58,7 +59,13 @@ class SendmailController extends Controller
                     }*/
                 }
                 //获取有效的发件人，多个的话随机选择发件人
-                $mail = Sender::join('mail_settings','mail_settings.id','=','senders.mail_setting_id')
+                $mail = Common::chooseSenders($v['email_address']);
+                if(!$mail){
+                    $message = '发件箱发送次数用完,联系人邮件无法发送！';
+                    Log::channel('info_send_email')->info($message, $v);
+                    continue;
+                }
+                /*$mail = Sender::join('mail_settings','mail_settings.id','=','senders.mail_setting_id')
                     ->where(['status'=>1,'email_status'=>1])
                     ->whereRaw('send_count<=max_send_count')
                     ->inRandomOrder()
@@ -105,7 +112,45 @@ class SendmailController extends Controller
                         ]);
                     //更新某个联系人的收到邮箱的次数
                     DB::table('contacts')->where(['email_address'=>$v['receiver_email']])->increment('send_count');
-                }
+                }*/
+                $re = explode('@', $mail->email_address);
+                $config_smtp = [
+                    'transport' => $mail->driver,
+                    'host' => $mail->host,
+                    'port' => $mail->port,
+                    'encryption' => $mail->encryption,
+                    'username' => $mail->email_address,
+                    'password' => $mail->email_pass,
+                    'timeout' => null,
+                    'auth_mode' => null
+                ];
+                $config_from= [
+                    'address' => $mail->email_address,
+                    'name'=>$re[0]
+                ];
+                $request_data['data']['sender_config_stmp'] = $config_smtp;
+                $request_data['data']['sender_config_from'] = $config_from;
+                Config()->set('mail.mailers.smtp',$config_smtp);
+                Config()->set('mail.from',$config_from);
+                $subject = $v['title'];
+                $viewData = [
+                    'content' => $v['content'],
+                ];
+                $request_data['data']['title'] = $subject;
+                $request_data['data']['content'] = $viewData;
+                //发送邮件
+                Mail::to($v['receiver_email'])->send(new ContactSender($subject, $viewData));
+                //更新发件人发件次数
+                DB::table('senders')->where(['email_address'=>$mail->email_address])->increment('send_count');
+                //更新发件箱邮件状态
+                MailForSend::where('id',$v['sendid'])
+                    ->update([
+                        'send_status' => 2,
+                        'sender_email'=>$mail->email_address,
+                        'real_send_time'=>date('Y-m-d H:i:s',time()),
+                    ]);
+                //更新某个联系人的收到邮箱的次数
+                DB::table('contacts')->where(['email_address'=>$v['receiver_email']])->increment('send_count');
             }
             return 1;
         }catch (\Exception $e){

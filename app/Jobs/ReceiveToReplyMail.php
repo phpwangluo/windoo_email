@@ -69,11 +69,12 @@ class ReceiveToReplyMail implements ShouldQueue
                 //获取收件箱
                 //Get all Mailboxes
                 /** @var \Webklex\PHPIMAP\Support\FolderCollection $folders */
-                $folders = $client->getFolders(false,'Inbox');
+                //$folders = $client->getFolders(false,'Inbox');
+                $folders = $client->getFolders(false);
                 //遍历收件箱中的邮件内容
                 //Loop through every Mailbox
                 /** @var \Webklex\PHPIMAP\Folder $folder */
-                $request_data['data']['email_folders '] = $folders;
+                $request_data['data']['email_folders'] = $folders;
                 foreach($folders as $folder){
                     //获取邮件相关属性
                     //Get all Messages of the current Mailbox $folder

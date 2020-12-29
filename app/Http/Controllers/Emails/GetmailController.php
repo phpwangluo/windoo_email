@@ -53,7 +53,7 @@ class GetmailController extends Controller
                 //获取收件箱
                 //Get all Mailboxes
                 /** @var \Webklex\PHPIMAP\Support\FolderCollection $folders */
-                $folders = $client->getFolders(false,'Inbox');
+                $folders = $client->getFolders(false);
                 //遍历收件箱中的邮件内容
                 //Loop through every Mailbox
                 /** @var \Webklex\PHPIMAP\Folder $folder */

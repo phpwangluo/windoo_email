@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Facades\Common;
 use App\Models\BusinessSource;
 use App\Models\Contact;
 use App\Models\Country;
@@ -99,6 +100,12 @@ class CreateToMailTasks implements ShouldQueue
                     Log::channel('info_create_task')->info($message, $v);
                     continue;
                 }
+                $mail = Common::chooseSenders($v['email_address']);
+                if(!$mail){
+                    $message = '联系人'.$v['email_address'].'对应的发件箱发送次数用完，联系人发送任务无法创建';
+                    Log::channel('info_create_task')->info($message, $insert_forsend);
+                    continue;
+                }
                 //把目标联系人的要发送时间转化成当地服务器的时间
                 date_default_timezone_set(\config('app.timezone'));
                 $sender_time_server = date('Y-m-d H:i:s',strtotime($sender_time.' '.$country_detail->timezone));
@@ -128,7 +135,7 @@ class CreateToMailTasks implements ShouldQueue
             //写入到mail_for_sends
             if(!empty($insert_forsend)){
                 //验证是否还有符合要求的发件箱
-                $mail = Sender::join('mail_settings','mail_settings.id','=','senders.mail_setting_id')
+                /*$mail = Sender::join('mail_settings','mail_settings.id','=','senders.mail_setting_id')
                     ->where(['status'=>1,'email_status'=>1])
                     ->whereRaw('send_count<=max_send_count')
                     ->inRandomOrder()
@@ -141,8 +148,11 @@ class CreateToMailTasks implements ShouldQueue
                     $insert_email_arrs = array_column($insert_forsend,'receiver_email');
                     //写入成功以后需要递减联系人最大使用次数
                     Contact::whereIn('email_address',$insert_email_arrs)->decrement('send_max_num');
-                }
-
+                }*/
+                MailForSend::insert($insert_forsend);
+                $insert_email_arrs = array_column($insert_forsend,'receiver_email');
+                //写入成功以后需要递减联系人最大使用次数
+                Contact::whereIn('email_address',$insert_email_arrs)->decrement('send_max_num');
             }
             return 1;
         }catch (\Exception $e){

@@ -10,6 +10,7 @@ use App\Models\Sender;
 use Illuminate\Http\Request;
 use App\Models\MailForSend;
 use Illuminate\Support\Facades\Log;
+use App\Facades\Common;
 
 class CreatemailController extends Controller
 {
@@ -31,12 +32,9 @@ class CreatemailController extends Controller
             }
             foreach ($contact_list as $k => $v){
                 //自动发送的邮件，当联系人状态已经变更为停用时，更新已有的还没有对联系人发送的邮件，修改状态为已取消
-                if($v['task_status'] == 0){
+                /*if($v['task_status'] == 0){
                     $cancel_send[$k]['receiver_email'] = $v['email_address'];
                     $cancel_send[$k]['send_status'] = 3;
-                    //$cancel_send[$k]['updated_at'] = date('Y-m-d H:i:s',time());
-                    /*$message = '联系人状态被停用，发送任务被取消';
-                    Log::channel('info_create_task')->info($message, $v);*/
                     continue;
                 }
                 //联系人已经变成合作资源时不创建自动发送任务
@@ -78,6 +76,12 @@ class CreatemailController extends Controller
                     $message = '联系人没有绑定邮件模板，无法创建发送任务';
                     Log::channel('info_create_task')->info($message, $v);
                     continue;
+                }*/
+                $mail = Common::chooseSenders($v['email_address']);
+                if(!$mail){
+                    $message = '联系人'.$v['email_address'].'对应的发件箱发送次数用完，联系人发送任务无法创建';
+                    Log::channel('info_create_task')->info($message, $insert_forsend);
+                    continue;
                 }
                 //把目标联系人的要发送时间转化成当地服务器的时间
                 date_default_timezone_set(\config('app.timezone'));
@@ -108,7 +112,7 @@ class CreatemailController extends Controller
             //写入到mail_for_sends
             if(!empty($insert_forsend)){
                 //验证是否还有符合要求的发件箱
-                $mail = Sender::join('mail_settings','mail_settings.id','=','senders.mail_setting_id')
+                /*$mail = Sender::join('mail_settings','mail_settings.id','=','senders.mail_setting_id')
                     ->where(['status'=>1,'email_status'=>1])
                     ->whereRaw('send_count<=max_send_count')
                     ->inRandomOrder()
@@ -121,7 +125,11 @@ class CreatemailController extends Controller
                     $insert_email_arrs = array_column($insert_forsend,'receiver_email');
                     //写入成功以后需要递减联系人最大使用次数
                     Contact::whereIn('email_address',$insert_email_arrs)->decrement('send_max_num');
-                }
+                }*/
+                MailForSend::insert($insert_forsend);
+                $insert_email_arrs = array_column($insert_forsend,'receiver_email');
+                //写入成功以后需要递减联系人最大使用次数
+                Contact::whereIn('email_address',$insert_email_arrs)->decrement('send_max_num');
 
             }
             return 1;
