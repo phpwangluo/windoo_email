@@ -32,9 +32,12 @@ class CreatemailController extends Controller
             }
             foreach ($contact_list as $k => $v){
                 //自动发送的邮件，当联系人状态已经变更为停用时，更新已有的还没有对联系人发送的邮件，修改状态为已取消
-                /*if($v['task_status'] == 0){
+                if($v['task_status'] == 0){
                     $cancel_send[$k]['receiver_email'] = $v['email_address'];
                     $cancel_send[$k]['send_status'] = 3;
+                    //$cancel_send[$k]['updated_at'] = date('Y-m-d H:i:s',time());
+                    /*$message = '联系人状态被停用，发送任务被取消';
+                    Log::channel('info_create_task')->info($message, $v);*/
                     continue;
                 }
                 //联系人已经变成合作资源时不创建自动发送任务
@@ -76,7 +79,7 @@ class CreatemailController extends Controller
                     $message = '联系人没有绑定邮件模板，无法创建发送任务';
                     Log::channel('info_create_task')->info($message, $v);
                     continue;
-                }*/
+                }
                 $mail = Common::chooseSenders($v['email_address']);
                 if(!$mail){
                     $message = '联系人'.$v['email_address'].'对应的发件箱发送次数用完，联系人发送任务无法创建';
