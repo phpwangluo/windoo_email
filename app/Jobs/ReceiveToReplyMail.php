@@ -50,7 +50,7 @@ class ReceiveToReplyMail implements ShouldQueue
                     'host'          => $v['getmail_host'],
                     'port'          => $v['getmail_port'],
                     'encryption'    => $v['getmail_encryption'],
-                    'validate_cert' => true,
+                    //'validate_cert' => false,
                     'username'      => $v['email_address'],
                     'password'      => $v['email_pass'],
                     'protocol'      => $v['getmail_protocol'],
@@ -69,8 +69,7 @@ class ReceiveToReplyMail implements ShouldQueue
                 //获取收件箱
                 //Get all Mailboxes
                 /** @var \Webklex\PHPIMAP\Support\FolderCollection $folders */
-                //$folders = $client->getFolders(false,'Inbox');
-                $folders = $client->getFolders(false);
+                $folders = $client->getFolders(false,'INBOX');
                 //遍历收件箱中的邮件内容
                 //Loop through every Mailbox
                 /** @var \Webklex\PHPIMAP\Folder $folder */

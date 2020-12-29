@@ -35,7 +35,7 @@ class GetmailController extends Controller
                     'host'          => $v['getmail_host'],
                     'port'          => $v['getmail_port'],
                     'encryption'    => $v['getmail_encryption'],
-                    'validate_cert' => true,
+                    //'validate_cert' => false,
                     'username'      => $v['email_address'],
                     'password'      => $v['email_pass'],
                     'protocol'      => $v['getmail_protocol'],
@@ -49,11 +49,11 @@ class GetmailController extends Controller
                 $client = Webklex\IMAP\Facades\Client::account('default');
                 */
                 //Connect to the IMAP Server;
-                $client->connect()->setTimeout(5000);
+                $client->connect()->setTimeout(1000);
                 //获取收件箱
                 //Get all Mailboxes
                 /** @var \Webklex\PHPIMAP\Support\FolderCollection $folders */
-                $folders = $client->getFolders(false);
+                $folders = $client->getFolders(false,'INBOX');
                 //遍历收件箱中的邮件内容
                 //Loop through every Mailbox
                 /** @var \Webklex\PHPIMAP\Folder $folder */
