@@ -23,11 +23,12 @@ class SendmailController extends Controller
 
         try{
             //获取邮件的发送信息
-            $mail_for_send = MailForSend::select(['mail_for_sends.*', 'contacts.*','mail_for_sends.id as sendid'])
+            $mail_for_send_obj = MailForSend::query()->select(['mail_for_sends.*', 'contacts.*','mail_for_sends.id as sendid'])
                 ->join('contacts','contacts.email_address','=','mail_for_sends.receiver_email')
                 ->where('send_status',1)
                 ->where('plan_send_time','<=',date('Y-m-d H:i:s',time()))
                 ->get(); //获取当天可以发送邮件的联系人
+            $mail_for_send = $mail_for_send_obj->toArray();
             $request_data['data']['sender_mail_detail'] = $mail_for_send;
             foreach ($mail_for_send as $k => $v){
                 //验证收件人的发送次数是否用完，用完不发送，除非修改模板内容

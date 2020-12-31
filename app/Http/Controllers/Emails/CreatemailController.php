@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\BusinessSource;
 use App\Models\Contact;
 use App\Models\Country;
-use App\Models\Sender;
 use Illuminate\Http\Request;
 use App\Models\MailForSend;
 use Illuminate\Support\Facades\Log;

@@ -11,7 +11,10 @@ class CommonUtils
 {
     function chooseSenders($email_address){
         //验证是否已经给联系人发送过邮件
-        $is_has_sender = MailForSend::query()->where('receiver_email','=',$email_address)->first();
+        $is_has_sender = MailForSend::query()->where([
+            'receiver_email'=>$email_address,
+            'send_status'=>2
+        ])->first();
         if(!$is_has_sender){
             $mail = Sender::query()->leftJoin('mail_settings','mail_settings.id','=','senders.mail_setting_id')
                 ->where(['senders.status'=>1,'senders.email_status'=>1])
