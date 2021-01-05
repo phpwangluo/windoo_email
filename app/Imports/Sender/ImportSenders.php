@@ -100,6 +100,7 @@ class ImportSenders implements ToModel,WithStartRow,WithValidation,SkipsOnFailur
     {
         return [
             '0' => 'required',
+            '0' => 'email',
             '1' => 'required',
             '0'=> Rule::unique('senders','email_address')->where('status',1),
         ];
@@ -110,6 +111,7 @@ class ImportSenders implements ToModel,WithStartRow,WithValidation,SkipsOnFailur
     {
         return [
             '0.required' => '邮箱地址必填',
+            '0.email'=>'邮箱地址不正确',
             '1.required' => '邮箱密码必填',
             '0.unique'=>'系统中已经存在的重复的邮箱地址',
             //'0.in' => '邮箱配置不正确，请配置正确的邮箱保证可以正常发送和拉取邮件'

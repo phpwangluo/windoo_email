@@ -102,7 +102,8 @@ class ImportContacts implements ToModel,WithStartRow,WithValidation,SkipsOnFailu
             '4' => 'required',
             '0'=>Rule::unique('contacts','email_address')->where('status',1),
             '1'=>Rule::exists('countries','country_name'),
-            '2'=>Rule::exists('trades','trade_name')
+            '2'=>Rule::exists('trades','trade_name'),
+            '0' => 'email',
         ];
     }
     // 自定义验证信息
@@ -110,6 +111,7 @@ class ImportContacts implements ToModel,WithStartRow,WithValidation,SkipsOnFailu
     {
         return [
             '0.required' => '联系人邮箱必填',
+            '0.email'=>'联系人邮箱地址不正确',
             '1.required' => '联系人所属国家必填',
             '2.required' => '联系人所属行业必填',
             '4.required' => '项目必填',
