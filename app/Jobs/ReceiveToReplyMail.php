@@ -163,7 +163,7 @@ class ReceiveToReplyMail implements ShouldQueue
             return 1;
         }catch (\Exception $e){
             $message = '拉取邮件失败:'.$e->getMessage();
-            Log::channel('error_gp_email')->error($message, [$request_data['data']]);
+            Log::channel('error_gp_email_receive')->error($message, [$request_data['data']]);
             //throw new EmailException($message);
         }
     }

@@ -156,7 +156,7 @@ class SendmailController extends Controller
             return 1;
         }catch (\Exception $e){
             $message = '邮件发送失败:'.$e->getMessage();
-            Log::channel('error_gp_email')->error($message, [$request_data['data']]);
+            Log::channel('error_gp_email_send')->error($message, [$request_data['data']]);
             //throw new EmailException($message);
         }
     }

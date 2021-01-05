@@ -147,7 +147,7 @@ class GetmailController extends Controller
             return 1;
         }catch (\Exception $e){
             $message = '拉取邮件失败:'.$e->getMessage();
-            Log::channel('error_gp_email')->error($message, [$request->get('mail_data')]);
+            Log::channel('error_gp_email_receive')->error($message, [$request->get('mail_data')]);
             throw new EmailException($message);
         }
     }
