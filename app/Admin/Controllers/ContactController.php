@@ -206,7 +206,7 @@ class ContactController extends AdminController
                 || $send_end_hour != $model->send_end_hour){
                 Contact::where('email_address',$model->email_address)
                     ->update([
-                        'send_max_num' => 2,
+                        'send_max_num' => 1,
                     ]);
             }
         });
