@@ -128,6 +128,7 @@
       <path value="$PROJECT_DIR$/vendor/predis/predis" />
       <path value="$PROJECT_DIR$/vendor/codingyu/laravel-ueditor" />
       <path value="$PROJECT_DIR$/vendor/codingyu/ueditor" />
+      <path value="$PROJECT_DIR$/vendor/ezyang/htmlpurifier" />
     </include_path>
   </component>
   <component name="PhpUnit">

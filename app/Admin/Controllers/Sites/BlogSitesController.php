@@ -30,24 +30,79 @@ class BlogSitesController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new SitesBlogSites());
+        $grid->filter(function($filter){
 
-        $grid->column('id', __('Id'));
-        $grid->column('name', __('Name'));
-        $grid->column('type', __('Type'));
-        $grid->column('industry', __('Industry'));
-        $grid->column('domain_name', __('Domain name'));
-        $grid->column('logo', __('Logo'));
-        $grid->column('photo', __('Photo'));
-        $grid->column('contact', __('Contact'));
-        $grid->column('address', __('Address'));
-        $grid->column('publish_time', __('Publish time'));
-        $grid->column('date_format', __('Date format'));
-        $grid->column('detail_title', __('Detail title'));
-        $grid->column('status', __('Status'));
-        $grid->column('remark', __('Remark'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+            // 去掉默认的id过滤器
+            //$filter->disableIdFilter();
 
+            // 在这里添加字段过滤器
+            $filter->equal('name', '站点名称');
+            $filter->equal('domain_name', '站点域名');
+
+        });
+        $grid->disableExport();//禁用导出
+        $grid->disableCreateButton(); //禁用创建
+        $grid->column('id', __('站点ID'));
+        $grid->column('name', __('站点名称'));
+        $grid->column('logo', __('站点Logo'));
+        $grid->column('type', __('站点类型'))->using([
+            'BLOG'=>'博客',
+            'COMMERCE'=>'商品'
+        ], '未知');
+        $grid->column('categories_name', __('站点分类'))->display(function () {
+            $cate_name_arr = [];
+            foreach ($this->categories as $item){
+                if($item->type == 1){
+                    $cate_name_arr[] =  $item->name;
+                }
+            }
+            return implode('/',$cate_name_arr);
+        });
+        $grid->column('detail_title', __('文章标题'))->using([
+            0=>'Article Title - SiteName',
+            1=>'Article Title - Site Name',
+            10=>'Article Title | SiteName',
+            11=>'Article Title | Site Name'
+        ], '未知');
+        $grid->column('industry', __('行业'));
+        $grid->column('domain_name', __('站点域名'));
+
+        $grid->column('photo', __('站点头图'));
+        $grid->column('remark', __('备注'));
+        $grid->column('author_name', __('博主名称'))->display(function () {
+            return $this->blog_author->first_name.' '.$this->blog_author->last_name;
+        });
+        $grid->column('author_name', __('博主名称'))->display(function () {
+            return $this->blog_author->first_name.' '.$this->blog_author->last_name;
+        });
+        $grid->column('blog_author.photo', __('博主头像'))->image();
+
+
+        $grid->actions(function ($actions) {
+
+            // 去掉删除
+            $actions->disableDelete();
+
+            // 去掉编辑
+            $actions->disableEdit();
+
+            // 去掉查看
+            $actions->disableView();
+            // 添加自定义查看的按钮
+            /*if($actions->row->receive_status == 1){
+                $actions->add(new MailReceivedDetailAction());
+                $actions->add(new ChangeBusinessStatusAction());
+                $actions->add(new DoReplyByUserAction());
+            }*/
+            // prepend一个操作
+            $actions->prepend('<a title="文章录入" href="'.$this->getResource().'/'.$actions->getKey().'"><i class="fa fa-list-alt"></i></a>&nbsp;&nbsp;');
+
+            $actions->prepend('<a title="文章管理" href="'.$this->getResource().'/'.$actions->getKey().'"><i class="fa fa-list-alt"></i></a>&nbsp;&nbsp;');
+
+            $actions->prepend('<a title="边栏设置" href="'.$this->getResource().'/'.$actions->getKey().'"><i class="fa fa-list-alt"></i></a>&nbsp;&nbsp;');
+
+            $actions->prepend('<a title="页面设置" href="'.$this->getResource().'/'.$actions->getKey().'"><i class="fa fa-list-alt"></i></a>&nbsp;&nbsp;');
+        });
         return $grid;
     }
 
@@ -128,7 +183,7 @@ class BlogSitesController extends AdminController
         //$form->text('profile', __('博主简介'))->required();
         $form->UEditor('profile', __('博主简介'));
 
-        $form->image('author_photo', __('博主头像'))->thumbnail('small', $width = 300, $height = 300);
+        $form->image('author_photo', __('博主头像'))->thumbnail('small');
         // 第一列占据1/2的页面宽度
         //$form->setWidth(9, 3);
         /*$form->column(1/2, function ($form) {
@@ -164,8 +219,8 @@ class BlogSitesController extends AdminController
                 'type'=>$model->type,
                 'industry'=>$model->industry,
                 'domain_name'=>$model->domain_name,
-                //'logo'=>$model->logo,
-                //'photo'=>$model->photo,
+                'logo'=>$model->logo,
+                'photo'=>$model->photo,
                 'detail_title'=>$model->detail_title
             ];
             $site_id = SitesBlogSites::insertGetId($insert_sites);
@@ -232,7 +287,7 @@ class BlogSitesController extends AdminController
                 $insert_author = [
                     'first_name'=>ucfirst($model->first_name),
                     'last_name'=>ucfirst($model->last_name),
-                    //'photo'=>$model->author_photo,
+                    'photo'=>$model->author_photo,
                     'site_id'=>$site_id,
                 ];
                 if ($model->profile){
@@ -242,34 +297,11 @@ class BlogSitesController extends AdminController
             }
             $success = new MessageBag([
                 'title'   => '提示',
-                'message' => '回复成功',
+                'message' => '创建成功',
             ]);
             return redirect(url("admin/sites-blog-sites"))->with(compact('success'));
 
         });
-/*
-        //dd($form->model()->php_errormsg);
-        Admin::js('vendor/laravel-admin/sweetalert2/dist/sweetalert2.min.js');
-        $script = <<<SCRIPT
-$('button[type=submit]').on('click',function(e){
-    e.preventDefault();
-    var form = $(this).parents('form');
-    swal({
-        title: "创建成功",
-        text: "{$form->model()->name}",
-        type: "success",
-        showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "确定",
-        cancelButtonText: "录入文章",
-        closeOnConfirm: false
-    }, function(isConfirm){
-        if (isConfirm) form.submit();
-    });
-});
-SCRIPT;
-
-        Admin::script($script);*/
         $form->footer(function ($footer) {
 
             // 去掉`重置`按钮

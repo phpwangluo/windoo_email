@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class SitesBlogAuthors extends Model
 {
     use HasFactory;
+    public function sites()
+    {
+        return $this->belongsTo(SitesBlogSites::class,'site_id');
+    }
 }
