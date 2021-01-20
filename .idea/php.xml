@@ -126,6 +126,8 @@
       <path value="$PROJECT_DIR$/vendor/ichynul/row-table" />
       <path value="$PROJECT_DIR$/vendor/jxlwqq/simditor" />
       <path value="$PROJECT_DIR$/vendor/predis/predis" />
+      <path value="$PROJECT_DIR$/vendor/codingyu/laravel-ueditor" />
+      <path value="$PROJECT_DIR$/vendor/codingyu/ueditor" />
     </include_path>
   </component>
   <component name="PhpUnit">
