@@ -59,7 +59,7 @@
     LA.user = @json($_user_);
 </script>
 
-<!-- REQUIRED JS SCRIPTS -->
+<!-- REQUIRED js SCRIPTS -->
 {!! Admin::js() !!}
 
 </body>

@@ -1,5 +1,5 @@
 /**
- * Grid theme for Highcharts JS
+ * Grid theme for Highcharts js
  * @author Torstein Hønsi
  */
 

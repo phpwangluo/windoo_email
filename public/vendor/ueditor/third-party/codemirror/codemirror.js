@@ -2180,7 +2180,7 @@ var CodeMirror = (function() {
             this.marked.sort(function(a, b){return (a.from || 0) - (b.from || 0);});
         },
         // Run the given mode's parser over a line, update the styles
-        // array, which contains alternating fragments of text and CSS
+        // array, which contains alternating fragments of text and css
         // classes.
         highlight: function(mode, state, tabSize) {
             var stream = new StringStream(this.text, tabSize), st = this.styles, pos = 0;

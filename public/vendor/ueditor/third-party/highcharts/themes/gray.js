@@ -1,5 +1,5 @@
 /**
- * Gray theme for Highcharts JS
+ * Gray theme for Highcharts js
  * @author Torstein Hønsi
  */
 

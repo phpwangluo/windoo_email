@@ -311,7 +311,7 @@ function pjax(options) {
     })
     context.html(container.contents)
 
-    // FF bug: Won't autofocus fields that are inserted via JS.
+    // FF bug: Won't autofocus fields that are inserted via js.
     // This behavior is incorrect. So if theres no current focus, autofocus
     // the last field.
     //

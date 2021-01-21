@@ -42,9 +42,10 @@ class BlogSitesController extends AdminController
         });
         $grid->disableExport();//禁用导出
         $grid->disableCreateButton(); //禁用创建
+        $grid->fixColumns(1,-1);
         $grid->column('id', __('站点ID'));
         $grid->column('name', __('站点名称'));
-        $grid->column('logo', __('站点Logo'));
+        $grid->column('logo', __('站点Logo'))->image();
         $grid->column('type', __('站点类型'))->using([
             'BLOG'=>'博客',
             'COMMERCE'=>'商品'
@@ -67,14 +68,12 @@ class BlogSitesController extends AdminController
         $grid->column('industry', __('行业'));
         $grid->column('domain_name', __('站点域名'));
 
-        $grid->column('photo', __('站点头图'));
+        $grid->column('photo', __('站点头图'))->image();
         $grid->column('remark', __('备注'));
         $grid->column('author_name', __('博主名称'))->display(function () {
             return $this->blog_author->first_name.' '.$this->blog_author->last_name;
         });
-        $grid->column('author_name', __('博主名称'))->display(function () {
-            return $this->blog_author->first_name.' '.$this->blog_author->last_name;
-        });
+
         $grid->column('blog_author.photo', __('博主头像'))->image();
 
 
@@ -95,13 +94,13 @@ class BlogSitesController extends AdminController
                 $actions->add(new DoReplyByUserAction());
             }*/
             // prepend一个操作
-            $actions->prepend('<a title="文章录入" href="'.$this->getResource().'/'.$actions->getKey().'"><i class="fa fa-list-alt"></i></a>&nbsp;&nbsp;');
-
-            $actions->prepend('<a title="文章管理" href="'.$this->getResource().'/'.$actions->getKey().'"><i class="fa fa-list-alt"></i></a>&nbsp;&nbsp;');
+            $actions->prepend('<a title="页面设置" href="'.$this->getResource().'/'.$actions->getKey().'"><i class="fa fa-list-alt"></i></a>&nbsp;&nbsp;');
 
             $actions->prepend('<a title="边栏设置" href="'.$this->getResource().'/'.$actions->getKey().'"><i class="fa fa-list-alt"></i></a>&nbsp;&nbsp;');
 
-            $actions->prepend('<a title="页面设置" href="'.$this->getResource().'/'.$actions->getKey().'"><i class="fa fa-list-alt"></i></a>&nbsp;&nbsp;');
+            $actions->prepend('<a title="文章管理" href="'.$this->getResource().'/'.$actions->getKey().'"><i class="fa fa-list-alt"></i></a>&nbsp;&nbsp;');
+
+            $actions->prepend('<a title="文章录入" href="sites-blog-articles/create?site_id='.$actions->row->id.'"><i class="fa fa-list-alt"></i></a>&nbsp;&nbsp;');
         });
         return $grid;
     }
@@ -145,6 +144,7 @@ class BlogSitesController extends AdminController
     {
 
         $form = new Form(new SitesBlogSites());
+        $form->setTitle('站点创建');
         $form->tools(function (Form\Tools $tools) {
 
             // 去掉`列表`按钮
@@ -159,8 +159,30 @@ class BlogSitesController extends AdminController
         $form->text('name', __('站点名称'))->required();
         $form->text('domain_name', __('站点域名'))->required();
         $form->text('industry', __('行业'))->required();
-        $form->image('logo', __('Logo'))->thumbnail('small', $width = 300, $height = 300);
-        $form->image('photo', __('头图'))->thumbnail('small', $width = 300, $height = 300);
+        Admin::css('/static/css/upload.css');
+        Admin::js('/static/js/upload.js');
+        $form->display('logo', 'Logo')->with(function ($value) {
+            $html = '<div class="bob-upload" tabindex="0"><div class="add_image">';
+            if ($value) {
+                $html .= '<img class="avatar" src="' . $value . '">';
+            } else {
+                $html .= '<i class="avatar-uploader-icon fa fa-plus"></i>';
+            }
+            $html .= '</div><input class="bob-upload-input" type="file"  name="file" input_name="logo" onchange="uploadImage(this)">';
+            $html .= '<input type="text" class="avatar-uploader-icon" name="logo" style="display:none;"></div>';
+            return $html;
+        });
+        $form->display('photo', '头图')->with(function ($value) {
+            $html = '<div class="bob-upload" tabindex="0"><div class="add_image">';
+            if ($value) {
+                $html .= '<img class="avatar" src="' . $value . '">';
+            } else {
+                $html .= '<i class="avatar-uploader-icon fa fa-plus"></i>';
+            }
+            $html .= '</div><input class="bob-upload-input" type="file"  name="file" input_name="photo" onchange="uploadImage(this)">';
+            $html .= '<input type="text" class="avatar-uploader-icon" name="photo" style="display:none;"></div>';
+            return $html;
+        });
         $form->select('type', __('站点类型'))->options([
             'BLOG'=>'博客',
             'COMMERCE'=>'商品'
@@ -182,8 +204,17 @@ class BlogSitesController extends AdminController
         $form->text('last_name', __('Last Name'))->required();
         //$form->text('profile', __('博主简介'))->required();
         $form->UEditor('profile', __('博主简介'));
-
-        $form->image('author_photo', __('博主头像'))->thumbnail('small');
+        $form->display('author_photo', '博主头像')->with(function ($value) {
+            $html = '<div class="bob-upload" tabindex="0"><div class="add_image">';
+            if ($value) {
+                $html .= '<img class="avatar" src="' . $value . '">';
+            } else {
+                $html .= '<i class="avatar-uploader-icon fa fa-plus"></i>';
+            }
+            $html .= '</div><input class="bob-upload-input" type="file"  name="file" input_name="author_photo" onchange="uploadImage(this)">';
+            $html .= '<input type="text"  name="author_photo" style="display:none;"></div>';
+            return $html;
+        });
         // 第一列占据1/2的页面宽度
         //$form->setWidth(9, 3);
         /*$form->column(1/2, function ($form) {

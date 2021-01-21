@@ -1,5 +1,5 @@
 /**
- * Skies theme for Highcharts JS
+ * Skies theme for Highcharts js
  * @author Torstein Hønsi
  */
 

@@ -890,7 +890,7 @@ jQuery.extend({
 		return ( new Date() ).getTime();
 	},
 
-	// A method for quickly swapping in/out CSS properties to get correct calculations.
+	// A method for quickly swapping in/out css properties to get correct calculations.
 	// Note: this method belongs to the css module but it's needed here for the support module.
 	// If support gets modularized, this method should be moved back to the css module.
 	swap: function( elem, options, callback, args ) {
@@ -1000,7 +1000,7 @@ function isArraylike( obj ) {
 // All jQuery objects should point back to these
 rootjQuery = jQuery(document);
 /*!
- * Sizzle CSS Selector Engine v1.10.2
+ * Sizzle css Selector Engine v1.10.2
  * http://sizzlejs.com/
  *
  * Copyright 2013 jQuery Foundation, Inc. and other contributors
@@ -1080,8 +1080,8 @@ var i,
 	// http://www.w3.org/TR/css3-syntax/#characters
 	characterEncoding = "(?:\\\\.|[\\w-]|[^\\x00-\\xa0])+",
 
-	// Loosely modeled on CSS identifier characters
-	// An unquoted value should be a CSS identifier http://www.w3.org/TR/css3-selectors/#attribute-selectors
+	// Loosely modeled on css identifier characters
+	// An unquoted value should be a css identifier http://www.w3.org/TR/css3-selectors/#attribute-selectors
 	// Proper syntax: http://www.w3.org/TR/CSS21/syndata.html#value-def-identifier
 	identifier = characterEncoding.replace( "w", "w#" ),
 
@@ -1135,7 +1135,7 @@ var i,
 
 	rescape = /'|\\/g,
 
-	// CSS escapes http://www.w3.org/TR/CSS21/syndata.html#escaped-characters
+	// css escapes http://www.w3.org/TR/CSS21/syndata.html#escaped-characters
 	runescape = new RegExp( "\\\\([\\da-f]{1,6}" + whitespace + "?|(" + whitespace + ")|.)", "ig" ),
 	funescape = function( _, escaped, escapedWhitespace ) {
 		var high = "0x" + escaped - 0x10000;
@@ -3573,15 +3573,15 @@ function internalData( elem, name, data, pvt /* Internal Use Only */ ){
 	var ret, thisCache,
 		internalKey = jQuery.expando,
 
-		// We have to handle DOM nodes and JS objects differently because IE6-7
-		// can't GC object references properly across the DOM-JS boundary
+		// We have to handle DOM nodes and js objects differently because IE6-7
+		// can't GC object references properly across the DOM-js boundary
 		isNode = elem.nodeType,
 
-		// Only DOM nodes need the global jQuery cache; JS object data is
+		// Only DOM nodes need the global jQuery cache; js object data is
 		// attached directly to the object so GC can occur automatically
 		cache = isNode ? jQuery.cache : elem,
 
-		// Only defining an ID for JS objects if its cache already exists allows
+		// Only defining an ID for js objects if its cache already exists allows
 		// the code to shortcut on the same path as a DOM node with no cache
 		id = isNode ? elem[ internalKey ] : elem[ internalKey ] && internalKey;
 
@@ -3602,7 +3602,7 @@ function internalData( elem, name, data, pvt /* Internal Use Only */ ){
 	}
 
 	if ( !cache[ id ] ) {
-		// Avoid exposing jQuery metadata on plain JS objects when the object
+		// Avoid exposing jQuery metadata on plain js objects when the object
 		// is serialized using JSON.stringify
 		cache[ id ] = isNode ? {} : { toJSON: jQuery.noop };
 	}
@@ -7011,7 +7011,7 @@ jQuery.extend({
 				return;
 			}
 
-			// If a number was passed in, add 'px' to the (except for certain CSS properties)
+			// If a number was passed in, add 'px' to the (except for certain css properties)
 			if ( type === "number" && !jQuery.cssNumber[ origName ] ) {
 				value += "px";
 			}

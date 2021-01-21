@@ -38,5 +38,6 @@ Route::group([
     /** 站群内容管理系统 */
 
     $router->resource('sites-blog-sites', Sites\BlogSitesController::class); //站点配置
+    $router->resource('sites-blog-articles', Sites\BlogArticlesController::class); //文章管理
 
 });

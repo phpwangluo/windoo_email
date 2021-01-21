@@ -246,7 +246,7 @@ vjs.CoreObject.create = function(){
   return inst;
 };
 /**
- * @fileoverview Event System (John Resig - Secrets of a JS Ninja http://jsninja.com/)
+ * @fileoverview Event System (John Resig - Secrets of a js Ninja http://jsninja.com/)
  * (Original book version wasn't completely usable, so fixed some things and made Closure Compiler compatible)
  * This should work very similarly to jQuery's events, however it's based off the book version which isn't as
  * robust as jquery's, so there's probably some differences.
@@ -874,7 +874,7 @@ vjs.isEmpty = function(obj) {
 };
 
 /**
- * Add a CSS class name to an element
+ * Add a css class name to an element
  * @param {Element} element    Element to add class name to
  * @param {String} classToAdd Classname to add
  * @private
@@ -886,7 +886,7 @@ vjs.addClass = function(element, classToAdd){
 };
 
 /**
- * Remove a CSS class name from an element
+ * Remove a css class name from an element
  * @param {Element} element    Element to remove from class name
  * @param {String} classToAdd Classname to remove
  * @private
@@ -1056,7 +1056,7 @@ vjs.support = {};
 
 /**
  * Shorthand for document.getElementById()
- * Also allows for CSS (jQuery) ID syntax. But nothing other than IDs.
+ * Also allows for css (jQuery) ID syntax. But nothing other than IDs.
  * @param  {String} id  Element ID
  * @return {Element}    Element with supplied ID
  * @private
@@ -1755,7 +1755,7 @@ vjs.Component.prototype.initChildren = function(){
 };
 
 /**
- * Allows sub components to stack CSS class names
+ * Allows sub components to stack css class names
  *
  * @return {String} The constructed class name
  */
@@ -1911,7 +1911,7 @@ vjs.Component.prototype.triggerReady = function(){
 ============================================================================= */
 
 /**
- * Add a CSS class name to the component's element
+ * Add a css class name to the component's element
  *
  * @param {String} classToAdd Classname to add
  * @return {vjs.Component}
@@ -1922,7 +1922,7 @@ vjs.Component.prototype.addClass = function(classToAdd){
 };
 
 /**
- * Remove a CSS class name from the component's element
+ * Remove a css class name from the component's element
  *
  * @param {String} classToRemove Classname to remove
  * @return {vjs.Component}
@@ -1985,7 +1985,7 @@ vjs.Component.prototype.disable = function(){
 };
 
 /**
- * Set or get the width of the component (CSS values)
+ * Set or get the width of the component (css values)
  *
  * Video tag width/height only work in pixels. No percents.
  * But allowing limited percents use. e.g. width() will return number+%, not computed width
@@ -2000,7 +2000,7 @@ vjs.Component.prototype.width = function(num, skipListeners){
 };
 
 /**
- * Get or set the height of the component (CSS values)
+ * Get or set the height of the component (css values)
  *
  * @param  {Number|String=} num     New component height
  * @param  {Boolean=} skipListeners Skip the resize event trigger
@@ -2854,7 +2854,7 @@ vjs.Player.prototype.createEl = function(){
   var el = this.el_ = vjs.Component.prototype.createEl.call(this, 'div');
   var tag = this.tag;
 
-  // Remove width/height attrs from tag so CSS can make it 100% width/height
+  // Remove width/height attrs from tag so css can make it 100% width/height
   tag.removeAttribute('width');
   tag.removeAttribute('height');
   // Empty video tag tracks so the built-in player doesn't use them also.
@@ -2901,7 +2901,7 @@ vjs.Player.prototype.createEl = function(){
   this.addClass('vjs-paused');
 
   // Make box use width/height of tag, or rely on default implementation
-  // Enforce with CSS since width/height attrs don't work on divs
+  // Enforce with css since width/height attrs don't work on divs
   this.width(this.options_['width'], true); // (true) Skip resize listener on load
   this.height(this.options_['height'], true);
 
@@ -4857,7 +4857,7 @@ vjs.LoadingSpinner.prototype.createEl = function(){
 ================================================================================ */
 /**
  * Initial play button. Shows before the video has played. The hiding of the
- * big play button is done via CSS and player states.
+ * big play button is done via css and player states.
  * @param {vjs.Player|Object} player
  * @param {Object=} options
  * @class
@@ -6241,7 +6241,7 @@ vjs.TextTrack.prototype.adjustFontSize = function(){
     if (this.player_.isFullScreen) {
         // Scale the font by the same factor as increasing the video width to the full screen window width.
         // Additionally, multiply that factor by 1.4, which is the default font size for
-        // the caption track (from the CSS)
+        // the caption track (from the css)
         this.el_.style.fontSize = screen.width / this.player_.width() * 1.4 * 100 + '%';
     } else {
         // Change the font size of the text track back to its original non-fullscreen size

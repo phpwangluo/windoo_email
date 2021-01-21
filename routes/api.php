@@ -37,3 +37,9 @@ Route::post('/businessstatus', [App\Http\Controllers\Api\MailReceivedController:
 
 
 Route::post('/mailforsendstatus', [App\Http\Controllers\Api\MailForSendController::class, 'changeMailForSendStatus']);
+
+
+Route::post('/uploadImg', [App\Http\Controllers\Api\UploadController::class, 'uploadImages']);
+Route::post('/uploadFiles', [App\Http\Controllers\Api\UploadController::class, 'uploadFiles']);
+
+Route::get('/blogs/categorylist', [\App\Http\Controllers\Api\Blogs\CategoriesController::class, 'categoryList']);
