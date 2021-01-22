@@ -38,7 +38,7 @@ Route::post('/businessstatus', [App\Http\Controllers\Api\MailReceivedController:
 
 Route::post('/mailforsendstatus', [App\Http\Controllers\Api\MailForSendController::class, 'changeMailForSendStatus']);
 
-
+Route::match(['get', 'post'],'/editorUpload', [App\Http\Controllers\Api\UploadController::class, 'editorUpload']);
 Route::post('/uploadImg', [App\Http\Controllers\Api\UploadController::class, 'uploadImages']);
 Route::post('/uploadFiles', [App\Http\Controllers\Api\UploadController::class, 'uploadFiles']);
 

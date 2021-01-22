@@ -11,15 +11,14 @@
 
 return [
     // 存储引擎: config/filesystem.php 中 disks， public 或 qiniu
-    'disk' => 'public',
+    'disk' => 'admin',
     'route' => [
         'name' => '/ueditor/server',
         'options' => [
             // middleware => 'auth',
         ],
     ],
-    'sourceEditorFirst'=>true,
-
+    'hash_filename'=>'{time}',
     // 上传 配置
     'upload' => [
         /* 前后端通信相关的配置,注释只允许使用多行方式 */

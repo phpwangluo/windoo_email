@@ -8,8 +8,6 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use http\Url;
-use Illuminate\Http\Request;
 
 class BlogArticlesController extends AdminController
 {
@@ -118,6 +116,10 @@ class BlogArticlesController extends AdminController
             $site_id = request('site_id');
             return $site_id;
         })->readonly();
+        $form->hidden('image_folder')->default(function (){
+            $site_id = request('site_id');
+            return $site_id;
+        });
         $form->select('category_id', __('选择分类'))->options('/api/blogs/categorylist')->required();
         $form->text('title', __('文章标题'))->required();
         $form->date('publish_time', __('发布时间'))->format('YYYY-MM-DD')->required();
@@ -129,12 +131,20 @@ class BlogArticlesController extends AdminController
             $html = '<input class="bob-upload-input" type="file"  name="file" onchange="uploadFiles(this)">';
                 return $html;
         });
+        //$form->ueditor('content', __('文章内容'));
         $form->UEditor('content', __('文章内容'))->required();
-        $form->text('photo', __('文章头图'))->required();
-
+        //$form->multipleImage('photo', __('文章头图'))->required();
+        Admin::css('/static/css/upload.css');
+        Admin::js('/static/js/upload.js');
+        $form->display('image-list', '文章头图')->with(function ($value) {
+            $html = '<div class="bob-upload" tabindex="0"><div id="add_article_image">上传文章内容然后在文章内容图片中选择头图</div>';
+            return $html;
+        });
+        $form->hidden('photo');
         $form->switch('carousel', __('加入轮播图'))->default(0)->required();
         $form->text('uri', __('文章URI'))->required();
         $form->text('abstract', __('文章摘要'))->required();
+
         $form->footer(function ($footer) {
 
             // 去掉`重置`按钮
@@ -152,6 +162,7 @@ class BlogArticlesController extends AdminController
             $footer->disableCreatingCheck();
 
         });
+        Admin::js('/static/js/article.js');
         return $form;
     }
 }

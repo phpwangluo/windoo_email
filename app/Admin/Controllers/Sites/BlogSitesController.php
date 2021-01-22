@@ -159,6 +159,7 @@ class BlogSitesController extends AdminController
         $form->text('name', __('站点名称'))->required();
         $form->text('domain_name', __('站点域名'))->required();
         $form->text('industry', __('行业'))->required();
+        $form->hidden('image_folder')->default('config_image');
         Admin::css('/static/css/upload.css');
         Admin::js('/static/js/upload.js');
         $form->display('logo', 'Logo')->with(function ($value) {

@@ -18,6 +18,8 @@
     width: 178px;
     height: 178px;
     display: block;
+    margin: 10px;
+    float: left;
 }
 .bob-upload .bob-upload-input {
     cursor: pointer;
