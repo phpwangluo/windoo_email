@@ -817,7 +817,7 @@ function getTimeTicks(normalizedInterval, min, max, startOfWeek) {
 }
 
 /**
- * Helper class that contains variuos counters that are local to the chart.
+ * Helpers class that contains variuos counters that are local to the chart.
  */
 function ChartCounters() {
 	this.color = 0;

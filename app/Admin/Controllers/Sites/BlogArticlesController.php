@@ -2,12 +2,14 @@
 
 namespace App\Admin\Controllers\Sites;
 
+use App\Helpers\Tools;
 use App\Models\SitesBlogArticles;
 use Encore\Admin\Admin;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Support\MessageBag;
 
 class BlogArticlesController extends AdminController
 {
@@ -132,7 +134,8 @@ class BlogArticlesController extends AdminController
                 return $html;
         });
         //$form->ueditor('content', __('文章内容'));
-        $form->UEditor('content', __('文章内容'))->required();
+        $form->UEditor('editor_content', __('文章内容'))->required();
+        $form->hidden('content');
         //$form->multipleImage('photo', __('文章头图'))->required();
         Admin::css('/static/css/upload.css');
         Admin::js('/static/js/upload.js');
@@ -144,7 +147,32 @@ class BlogArticlesController extends AdminController
         $form->switch('carousel', __('加入轮播图'))->default(0)->required();
         $form->text('uri', __('文章URI'))->required();
         $form->text('abstract', __('文章摘要'))->required();
+        $form->saving(function ($model) {
+            if (request('site_id')){
+                $insertArticle = [];
+                $insertArticle['title'] =  $model->title;
+                $insertArticle['publish_time'] =  date('Y-m-d H:i:s',time());
+                $insertArticle['author_id'] =  1;
+                $insertArticle['category_id'] = $model->category_id;
+                $insertArticle['checker_id'] =  1;
+                $insertArticle['photo'] =  $model->photo;
+                $insertArticle['site_id'] =  $model->site_id;
+                $insertArticle['check_status'] =  1;
+                $insertArticle['check_time'] =  date('Y-m-d H:i:s',time());
+                $insertArticle['carousel'] =  $model->carousel;
+                $insertArticle['uri'] = Tools::usubstr($model->uri, 0, 100);
+                $insertArticle['abstract'] = Tools::usubstr($model->content, 0, 100);
+                if (SitesBlogArticles::insertGetId($insertArticle)){
+                    $success = new MessageBag([
+                        'title'   => '提示',
+                        'message' => '创建成功',
+                    ]);
+                    //return redirect(url("admin/sites-blog-articles"))->with(compact('success'));
+                }
+            }
+            return;
 
+        });
         $form->footer(function ($footer) {
 
             // 去掉`重置`按钮

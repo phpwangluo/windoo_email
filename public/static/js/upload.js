@@ -47,14 +47,21 @@ function uploadFiles(obj) {
         contentType: false,
         success:function(res){
             if (res.error === 1){
-                UE.delEditor("content");
-                var ue = UE.getEditor('content');
+                UE.delEditor("editor_content");
+                var ue = UE.getEditor('editor_content');
                 ue.addListener("ready", function () {
                     ue.setContent(res.content, false);
                     ue.addListener("blur",function(){
                         var old_str = ue.getContent()
-                        console.log(ss)
-
+                        var imgReg = /<img.*?(?:>|\/>)/gi;
+                        var srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i;
+                        var arr = old_str.match(imgReg);  // arr 为包含所有img标签的数组
+                        imgss = '';
+                        for (var i = 0; i < arr.length; i++) {
+                            var src = arr[i].match(srcReg);
+                            //获取图片地址
+                            imgss +='<img class="avatar" onclick="choosePhoto(this)" src="'+src[1]+'">'
+                        }
                         $('#add_article_image').html(imgss);
                         return;
                     });
