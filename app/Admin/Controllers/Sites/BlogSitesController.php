@@ -74,7 +74,7 @@ class BlogSitesController extends AdminController
             return $this->blog_author->first_name.' '.$this->blog_author->last_name;
         });
 
-        $grid->column('blog_author.photo', __('博主头像'))->image();
+        $grid->column('blog_author.photo', __('博主头像'))->image('/');
 
 
         $grid->actions(function ($actions) {
@@ -246,8 +246,14 @@ class BlogSitesController extends AdminController
         */
         $form->saving(function ($model) {
             //添加站点基本信息
+            $site_name_arr = explode(' ', trim($model->name));
+            $words_site = [];
+            foreach ($site_name_arr as $key=>$s) {
+                $words_site[$key]=ucfirst($s);
+            }
+            $site_name = implode(' ', $words_site);
             $insert_sites = [
-                'name'=>$model->name,
+                'name'=>trim($site_name),
                 'type'=>$model->type,
                 'industry'=>$model->industry,
                 'domain_name'=>$model->domain_name,
@@ -269,7 +275,7 @@ class BlogSitesController extends AdminController
                         'uri'=>'/',
                         'site_id'=>$site_id
                     ],
-                    'About us'=>[
+                    'About Us'=>[
                         'page_type'=>2,
                         'uri'=>'/about-us/',
                         'site_id'=>$site_id
@@ -288,10 +294,10 @@ class BlogSitesController extends AdminController
                 $categories_arr = $model->categories_names;
                 foreach ($categories_arr as $cate_name){
                     if($cate_name && $cate_name != ''){
-                        $site_name_arr = explode(' ', $cate_name);
+                        $cate_name_arr = explode(' ', $cate_name);
                         $words_cate = [];
                         $words_uri = [];
-                        foreach ($site_name_arr as $key=>$s) {
+                        foreach ($cate_name_arr as $key=>$s) {
                             $words_cate[$key]=ucfirst($s);
                             $words_uri[$key]=strtolower($s);
                         }

@@ -20,6 +20,7 @@
     display: block;
     margin: 10px;
     float: left;
+    background-position:center;
 }
 .bob-upload .bob-upload-input {
     cursor: pointer;

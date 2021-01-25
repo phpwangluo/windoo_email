@@ -22,8 +22,7 @@ class UploadController extends Controller
     {
         //调用上传图片类里的save方法，获取存储的图片路径
         $file = $upload->save($request->file()['file'], $request->get('image_folder').'/', '', '','files');
-        $source = public_path().'/storage/upload' . $file['path'];
-        //dd($source);
+        $source = public_path() . $file['path'];
         $phpWord = \PhpOffice\PhpWord\IOFactory::load($source);
         $htmlWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, "HTML");
         $content = '';

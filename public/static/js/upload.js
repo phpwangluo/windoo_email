@@ -47,8 +47,8 @@ function uploadFiles(obj) {
         contentType: false,
         success:function(res){
             if (res.error === 1){
-                UE.delEditor("editor_content");
-                var ue = UE.getEditor('editor_content');
+                UE.delEditor("content");
+                var ue = UE.getEditor('content');
                 ue.addListener("ready", function () {
                     ue.setContent(res.content, false);
                     ue.addListener("blur",function(){

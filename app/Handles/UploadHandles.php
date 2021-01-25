@@ -38,7 +38,7 @@ class UploadHandles {
             }
 
             //返回图片已经存储的路径
-            return ['path' => '/images/' . "$folder_name/$file_name"];
+            return ['path' => '/storage/upload/images/' . "$folder_name/$file_name"];
         }elseif ($type == 'files'){
 
             if(! in_array($extension, $this->allow_file_ext)) {
@@ -55,7 +55,7 @@ class UploadHandles {
             $file->move($upload_path, $file_name);
 
             //返回图片已经存储的路径
-            return ['path' => '/files/' . "$folder_name/$file_name"];
+            return ['path' => '/storage/upload/files/' . "$folder_name/$file_name"];
         }
 
     }

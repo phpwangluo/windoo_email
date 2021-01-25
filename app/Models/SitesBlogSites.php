@@ -17,4 +17,8 @@ class SitesBlogSites extends Model
     {
         return $this->hasMany(SitesBlogCategories::class,'site_id');
     }
+    public function articles()
+    {
+        return $this->hasMany(SitesBlogArticles::class,'site_id');
+    }
 }

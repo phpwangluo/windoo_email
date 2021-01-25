@@ -64,11 +64,17 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
         ],
-        'admin'=>[
+        'ueditor'=>[
             'driver'=>'local',
             'root'       => storage_path('app/public/upload'),
             'visibility' => 'public',
             'url' => env('APP_URL').'/storage/upload',
+        ],
+        'admin'=>[
+            'driver'=>'local',
+            'root'       => storage_path('app/public/upload'),
+            'visibility' => 'public',
+            'url' => env('APP_URL'),
         ]
 
     ],
