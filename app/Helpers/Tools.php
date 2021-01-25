@@ -25,7 +25,7 @@ class Tools
         $format = preg_replace('/[\s　]/', '-', $format); //替换空格为中划线
         $format = strtolower($format);
         $format_arr = explode('-', $format);
-        $format_arr = array_unique($format_arr);
+        //$format_arr = array_unique($format_arr);
         foreach ($format_arr as $k => $v) {
             if ($v == '') {
                 unset($format_arr[$k]);

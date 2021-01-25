@@ -7,11 +7,13 @@ use App\Admin\Extensions\DiyHandle\ArticleContent;
 use App\Helpers\Tools;
 use App\Models\SitesBlogArticles;
 use App\Models\SitesBlogAuthors;
+use App\Models\SitesBlogPhotos;
 use Encore\Admin\Admin;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\MessageBag;
 
 class BlogArticlesController extends AdminController
@@ -194,13 +196,27 @@ class BlogArticlesController extends AdminController
                     $uri = Tools::format_uri($data);
                     $insertArticle['uri'] = $uri;
                     $insertArticle['abstract'] = Tools::blog_summary($model->content, 160);
-                    if (SitesBlogArticles::insertGetId($insertArticle)){
-                        $success = new MessageBag([
-                            'title'   => '提示',
-                            'message' => '创建成功',
-                        ]);
-                        return redirect(url("admin/sites-blog-articles/create/?site_id=".$model->site_id))->with(compact('success'));
+                    $article_id = SitesBlogArticles::insertGetId($insertArticle);
+
+                    SitesBlogPhotos::query()->where('article_id', '=',$article_id)->delete();
+                    $pattern = '/(<img.+?src="?)([^"]+)("[^>]+>)/i';
+                    preg_match_all($pattern,$model->content,$matchs);
+                    $article_image_lists  = $matchs[2];
+                    $insert_article_phots = [];
+                    foreach ($article_image_lists as $imgk =>  $images){
+                        $insert_article_phots[$imgk] = [
+                            'name'=>array_last(explode('/',$images)),
+                            'path'=>$images,
+                            'article_id'=>$article_id,
+                        ];
                     }
+                    DB::table('sites_blog_photos')->insert($insert_article_phots);
+                    //保存文章所在图片
+                    $success = new MessageBag([
+                        'title'   => '提示',
+                        'message' => '创建成功',
+                    ]);
+                    return redirect(url("admin/sites-blog-articles/create/?site_id=".$model->site_id))->with(compact('success'));
                 }
                 $error = new MessageBag([
                     'title'   => '错误',
@@ -211,16 +227,31 @@ class BlogArticlesController extends AdminController
 
             });
         }else{
-            $form->saving(function ($model) {
+            $form->saving(function (Form $form) {
                 $data=[
-                    'title'=>$model->title,
+                    'title'=>$form->title,
                 ];
                 $uri = Tools::format_uri($data);
-                $this->uri = $uri;
-                $this->abstract = Tools::blog_summary($model->content, 160);
-                return $this;
+                $form->uri = $uri;
+                $form->abstract = Tools::blog_summary($form->content, 160);
+                SitesBlogPhotos::query()->where('article_id', '=',$form->id)->delete();
+                $pattern = '/(<img.+?src="?)([^"]+)("[^>]+>)/i';
+                preg_match_all($pattern,$form->content,$matchs);
+                $article_image_lists  = $matchs[2];
+                $insert_article_phots = [];
+                foreach ($article_image_lists as $imgk =>  $images){
+                    $insert_article_phots[$imgk] = [
+                        'name'=>array_last(explode('/',$images)),
+                        'path'=>$images,
+                        'article_id'=>$form->id,
+                    ];
+                }
+                DB::table('sites_blog_photos')->insert($insert_article_phots);
             });
         }
+        $form->hidden('id');
+        $form->hidden('uri');
+        $form->hidden('abstract');
         $form->footer(function ($footer) {
 
             // 去掉`重置`按钮

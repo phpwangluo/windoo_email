@@ -16,16 +16,10 @@ class SitesBlogArticles extends Model
     {
         return $this->belongsTo(SitesBlogCategories::class,'category_id');
     }
-    public static function boot()
+
+
+    public function articlecategories()
     {
-        parent::boot();
-        static::saving(function ($model) {
-            //修改状态值
-            if($model->carousel == 'on'){
-                $model->carousel = 1;
-            }elseif($model->carousel == 'off'){
-                $model->carousel = 0;
-            }
-        });
+        return $this->hasOne(SitesBlogArticleCategories::class);
     }
 }

@@ -39,5 +39,6 @@ Route::group([
 
     $router->resource('sites-blog-sites', Sites\BlogSitesController::class); //站点配置
     $router->resource('sites-blog-articles', Sites\BlogArticlesController::class); //文章管理
-
+    $router->resource('sites-blog-categories', Sites\BlogCategriesController::class); //边栏管理
+    $router->resource('sites-blog-article-categories', Sites\BlogArticlesCategriesController::class);
 });
