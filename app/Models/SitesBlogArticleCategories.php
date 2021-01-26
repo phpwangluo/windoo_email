@@ -10,11 +10,11 @@ class SitesBlogArticleCategories extends Model
     use HasFactory;
     public function categories()
     {
-        return $this->belongsTo(SitesBlogCategories::class);
+        return $this->belongsTo(SitesBlogCategories::class,'category_id');
     }
 
     public function articles()
     {
-        return $this->belongsTo(SitesBlogArticles::class);
+        return $this->belongsTo(SitesBlogArticles::class,'article_id');
     }
 }

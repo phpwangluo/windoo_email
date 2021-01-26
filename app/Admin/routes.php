@@ -41,4 +41,8 @@ Route::group([
     $router->resource('sites-blog-articles', Sites\BlogArticlesController::class); //文章管理
     $router->resource('sites-blog-categories', Sites\BlogCategriesController::class); //边栏管理
     $router->resource('sites-blog-article-categories', Sites\BlogArticlesCategriesController::class);
+
+    $router->resource('sites-blog-page-settings', Sites\BlogPageSettingsController::class); //页面设置
+    $router->resource('sites-blog-authors', Sites\BlogAuthorsController::class); //博客管理
+
 });

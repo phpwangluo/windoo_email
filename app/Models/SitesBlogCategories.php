@@ -19,6 +19,10 @@ class SitesBlogCategories extends Model
 
     public function categoriearticles()
     {
-        return $this->hasMany(SitesBlogArticleCategories::class);
+        return $this->hasMany(SitesBlogArticleCategories::class,'category_id');
+    }
+    public function pagesettings()
+    {
+        return $this->belongsTo(SitesBlogPageSettings::class,'page_id');
     }
 }

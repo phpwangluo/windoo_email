@@ -3,6 +3,9 @@ function uploadImage(obj){
     var image = $(obj)[0].files[0];
     var image_folder = $("input[name='image_folder']").val();
     if (!image) return false;
+    if (!image_folder){
+        image_folder = 'config_image';
+    }
     var formData = new FormData();
     formData.append("file", image)
     formData.append("image_folder", image_folder)

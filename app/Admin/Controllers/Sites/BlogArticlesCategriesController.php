@@ -3,6 +3,9 @@
 namespace App\Admin\Controllers\Sites;
 
 use App\Models\SitesBlogArticleCategories;
+use App\Models\SitesBlogArticles;
+use App\Models\SitesBlogCategories;
+use Encore\Admin\Admin;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -24,12 +27,61 @@ class BlogArticlesCategriesController extends AdminController
      */
     protected function grid()
     {
-        $grid = new Grid(new SitesBlogArticleCategories());
+        $grid = new Grid(new SitesBlogArticles());
+        $obj = $grid->model();
+        if(request('site_id')) {
+            $obj->where('site_id','=',request('site_id'));
+        }
+        $obj->groupBy(['id']);
+        $obj->orderBy('site_id','desc');
+        $grid->filter(function($filter){
 
-        $grid->column('articles.title', __('文章标题'));
-        $grid->column('category_id', __('发布时间'));
+            // 去掉默认的id过滤器
+            $filter->disableIdFilter();
+
+            // 在这里添加字段过滤器
+            $filter->equal('title', '文章标题');
+
+        });
+        $grid->disableExport();//禁用导出
+        $grid->disableCreateButton(); //禁用创建
+        $grid->column('title', __('文章标题'))->limit(30,'...');
+        $grid->column('publish_time', __('发布时间'));
         $grid->column('site_id', __('站点ID'));
-        $grid->column('site_id', __('选择栏目'));
+        $grid->column('choose_lable', '选择栏目')->display(function () {
+            $now_selected = SitesBlogArticleCategories::query()
+                ->where('article_id','=',$this->id)
+                ->get();
+            $in_selected = [];
+            foreach ($now_selected as $sitem){
+                $in_selected[] = $sitem->category_id;
+            }
+            $cate_aside  = SitesBlogCategories::query()->where('type','=',2)
+                ->where('site_id','=',$this->site_id)->get();
+            if($cate_aside){
+                $html = '<div id="ischange" article_id = '.$this->id.'  site_id='.$this->site_id.'>';
+                foreach ($cate_aside as $item){
+                    if(in_array($item->id,$in_selected)){
+                        $html .= '<div class="checkbox icheck">
+                <label>
+                    <input type="checkbox" checked name=\'category_id[]\' class="minimal ie-input" value="'.$item->id.'" data-label="'.$item->name.'"/>&nbsp;'.$item->name.'&nbsp;&nbsp;
+                </label>
+            </div>';
+                    }else{
+                        $html .= '
+            <div class="checkbox icheck">
+                <label>
+                    <input type="checkbox" name=\'category_id[]\' class="minimal ie-input" value="'.$item->id.'" data-label="'.$item->name.'"/>&nbsp;'.$item->name.'&nbsp;&nbsp;
+                </label>
+            </div>';
+                    }
+                }
+            }
+            $html .= '</div>';
+            return $html;
+        });
+        $grid->disableActions();
+        Admin::js('/static/js/diycommon.js');
         return $grid;
     }
 

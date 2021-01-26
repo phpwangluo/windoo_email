@@ -21,4 +21,8 @@ class SitesBlogSites extends Model
     {
         return $this->hasMany(SitesBlogArticles::class,'site_id');
     }
+    public function pagesettings()
+    {
+        return $this->hasMany(SitesBlogPageSettings::class,'site_id');
+    }
 }

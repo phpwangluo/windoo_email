@@ -33,6 +33,11 @@ class BlogArticlesController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new SitesBlogArticles());
+        $obj = $grid->model();
+        if(request('site_id')) {
+            $obj->where('site_id','=',request('site_id'));
+        }
+        $obj->orderBy('site_id','desc');
         $grid->filter(function($filter){
 
             // 去掉默认的id过滤器
@@ -51,15 +56,15 @@ class BlogArticlesController extends AdminController
         $grid->column('content_more', '文章内容')->modal('内容详情', function ($model) {
            return '<div style="width: 95%;white-space: normal;margin: 20px;";>'.$model->content.'</div>';
         })->width('200');
-        $grid->column('sites.name', __('站点名称'));
-        $grid->column('title', __('文章标题'));
-        $grid->column('uri', __('文章地址'));
+        $grid->column('sites.name', __('站点名称'))->limit(30,'...');
+        $grid->column('title', __('文章标题'))->limit(30,'...');
+        $grid->column('uri', __('文章地址'))->limit(30,'...');
         $grid->column('photo', __('头图'))->image();
         $grid->column('carousel', __('加入轮播图'))->switch();
 
         //$grid->column('carousel', __('首页展现'))->switch();
-        //$grid->column('category.name', __('分类'));
-        //$grid->column('publish_time', __('发布时间'));
+        $grid->column('category.name', __('分类'));
+        $grid->column('publish_time', __('发布时间'));
 
         $grid->actions(function ($actions) {
 
@@ -143,7 +148,9 @@ class BlogArticlesController extends AdminController
                 $site_id = request('site_id');
                 return $site_id;
             });
-            $form->select('category_id', __('选择分类'))->options('/api/blogs/categorylist')->required();
+            $form->select('category_id', __('选择分类'))->options('/api/blogs/categorylist', [
+                'site_id' => request('site_id')
+                ])->required();
             $form->switch('carousel', __('加入轮播图'))->default(0)->required();
         }
         $form->text('title', __('文章标题'))->required();

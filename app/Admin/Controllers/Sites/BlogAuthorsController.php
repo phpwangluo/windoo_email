@@ -2,21 +2,21 @@
 
 namespace App\Admin\Controllers\Sites;
 
-use App\Admin\Actions\Diy\DiyAddButtonAction;
-use App\Models\SitesBlogCategories;
+use Encore\Admin\Admin;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use \App\Models\SitesBlogAuthors;
 
-class BlogCategriesController extends AdminController
+class BlogAuthorsController extends AdminController
 {
     /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = '边栏管理';
+    protected $title = '博主管理';
 
     /**
      * Make a grid builder.
@@ -25,14 +25,13 @@ class BlogCategriesController extends AdminController
      */
     protected function grid()
     {
-        $grid = new Grid(new SitesBlogCategories());
-        $obj = $grid->model()
-            ->where('type','=',2);
+        $grid = new Grid(new SitesBlogAuthors());
+
+        $obj = $grid->model();
         if(request('site_id')) {
             $obj->where('site_id','=',request('site_id'));
         }
-        $obj->orderBy('site_id','desc')
-            ->orderBy('ordinal_number','asc');
+        $obj->orderBy('site_id','desc');
         $grid->filter(function($filter){
 
             // 去掉默认的id过滤器
@@ -45,27 +44,24 @@ class BlogCategriesController extends AdminController
         });
         $grid->disableExport();//禁用导出
         $grid->disableCreateButton(); //禁用创建
-        $grid->tools(function (Grid\Tools $tools) {
-            $tools->append(new DiyAddButtonAction());
-        });
         $grid->column('site_id', __('站点ID'));
         $grid->column('sites.name', __('站点名称'));
-        $grid->column('name', __('边栏名称'));
-        $grid->column('ordinal_number', __('排序'));
+        $grid->column('author_name', __('博主名称'))->display(function () {
+            return $this->first_name.' '.$this->last_name;
+        });
+        $grid->column('photo', __('博主头像'))->image();
         $grid->actions(function ($actions) {
 
             // 去掉删除
             $actions->disableDelete();
 
             // 去掉编辑
-            $actions->disableEdit();
+            //$actions->disableEdit();
 
             // 去掉查看
             $actions->disableView();
             // 添加自定义查看的按钮
-            $actions->prepend('<a title="边栏设置" href="sites-blog-article-categories?site_id='.$actions->row->site_id.'"><i class="fa fa-link"></i></a>&nbsp;&nbsp;');
         });
-
         return $grid;
     }
 
@@ -77,13 +73,16 @@ class BlogCategriesController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(SitesBlogCategories::findOrFail($id));
+        $show = new Show(SitesBlogAuthors::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('name', __('Name'));
         $show->field('type', __('Type'));
-        $show->field('page_id', __('Page id'));
-        $show->field('ordinal_number', __('Ordinal number'));
+        $show->field('first_name', __('First name'));
+        $show->field('last_name', __('Last name'));
+        $show->field('profile', __('Profile'));
+        $show->field('email', __('Email'));
+        $show->field('photo', __('Photo'));
+        $show->field('home_page', __('Home page'));
         $show->field('site_id', __('Site id'));
         $show->field('status', __('Status'));
         $show->field('created_at', __('Created at'));
@@ -99,7 +98,7 @@ class BlogCategriesController extends AdminController
      */
     protected function form()
     {
-        $form = new Form(new SitesBlogCategories());
+        $form = new Form(new SitesBlogAuthors());
         $form->tools(function (Form\Tools $tools) {
 
             // 去掉`列表`按钮
@@ -110,10 +109,22 @@ class BlogCategriesController extends AdminController
             $tools->disableView();
 
         });
-        $form->number('site_id', __('站点ID'))->default(request('site_id'))->required();
-        $form->text('name', __('站点名称'))->required();
-        $form->hidden('type')->default(2);
-
+        $form->text('first_name', __('First name'))->required();
+        $form->text('last_name', __('Last name'))->required();
+        $form->UEditor('profile', __('简介'))->required();
+        Admin::css('/static/css/upload.css');
+        Admin::js('/static/js/upload.js');
+        $form->display('photo', '头像')->with(function ($value) {
+            $html = '<div class="bob-upload" tabindex="0"><div class="add_image">';
+            if ($value) {
+                $html .= '<img class="avatar" src="' . $value . '">';
+            } else {
+                $html .= '<i class="avatar-uploader-icon fa fa-plus"></i>';
+            }
+            $html .= '</div><input class="bob-upload-input" type="file"  name="file" input_name="photo" onchange="uploadImage(this)">';
+            $html .= '<input type="text" class="avatar-uploader-icon" name="photo" style="display:none;"></div>';
+            return $html;
+        });
         $form->footer(function ($footer) {
 
             // 去掉`重置`按钮

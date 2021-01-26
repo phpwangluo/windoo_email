@@ -20,6 +20,6 @@ class SitesBlogArticles extends Model
 
     public function articlecategories()
     {
-        return $this->hasOne(SitesBlogArticleCategories::class);
+        return $this->hasMany(SitesBlogArticleCategories::class,'article_id');
     }
 }

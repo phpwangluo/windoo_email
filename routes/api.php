@@ -43,3 +43,4 @@ Route::post('/uploadImg', [App\Http\Controllers\Api\UploadController::class, 'up
 Route::post('/uploadFiles', [App\Http\Controllers\Api\UploadController::class, 'uploadFiles']);
 
 Route::get('/blogs/categorylist', [\App\Http\Controllers\Api\Blogs\CategoriesController::class, 'categoryList']);
+Route::post('/blogs/addarticlecategories', [\App\Http\Controllers\Api\Blogs\ArticleCategoriesController::class, 'addArticleCategories']);

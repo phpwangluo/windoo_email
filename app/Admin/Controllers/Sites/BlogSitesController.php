@@ -30,6 +30,8 @@ class BlogSitesController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new SitesBlogSites());
+        $obj = $grid->model();
+        $obj->orderBy('id','desc');
         $grid->filter(function($filter){
 
             // 去掉默认的id过滤器
@@ -44,7 +46,7 @@ class BlogSitesController extends AdminController
         $grid->disableCreateButton(); //禁用创建
         $grid->fixColumns(1,-1);
         $grid->column('id', __('站点ID'));
-        $grid->column('name', __('站点名称'));
+        $grid->column('name', __('站点名称'))->limit(30,'...');
         $grid->column('logo', __('站点Logo'))->image();
         $grid->column('type', __('站点类型'))->using([
             'BLOG'=>'博客',
@@ -59,7 +61,7 @@ class BlogSitesController extends AdminController
             }
             return implode('/',$cate_name_arr);
         });
-        $grid->column('detail_title', __('文章标题'))->using([
+        $grid->column('detail_title', __('文章标题类型'))->using([
             0=>'Article Title - SiteName',
             1=>'Article Title - Site Name',
             10=>'Article Title | SiteName',
@@ -69,7 +71,7 @@ class BlogSitesController extends AdminController
         $grid->column('domain_name', __('站点域名'));
 
         $grid->column('photo', __('站点头图'))->image();
-        $grid->column('remark', __('备注'));
+        $grid->column('remark', __('备注'))->limit(30,'...');
         $grid->column('author_name', __('博主名称'))->display(function () {
             return $this->blog_author->first_name.' '.$this->blog_author->last_name;
         });
@@ -94,13 +96,13 @@ class BlogSitesController extends AdminController
                 $actions->add(new DoReplyByUserAction());
             }*/
             // prepend一个操作
-            $actions->prepend('<a title="页面设置" href="'.$this->getResource().'/'.$actions->getKey().'"><i class="fa fa-list-alt"></i></a>&nbsp;&nbsp;');
+            $actions->prepend('<a title="页面设置" href="sites-blog-page-settings?site_id='.$actions->row->id.'"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;');
 
-            $actions->prepend('<a title="边栏设置" href="'.$this->getResource().'/'.$actions->getKey().'"><i class="fa fa-list-alt"></i></a>&nbsp;&nbsp;');
+            $actions->prepend('<a title="边栏设置" href="sites-blog-categories?site_id='.$actions->row->id.'"><i class="fa fa-ellipsis-v"></i></a>&nbsp;&nbsp;');
 
-            $actions->prepend('<a title="文章管理" href="'.$this->getResource().'/'.$actions->getKey().'"><i class="fa fa-list-alt"></i></a>&nbsp;&nbsp;');
+            $actions->prepend('<a title="文章管理" href="sites-blog-articles?site_id='.$actions->row->id.'"><i class="fa fa-align-justify"></i></a>&nbsp;&nbsp;');
 
-            $actions->prepend('<a title="文章录入" href="sites-blog-articles/create?site_id='.$actions->row->id.'"><i class="fa fa-list-alt"></i></a>&nbsp;&nbsp;');
+            $actions->prepend('<a title="文章录入" href="sites-blog-articles/create?site_id='.$actions->row->id.'"><i class="fa fa-book"></i></a>&nbsp;&nbsp;');
         });
         return $grid;
     }
