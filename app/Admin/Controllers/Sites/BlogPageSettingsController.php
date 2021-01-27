@@ -119,8 +119,8 @@ class BlogPageSettingsController extends AdminController
         if($page_type->page_type == 2 || $page_type->page_type == 3){
             $form->UEditor('content', __('页面内容'))->required();
         }else{
-            $form->number('site_id', __('站点ID'))->disable();
-            $form->number('sites.name', __('站点名称'))->disable();
+            $form->text('site_id', __('站点ID'))->disable();
+            $form->text('sites.name', __('站点名称'))->disable();
             Admin::css('/static/css/upload.css');
             Admin::js('/static/js/upload.js');
             $form->display('photo', '分类图标')->with(function ($value) {

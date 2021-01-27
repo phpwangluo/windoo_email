@@ -29,6 +29,7 @@ class BlogSitesController extends AdminController
      */
     protected function grid()
     {
+
         $grid = new Grid(new SitesBlogSites());
         $obj = $grid->model();
         $obj->orderBy('id','desc');

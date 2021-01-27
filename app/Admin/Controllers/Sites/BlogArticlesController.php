@@ -54,7 +54,7 @@ class BlogArticlesController extends AdminController
         $grid->fixColumns(1,-1);
         $grid->column('site_id', __('站点ID'));
         $grid->column('content_more', '文章内容')->modal('内容详情', function ($model) {
-           return '<div style="width: 95%;white-space: normal;margin: 20px;";>'.$model->content.'</div>';
+           return '<div style="width: 95%;white-space: normal;margin: 10px;";>'.$model->content.'</div>';
         })->width('200');
         $grid->column('sites.name', __('站点名称'))->limit(30,'...');
         $grid->column('title', __('文章标题'))->limit(30,'...');
@@ -139,7 +139,7 @@ class BlogArticlesController extends AdminController
 
         });
         $form->setTitle('文章录入');
-        $form->number('site_id', __('站点ID'))->required()->default(function (){
+        $form->text('site_id', __('站点ID'))->required()->default(function (){
             $site_id = request('site_id');
             return $site_id;
         })->readonly();
@@ -162,7 +162,9 @@ class BlogArticlesController extends AdminController
                 return $html;
             });
         }
-        $form->UEditor('content', __('文章内容'))->required();
+        $form->UEditor('content', __('文章内容'))->with(function (){
+            return $this->content;
+        })->required();
         Admin::css('/static/css/upload.css');
         Admin::js('/static/js/upload.js');
         $form->display('image-list', '文章头图')->with(function ($model) {

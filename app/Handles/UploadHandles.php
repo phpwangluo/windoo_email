@@ -23,7 +23,7 @@ class UploadHandles {
             }
 
             //定义存储路径，文件夹切割能让查找效率更高
-            $folder_name = $folder.date("Ym/d", time());
+            $folder_name = $folder.date("Y", time());
             $upload_path = storage_path('app/public/upload') . '/images/' . $folder_name;
             //定义文件名
             $file_name = $file_prefix . "_" . time() . "_" . Str::random(10).".". $extension;
