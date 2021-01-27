@@ -1,6 +1,10 @@
 $(function () {
+    var site_id = $("input[name='site_id']").val();
     var ue = UE.getEditor('content');
     ue.addListener("ready", function () {
+        ue.execCommand('serverparam', {
+            'site_id':site_id,
+        });
         ue.addListener("blur",function(){
             var str = ue.getContent()
             var imgReg = /<img.*?(?:>|\/>)/gi;

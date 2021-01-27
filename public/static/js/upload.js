@@ -52,7 +52,11 @@ function uploadFiles(obj) {
             if (res.error === 1){
                 UE.delEditor("content");
                 var ue = UE.getEditor('content');
+                var site_id = $("input[name='site_id']").val();
                 ue.addListener("ready", function () {
+                    ue.execCommand('serverparam', {
+                        'site_id':site_id,
+                    });
                     ue.setContent(res.content, false);
                     ue.addListener("blur",function(){
                         var old_str = ue.getContent()
