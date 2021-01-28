@@ -13,8 +13,10 @@ $(function () {
             imgs = '';
             for (var i = 0; i < arr.length; i++) {
                 var src = arr[i].match(srcReg);
+                var arr_src=src[1].split("/");
+                var end = arr_src.pop()
                 //获取图片地址
-                imgs +='<img class="avatar" onclick="choosePhoto(this)" src="'+src[1]+'">'
+                imgs +='<img class="avatar" onclick="choosePhoto(this)" data="'+end+'" src="'+src[1]+'">'
             }
             $('#add_article_image').html(imgs);
         });

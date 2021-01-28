@@ -4,7 +4,7 @@ function uploadImage(obj){
     var image_folder = $("input[name='image_folder']").val();
     if (!image) return false;
     if (!image_folder){
-        image_folder = 'config_image';
+        image_folder = 'site_image';
     }
     var formData = new FormData();
     formData.append("file", image)
@@ -22,7 +22,7 @@ function uploadImage(obj){
                 $("input[name="+input_name+"]").attr("value",res.url);
                 $(obj).prev(".add_image i").remove();
                 $(obj).prev(".add_image img").remove();
-                $(obj).prev(".add_image").html('<img src="'+res.url+'">');
+                $(obj).prev(".add_image").html('<img src="/storage/upload/'+image_folder+'/'+res.url+'">');
                 toastr.success(res.message)
             } else {
                 toastr.error(res.message)
@@ -67,7 +67,9 @@ function uploadFiles(obj) {
                         for (var i = 0; i < arr.length; i++) {
                             var src = arr[i].match(srcReg);
                             //获取图片地址
-                            imgss +='<img class="avatar" onclick="choosePhoto(this)" src="'+src[1]+'">'
+                            var arr_src=src[1].split("/");
+                            var end = arr_src.pop()
+                            imgss +='<img class="avatar" onclick="choosePhoto(this)" data="'+end+'" src="'+src[1]+'">'
                         }
                         $('#add_article_image').html(imgss);
                         return;
@@ -75,7 +77,9 @@ function uploadFiles(obj) {
                 });
                 var imgs = '';
                 $.each(res.image_lists, function(key, val) {
-                    imgs +='<img class="avatar" onclick="choosePhoto(this)" src="'+val+'">'
+                    var arr_src1=val.split("/");
+                    var end1 = arr_src1.pop()
+                    imgs +='<img class="avatar" onclick="choosePhoto(this)" data="'+end1+'" src="'+val+'">'
                 });
                 $('#add_article_image').html(imgs);
                 toastr.success(res.message)
@@ -91,7 +95,7 @@ function uploadFiles(obj) {
 
 function choosePhoto(obj) {
     $(obj).css("border","2px solid red").siblings().css("border","2px solid #cccccc");
-    var article_photo = $(obj).attr('src');
+    var article_photo = $(obj).attr('data');
     $("input[name='photo']").val(article_photo)
 }
 

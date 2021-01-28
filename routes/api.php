@@ -40,6 +40,8 @@ Route::post('/mailforsendstatus', [App\Http\Controllers\Api\MailForSendControlle
 
 Route::match(['get', 'post'],'/editorUpload', [App\Http\Controllers\Api\UploadController::class, 'editorUpload']);
 Route::post('/uploadImg', [App\Http\Controllers\Api\UploadController::class, 'uploadImages']);
+//Route::post('/uploadImagesForEditor', [App\Http\Controllers\Api\UploadController::class, 'uploadImagesForEditor']);
+
 Route::post('/uploadFiles', [App\Http\Controllers\Api\UploadController::class, 'uploadFiles']);
 
 Route::get('/blogs/categorylist', [\App\Http\Controllers\Api\Blogs\CategoriesController::class, 'categoryList']);

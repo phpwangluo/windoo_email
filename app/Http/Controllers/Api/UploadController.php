@@ -18,6 +18,17 @@ class UploadController extends Controller
             'error'=>1,'message'=>'上传成功','url'=>$image['path']
         ];
     }
+    /*public function uploadImagesForEditor(Request $request, UploadHandles $upload)
+    {
+        //调用上传图片类里的save方法，获取存储的图片路径
+        $image = $upload->save($request->file()['upfile'], $request->get('site_id').'/', '', 500);
+        $image_name = explode('/',$image['path']);
+
+        //将图片路径赋值 $data 里
+        return [
+            'state'=>'SUCCESS','message'=>'上传成功','title'=>$image['path'],'url'=>$image_name[1]
+        ];
+    }*/
     public function uploadFiles(Request $request, UploadHandles $upload)
     {
         //调用上传图片类里的save方法，获取存储的图片路径

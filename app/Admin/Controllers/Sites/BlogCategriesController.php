@@ -111,7 +111,7 @@ class BlogCategriesController extends AdminController
 
         });
         $form->number('site_id', __('站点ID'))->default(request('site_id'))->required();
-        $form->text('name', __('站点名称'))->required();
+        $form->text('name', __('边栏名称'))->required();
         $form->hidden('type')->default(2);
 
         $form->footer(function ($footer) {

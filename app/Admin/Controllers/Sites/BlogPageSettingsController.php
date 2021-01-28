@@ -117,7 +117,13 @@ class BlogPageSettingsController extends AdminController
 
         });
         if($page_type->page_type == 2 || $page_type->page_type == 3){
-            $form->UEditor('content', __('页面内容'))->required();
+
+            $form->UEditor('content', __('页面内容'))->with(function (){
+                $policy_arr = Config()->get('blogs.policy_template');
+                $rand_key =  array_rand($policy_arr,1);
+                $template_content = $policy_arr[$rand_key];
+                return $template_content;
+            })->required();
         }else{
             $form->text('site_id', __('站点ID'))->disable();
             $form->text('sites.name', __('站点名称'))->disable();

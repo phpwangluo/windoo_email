@@ -54,12 +54,19 @@ class BlogArticlesController extends AdminController
         $grid->fixColumns(1,-1);
         $grid->column('site_id', __('站点ID'));
         $grid->column('content_more', '文章内容')->modal('内容详情', function ($model) {
-           return '<div style="width: 95%;white-space: normal;margin: 10px;";>'.$model->content.'</div>';
+            if($model->content != ''){
+                $pattern = '/(<img.+?src="?)([^"]+)("[^>]+>)/i';
+                preg_match_all($pattern,$model->content,$matchs);
+                $model->content = preg_replace( $pattern,'$1'.'/storage/upload/'.$model->site_id.'/$2$3',$model->content);
+            }
+            return '<div style="width: 95%;white-space: normal;margin: 10px;";>'.$model->content.'</div>';
         })->width('200');
         $grid->column('sites.name', __('站点名称'))->limit(30,'...');
         $grid->column('title', __('文章标题'))->limit(30,'...');
         $grid->column('uri', __('文章地址'))->limit(30,'...');
-        $grid->column('photo', __('头图'))->image();
+        $grid->column('photo', __('头图'))->display(function (){
+            return $this->site_id.'/'.$this->photo;
+        })->image();
         $grid->column('carousel', __('加入轮播图'))->switch();
 
         //$grid->column('carousel', __('首页展现'))->switch();
@@ -162,7 +169,12 @@ class BlogArticlesController extends AdminController
                 return $html;
             });
         }
-        $form->UEditor('content', __('文章内容'))->with(function (){
+        $form->UEditor('content', __('文章内容'))->with(function ($model){
+            if($this->content != ''){
+                $pattern = '/(<img.+?src="?)([^"]+)("[^>]+>)/i';
+                preg_match_all($pattern,$this->content,$matchs);
+                $this->content = preg_replace( $pattern,'$1'.'/storage/upload/'.$this->site_id.'/$2$3',$this->content);
+            }
             return $this->content;
         })->required();
         Admin::css('/static/css/upload.css');
@@ -175,13 +187,23 @@ class BlogArticlesController extends AdminController
                 $image_lists  = $matchs[2];
                 $img = '';
                 foreach ($image_lists as $images){
-                    $img .= '<img class="avatar" onclick="choosePhoto(this)" src="'.$images.'">';
+                    $image_arr = explode('/',$images);
+                    $image_name = end($image_arr);
+                    if($image_name == $this->photo){
+                        $img .= '<img class="avatar" onclick="choosePhoto(this)" data="'.$image_name.'" src="'.$images.'" style="border: 2px solid red;">';
+                    }else{
+                        $img .= '<img class="avatar" onclick="choosePhoto(this)" data="'.$image_name.'" src="'.$images.'">';
+                    }
                 }
             }
             $html = '<div class="bob-upload" tabindex="0"><div id="add_article_image">'.$img.'</div>';
             return $html;
         });
-        $form->hidden('photo');
+        $form->hidden('photo')->default($form->model()->photo);
+        $form->hidden('carousel')->default($form->model()->carousel);
+        $form->hidden('id')->default($form->model()->id);
+        $form->hidden('uri')->default($form->model()->uri);
+        $form->hidden('abstract')->default($form->model()->abstract);
         if(!$form->isEditing()){
             $form->saving(function ($model) {
                 if ($model->site_id){
@@ -194,6 +216,9 @@ class BlogArticlesController extends AdminController
                     $insertArticle['category_id'] = $model->category_id;
                     $insertArticle['checker_id'] =  $author->id;;
                     $insertArticle['photo'] =  $model->photo;
+                    if($model->content != ''){
+                        $model->content = str_replace('/storage/upload/'.$model->site_id,'',$model->content);
+                    }
                     $insertArticle['content'] =  $model->content;
                     $insertArticle['site_id'] =  $model->site_id;
                     $insertArticle['check_status'] =  1;
@@ -237,30 +262,32 @@ class BlogArticlesController extends AdminController
             });
         }else{
             $form->saving(function (Form $form) {
-                $data=[
-                    'title'=>$form->title,
-                ];
-                $uri = Tools::format_uri($data);
-                $form->uri = $uri;
-                $form->abstract = Tools::blog_summary($form->content, 160);
-                SitesBlogPhotos::query()->where('article_id', '=',$form->id)->delete();
-                $pattern = '/(<img.+?src="?)([^"]+)("[^>]+>)/i';
-                preg_match_all($pattern,$form->content,$matchs);
-                $article_image_lists  = $matchs[2];
-                $insert_article_phots = [];
-                foreach ($article_image_lists as $imgk =>  $images){
-                    $insert_article_phots[$imgk] = [
-                        'name'=>array_last(explode('/',$images)),
-                        'path'=>$images,
-                        'article_id'=>$form->id,
+                if ($form->id != null){
+                    $data=[
+                        'title'=>$form->title,
                     ];
+                    $uri = Tools::format_uri($data);
+                    $form->uri = $uri;
+                    if($form->content != ''){
+                        $form->content = str_replace('/storage/upload/'.$form->site_id,'',$form->content);
+                    }
+                    $form->abstract = Tools::blog_summary($form->content, 160);
+                    SitesBlogPhotos::query()->where('article_id', '=',$form->id)->delete();
+                    $pattern = '/(<img.+?src="?)([^"]+)("[^>]+>)/i';
+                    preg_match_all($pattern,$form->content,$matchs);
+                    $article_image_lists  = $matchs[2];
+                    $insert_article_phots = [];
+                    foreach ($article_image_lists as $imgk =>  $images){
+                        $insert_article_phots[$imgk] = [
+                            'name'=>array_last(explode('/',$images)),
+                            'path'=>$images,
+                            'article_id'=>$form->id,
+                        ];
+                    }
+                    DB::table('sites_blog_photos')->insert($insert_article_phots);
                 }
-                DB::table('sites_blog_photos')->insert($insert_article_phots);
             });
         }
-        $form->hidden('id');
-        $form->hidden('uri');
-        $form->hidden('abstract');
         $form->footer(function ($footer) {
 
             // 去掉`重置`按钮

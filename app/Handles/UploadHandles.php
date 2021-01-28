@@ -23,22 +23,20 @@ class UploadHandles {
             }
 
             //定义存储路径，文件夹切割能让查找效率更高
-            $folder_name = $folder.date("Y", time());
-            $upload_path = storage_path('app/public/upload') . '/images/' . $folder_name;
+            $upload_path = storage_path('app/public/upload') .'/'.$folder;
             //定义文件名
             $file_name = $file_prefix . "_" . time() . "_" . Str::random(10).".". $extension;
-
             //将图片移动到目标储存位置
             $file->move($upload_path, $file_name);
 
             //如果限制了图片宽度，就进行裁剪
             if ($max_width && $extension != 'gif') {
                 // 此类封装的函数， 用于裁剪图片
-                $this->reduceSize($upload_path . "/" . $file_name,$max_width);
+                $this->reduceSize($upload_path . $file_name,$max_width);
             }
 
             //返回图片已经存储的路径
-            return ['path' => '/storage/upload/images/' . "$folder_name/$file_name"];
+            return ['path' =>  "$file_name"];
         }elseif ($type == 'files'){
 
             if(! in_array($extension, $this->allow_file_ext)) {

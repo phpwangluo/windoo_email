@@ -8,6 +8,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use \App\Models\SitesBlogAuthors;
+use Illuminate\Support\Facades\Storage;
 
 class BlogAuthorsController extends AdminController
 {
@@ -49,7 +50,17 @@ class BlogAuthorsController extends AdminController
         $grid->column('author_name', __('博主名称'))->display(function () {
             return $this->first_name.' '.$this->last_name;
         });
-        $grid->column('photo', __('博主头像'))->image();
+        $grid->column('photo', __('博主头像'))->display(function (){
+            if ($this->photo == ''){
+                return  '';
+            }
+            $file_path = 'public/upload/'.$this->site_id.'/'.$this->photo;
+            if(Storage::exists($file_path)){
+                return  '/'.$this->site_id.'/'.$this->photo;
+            }else{
+                return '/site_image/'.$this->photo;
+            }
+        })->image();
         $grid->actions(function ($actions) {
 
             // 去掉删除
@@ -117,7 +128,7 @@ class BlogAuthorsController extends AdminController
         $form->display('photo', '头像')->with(function ($value) {
             $html = '<div class="bob-upload" tabindex="0"><div class="add_image">';
             if ($value) {
-                $html .= '<img class="avatar" src="' . $value . '">';
+                $html .= '<img class="avatar" src="/storage/upload' . $value . '">';
             } else {
                 $html .= '<i class="avatar-uploader-icon fa fa-plus"></i>';
             }
