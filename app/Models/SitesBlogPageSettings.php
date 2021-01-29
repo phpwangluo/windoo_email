@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class SitesBlogPageSettings extends Model
 {
     use HasFactory;
+    protected $connection = 'mysql_blog';
+    protected $table = 'page_settings';
     public function sites()
     {
         return $this->belongsTo(SitesBlogSites::class,'site_id');

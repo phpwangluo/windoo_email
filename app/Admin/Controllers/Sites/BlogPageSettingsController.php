@@ -8,6 +8,8 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use \App\Models\SitesBlogPageSettings;
+use Illuminate\Support\Facades\Storage;
+
 
 class BlogPageSettingsController extends AdminController
 {
@@ -48,7 +50,17 @@ class BlogPageSettingsController extends AdminController
         $grid->column('site_id', __('站点ID'));
         $grid->column('sites.name', __('站点名称'));
         $grid->column('categories.name', __('分类名称'));
-        $grid->column('photo', __('页面图标'))->image();
+        $grid->column('photo', __('页面图标'))->display(function (){
+            if ($this->photo == ''){
+                return  '';
+            }
+            $file_path = 'public/upload/'.$this->site_id.'/'.$this->photo;
+            if(Storage::exists($file_path)){
+                return  '/'.$this->site_id.'/'.$this->photo;
+            }else{
+                return '/site_image/'.$this->photo;
+            }
+        })->image();
         $grid->column('page_title', __('页面标题'))->limit(30,'...');
         $grid->column('page_description', __('页面描述'))->limit(30,'...');
         $grid->column('page_keywords', __('页面关键字'))->limit(30,'...');
@@ -131,13 +143,19 @@ class BlogPageSettingsController extends AdminController
             Admin::js('/static/js/upload.js');
             $form->display('photo', '分类图标')->with(function ($value) {
                 $html = '<div class="bob-upload" tabindex="0"><div class="add_image">';
-                if ($value) {
-                    $html .= '<img class="avatar" src="' . $value . '">';
+                if ($this->photo) {
+                    $file_path = 'public/upload/'.$this->site_id.'/'.$this->photo;
+                    if(Storage::exists($file_path)){
+                        $src =   '/storage/upload/'.$this->site_id.'/'.$this->photo;
+                    }else{
+                        $src =   '/storage/upload/site_image/'.$this->photo;
+                    }
+                    $html .= '<img class="avatar" src="'.$src.'">';
                 } else {
                     $html .= '<i class="avatar-uploader-icon fa fa-plus"></i>';
                 }
                 $html .= '</div><input class="bob-upload-input" type="file"  name="file" input_name="photo" onchange="uploadImage(this)">';
-                $html .= '<input type="text" class="avatar-uploader-icon" name="photo" style="display:none;"></div>';
+                $html .= '<input type="text" class="avatar-uploader-icon" name="photo" value="'.$this->photo.'" style="display:none;"></div>';
                 return $html;
             });
             $form->text('page_title', __('页面标题'));

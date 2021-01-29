@@ -204,11 +204,19 @@ class BlogSitesController extends AdminController
         $form->display('logo', 'Logo')->with(function ($value) {
             $html = '<div class="bob-upload" tabindex="0"><div class="add_image">';
             if ($this->logo) {
-                if($this->id < 112){
-                    $html .= '<img class="avatar" src="/storage/upload/'.$this->id.'/'.$this->logo . '">';
+                $file_path = 'public/upload/'.$this->id.'/'.$this->logo;
+                if(Storage::exists($file_path)){
+                    $src =   '/storage/upload/'.$this->id.'/'.$this->logo;
+                }else{
+                    $src =   '/storage/upload/site_image/'.$this->logo;
+                }
+                $html .= '<img class="avatar" src="'.$src.'">';
+
+                /*if($this->id < 112){
+                    $html .= '<img class="avatar" src="/storage/upload/'.$this->id.'/'.$this->logo .'">';
                 }else{
                     $html .= '<img class="avatar" src="/storage/upload/site_image/'.$this->logo . '">';
-                }
+                }*/
             } else {
                 $html .= '<i class="avatar-uploader-icon fa fa-plus"></i>';
             }
@@ -219,11 +227,18 @@ class BlogSitesController extends AdminController
         $form->display('photo', '头图')->with(function ($value) {
             $html = '<div class="bob-upload" tabindex="0"><div class="add_image">';
             if ($this->photo) {
-                if($this->id < 112){
+                $file_path = 'public/upload/'.$this->id.'/'.$this->photo;
+                if(Storage::exists($file_path)){
+                    $src =   '/storage/upload/'.$this->id.'/'.$this->photo;
+                }else{
+                    $src =   '/storage/upload/site_image/'.$this->photo;
+                }
+                $html .= '<img class="avatar" src="'.$src.'">';
+                /*if($this->id < 112){
                     $html .= '<img class="avatar" src="/storage/upload/'.$this->id.'/'.$this->photo . '">';
                 }else{
                     $html .= '<img class="avatar" src="/storage/upload/site_image/'.$this->photo . '">';
-                }
+                }*/
             } else {
                 $html .= '<i class="avatar-uploader-icon fa fa-plus"></i>';
             }

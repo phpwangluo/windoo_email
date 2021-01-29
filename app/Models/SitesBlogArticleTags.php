@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class SitesBlogArticleTags extends Model
 {
     use HasFactory;
+    protected $connection = 'mysql_blog';
+    protected $table = 'article_tags';
 }

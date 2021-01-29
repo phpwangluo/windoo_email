@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\Blogs;
 
 use App\Http\Controllers\Controller;
 use App\Models\SitesBlogArticleCategories;
-use App\Models\SitesBlogPhotos;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -26,6 +25,10 @@ class ArticleCategoriesController extends Controller
                 'error'=>0,'message'=>'参数不合法'
             ];
         }
+        SitesBlogArticleCategories::query()
+            ->where('article_id', '=',$article_id)
+            ->where('site_id','=',$site_id)
+            ->delete();
         $batch_insert = [];
         foreach ($cate_ids as $categoyr_id){
             $batch_insert[] = [
@@ -34,11 +37,7 @@ class ArticleCategoriesController extends Controller
                 'article_id'=>$article_id
             ];
         }
-        SitesBlogArticleCategories::query()
-            ->where('article_id', '=',$article_id)
-            ->where('site_id','=',$site_id)
-            ->delete();
-        DB::table('sites_blog_article_categories')->insert($batch_insert);
+        SitesBlogArticleCategories::query()->insert($batch_insert);
         return [
             'error'=>1,'message'=>'成功'
         ];

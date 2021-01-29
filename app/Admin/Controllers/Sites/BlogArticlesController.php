@@ -5,8 +5,10 @@ namespace App\Admin\Controllers\Sites;
 use App\Admin\Actions\Diy\ArticleContentDetailAction;
 use App\Admin\Extensions\DiyHandle\ArticleContent;
 use App\Helpers\Tools;
+use App\Models\SitesBlogArticleCategories;
 use App\Models\SitesBlogArticles;
 use App\Models\SitesBlogAuthors;
+use App\Models\SitesBlogCategories;
 use App\Models\SitesBlogPhotos;
 use Encore\Admin\Admin;
 use Encore\Admin\Controllers\AdminController;
@@ -15,6 +17,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\MessageBag;
+
 
 class BlogArticlesController extends AdminController
 {
@@ -69,6 +72,28 @@ class BlogArticlesController extends AdminController
         })->image();
         $grid->column('carousel', __('加入轮播图'))->switch();
 
+        $grid->column('insert_index_list', '加入首页')->display(function (){
+            $cate = SitesBlogCategories::query()
+                ->select('categories.id as cate_id')
+                ->join('page_settings','page_settings.id','=','categories.page_id')
+                ->where([
+                    'page_settings.page_type'=>1,
+                    'page_settings.site_id'=>$this->site_id
+                ])->first();
+
+            $category_id = $cate->cate_id;
+            $is_exist_in_home = SitesBlogArticleCategories::query()
+                ->where([
+                    'article_id'=>$this->id,
+                    'site_id'=>$this->site_id,
+                    'category_id'=>$category_id
+                ])->first();
+            if($is_exist_in_home){
+                return 1;
+            }else{
+                return 0;
+            }
+        })->switch();
         //$grid->column('carousel', __('首页展现'))->switch();
         $grid->column('category.name', __('分类'));
         $grid->column('publish_time', __('发布时间'));
@@ -204,6 +229,7 @@ class BlogArticlesController extends AdminController
         $form->hidden('id')->default($form->model()->id);
         $form->hidden('uri')->default($form->model()->uri);
         $form->hidden('abstract')->default($form->model()->abstract);
+
         if(!$form->isEditing()){
             $form->saving(function ($model) {
                 if ($model->site_id){
@@ -244,7 +270,7 @@ class BlogArticlesController extends AdminController
                             'article_id'=>$article_id,
                         ];
                     }
-                    DB::table('sites_blog_photos')->insert($insert_article_phots);
+                    SitesBlogPhotos::query()->insert($insert_article_phots);
                     //保存文章所在图片
                     $success = new MessageBag([
                         'title'   => '提示',
@@ -262,6 +288,39 @@ class BlogArticlesController extends AdminController
             });
         }else{
             $form->saving(function (Form $form) {
+                if($form->insert_index_list != null){
+                    $article_id = $form->key;
+                    $article = SitesBlogArticles::query()->where([
+                        'id'=>$article_id
+                    ])->first();
+                    $site_id = $article->site_id;
+                    $cate = SitesBlogCategories::query()
+                        ->select('categories.id as cate_id')
+                        ->join('page_settings','page_settings.id','=','categories.page_id')
+                        ->where([
+                            'page_settings.page_type'=>1,
+                            'page_settings.site_id'=>$site_id
+                        ])->first();
+                    $category_id = $cate->cate_id;
+                    if($form->insert_index_list == 0){
+                        SitesBlogArticleCategories::query()
+                            ->where('article_id', '=',$article_id)
+                            ->where('site_id','=',$site_id)
+                            ->where('category_id','=',$category_id)
+                            ->delete();
+                    }else{
+                        $_insert= [
+                            'category_id'=>$category_id,
+                            'site_id'=>$site_id,
+                            'article_id'=>$article_id
+                        ];
+                        SitesBlogArticleCategories::query()->create($_insert);
+                    }
+                    return response()->json([
+                        'status'  => true,
+                        'message' => '成功',
+                    ]);
+                }
                 if ($form->id != null){
                     $data=[
                         'title'=>$form->title,
@@ -284,8 +343,9 @@ class BlogArticlesController extends AdminController
                             'article_id'=>$form->id,
                         ];
                     }
-                    DB::table('sites_blog_photos')->insert($insert_article_phots);
+                    SitesBlogPhotos::query()->insert($insert_article_phots);
                 }
+
             });
         }
         $form->footer(function ($footer) {

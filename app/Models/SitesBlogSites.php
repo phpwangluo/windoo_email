@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class SitesBlogSites extends Model
 {
     use HasFactory;
+    protected $connection = 'mysql_blog';
+    protected $table = 'sites';
 
     public function blog_author()
     {

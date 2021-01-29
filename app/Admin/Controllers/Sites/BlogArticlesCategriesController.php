@@ -11,6 +11,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 
+
 class BlogArticlesCategriesController extends AdminController
 {
     /**
@@ -59,19 +60,19 @@ class BlogArticlesCategriesController extends AdminController
             $cate_aside  = SitesBlogCategories::query()->where('type','=',2)
                 ->where('site_id','=',$this->site_id)->get();
             if($cate_aside){
-                $html = '<div id="ischange" article_id = '.$this->id.'  site_id='.$this->site_id.'>';
+                $html = '<div onchange="add_article_to_category(this)"  id="ischange"  article_id = '.$this->id.'  site_id='.$this->site_id.'>';
                 foreach ($cate_aside as $item){
                     if(in_array($item->id,$in_selected)){
                         $html .= '<div class="checkbox icheck">
                 <label>
-                    <input type="checkbox" checked name=\'category_id[]\' class="minimal ie-input" value="'.$item->id.'" data-label="'.$item->name.'"/>&nbsp;'.$item->name.'&nbsp;&nbsp;
+                    <input  type="checkbox" checked name=\'category_id[]\' class="minimal ie-input" value="'.$item->id.'" data-label="'.$item->name.'"/>&nbsp;'.$item->name.'&nbsp;&nbsp;
                 </label>
             </div>';
                     }else{
                         $html .= '
             <div class="checkbox icheck">
                 <label>
-                    <input type="checkbox" name=\'category_id[]\' class="minimal ie-input" value="'.$item->id.'" data-label="'.$item->name.'"/>&nbsp;'.$item->name.'&nbsp;&nbsp;
+                    <input  type="checkbox" name=\'category_id[]\' class="minimal ie-input" value="'.$item->id.'" data-label="'.$item->name.'"/>&nbsp;'.$item->name.'&nbsp;&nbsp;
                 </label>
             </div>';
                     }

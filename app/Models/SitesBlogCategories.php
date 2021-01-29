@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class SitesBlogCategories extends Model
 {
     use HasFactory;
+    protected $connection = 'mysql_blog';
+    protected $table = 'categories';
     public function sites()
     {
         return $this->belongsTo(SitesBlogSites::class,'site_id');

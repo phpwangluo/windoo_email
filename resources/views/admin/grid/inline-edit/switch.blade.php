@@ -14,13 +14,14 @@
             var key = $(this).data('key');
             var value = $(this).val();
             var _status = true;
-
             $.ajax({
                 url: "{{ $resource }}/" + key,
                 type: "POST",
                 async:false,
                 data: {
                     "{{ $name }}": value,
+                    "key":key,
+                    "site_id":key,
                     _token: LA.token,
                     _method: 'PUT'
                 },
