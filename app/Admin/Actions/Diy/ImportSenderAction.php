@@ -7,7 +7,6 @@ use Encore\Admin\Actions\Action;
 use Illuminate\Http\Request;
 
 use Encore\Admin\Admin;
-use Maatwebsite\Excel\Facades\Excel;
 
 class ImportSenderAction extends Action
 {
@@ -35,7 +34,7 @@ class ImportSenderAction extends Action
     public function html()
     {
         return <<<HTML
-        <a class="btn btn-sm btn-default import-action">导入</a>
+        <a class="btn btn-sm btn-default import-action">发件箱导入</a>
 HTML;
     }
 
@@ -48,8 +47,8 @@ HTML;
             ->file('file', '请选择文件')
             ->options(['showPreview' => false,
                 'allowedFileExtensions'=>['xlsx','xls','csv'],
-                'showUpload'=>true
-            ])->required();
+                'showUpload'=>true,
+            ])->required()->help('导入的文件必须是excel，具体格式请先下载导入模版，按模版文件中标题行的提示正确填写');
     }
     /**
      * 上传等待

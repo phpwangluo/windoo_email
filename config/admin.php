@@ -11,7 +11,7 @@ return [
     | login page.
     |
     */
-    'name' => 'GP 邮件管理系统',
+    'name' => 'WINNDOO 站群管理系统',
 
     /*
     |--------------------------------------------------------------------------
@@ -22,7 +22,7 @@ return [
     | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo' => 'GP 邮件管理系统',
+    'logo' => 'WINNDOO 站群管理系统',
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +34,7 @@ return [
     | '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo-mini' => '<b>GP</b>',
+    'logo-mini' => '<b>WINNDOO</b>',
 
     /*
     |--------------------------------------------------------------------------
@@ -85,7 +85,7 @@ return [
     | Html title for all pages.
     |
     */
-    'title' => 'GP邮件管理系统',
+    'title' => 'WINNDOO 站群管理系统',
 
     /*
     |--------------------------------------------------------------------------
@@ -275,7 +275,7 @@ return [
     |    "skin-red", "skin-red-light", "skin-black", "skin-black-light".
     |
     */
-    'skin' => 'skin-red',
+    'skin' => 'skin-blue',
 
     /*
     |--------------------------------------------------------------------------
@@ -289,7 +289,7 @@ return [
     | "sidebar-mini".
     |
     */
-    'layout' => ['sidebar-mini', 'sidebar-collapse'],
+    'layout' => ['sidebar-mini'],
 
     /*
     |--------------------------------------------------------------------------
@@ -373,8 +373,9 @@ return [
     | The global Grid action display class.
     |--------------------------------------------------------------------------
     */
-    'grid_action_class' => \Encore\Admin\Grid\Displayers\DropdownActions::class,
-
+    //                                                                                                                                                                                                              'grid_action_class' => \Encore\Admin\Grid\Displayers\DropdownActions::class,
+    // 最原始的`按钮图标`形式
+    'grid_action_class' => \Encore\Admin\Grid\Displayers\Actions::class,
     /*
     |--------------------------------------------------------------------------
     | Extension Directory
@@ -440,7 +441,7 @@ return [
         ],
         'simditor' => [
             // Set to false if you want to disable this extension
-            'enable' => true,
+            'enable' => false,
             // Editor configuration
             'config' => [
                 'upload' => [
@@ -461,6 +462,18 @@ return [
         'chartjs' => [
             // Set to `false` if you want to disable this extension
             'enable' => true,
+        ],
+        'ueditor' => [
+
+            // 如果要关掉这个扩展，设置为false
+            'enable' => true,
+
+            // 编辑器的前端配置 参考：http://fex.baidu.com/ueditor/#start-config
+            'config' => [
+                'initialFrameHeight' => 400, // 例如初始化高度
+            ],
+            // 'field_type' => '自定义名字'
         ]
     ],
+    'send_max_num'=>env('SEND_MAIL_LIMIT_NUM',5),
 ];

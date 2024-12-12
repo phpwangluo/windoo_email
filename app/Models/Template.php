@@ -30,4 +30,9 @@ class Template extends Model
     {
         return $this->hasOne(Contact::class);
     }
+    public function mailforsend()
+    {
+        return $this->hasOne(MailForSend::class);
+    }
+
 }

@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateTemplatesTable extends Migration
 {
@@ -22,7 +23,9 @@ class CreateTemplatesTable extends Migration
             $table->integer('country_id')->unsigned()->default(0)->comment("国家ID");
             $table->integer('trade_id')->unsigned()->default(0)->comment("行业ID");
             $table->tinyInteger('status')->unsigned()->default(1)->comment("模板状态,0:删除");
-            $table->timestamps();
+            //$table->timestamps();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }
 

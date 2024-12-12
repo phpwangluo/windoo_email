@@ -4,19 +4,7 @@ namespace App\Http\Controllers\Emails;
 
 use App\Exports\Export;
 use App\Http\Controllers\Controller;
-use App\Models\MailSended;
 use Illuminate\Http\Request;
-
-use App\Mail\ContactSender;
-
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\DB;
-use App\Models\Sender;
-use App\Models\MailForSend;
-use League\Flysystem\Config;
-use \Exception;
-use Illuminate\Support\Facades\Response;
-
 use Maatwebsite\Excel\Facades\Excel;
 
 class ExportContactTemplateController extends Controller
@@ -26,18 +14,18 @@ class ExportContactTemplateController extends Controller
         //设置表头
         $header = [
             [
-                "0"=>'联系人邮箱地址（必填）',
-                "1"=>'联系人所属国家（必填）',
-                "2"=>'联系人所属行业（必填）',
-                "3"=>'联系人模板',
+                "0"=>'联系人（必填，如：123@qq.com）',
+                "1"=>'国家（必填，如：美国）',
+                "2"=>'行业（必填，如：汽车）',
+                "3"=>'模板名称（选填）',
                 "4"=>'项目（必填）',
-                "5"=>'联系人标发送邮件开始时间点',
-                "6"=>'发送邮件结束时间点',
-                "7"=>'备注'
+                "5"=>'开始时间（选填，单位小时）',
+                "6"=>'结束时间（选填，单位小时）',
+                "7"=>'备注（选填）'
             ]
         ];
         $columnWidth = [
-            "A"=>30,
+            "A"=>40,
             "B"=>30,
             "C"=>30,
             "D"=>30,

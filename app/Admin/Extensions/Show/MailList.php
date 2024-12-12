@@ -3,7 +3,6 @@
 
 namespace App\Admin\Extensions\Show;
 
-use App\Models\MailForSend;
 use App\Models\MailReceived;
 use Encore\Admin\Show\AbstractField;
 
@@ -26,8 +25,7 @@ class MailList extends AbstractField
             $replyed_list = MailReceived::where([
                 'sender_email'=>$reply_sender_email,
                 'receiver_email'=>$reply_sreceiver_email,
-                'reply_status'=>2
-            ])->orderBy('receive_time','desc')->get()->toArray();
+            ])->where('id','<>',$id)->orderBy('receive_time','desc')->orderBy('id','desc')->get()->toArray();
             foreach ($replyed_list as $rk=>$rv){
                 $replyed_list[$rk]['template_id'] = 0;
                 $replyed_list[$rk]['email_sign'] = '';
@@ -60,17 +58,43 @@ class MailList extends AbstractField
         foreach ($lists_format_end as $k => $v) {
             $style = '';
             if($v['handle_type'] == 2){
-                $style = 'style="color:green"';
+                $style = 'color:green';
             }elseif ($v['handle_type'] == 1){
-                $style = 'style="color:red"';
+                $style = 'color:red';
             }
             $html .= '
-        <table border="1" width="100%">
-            <tr><td width="30%">邮箱</td><td width="70%"' . $style . '>' . $v['sender_email'] . '</td></tr>
-            <tr><td>发送时间</td><td>' . $v['handle_time'] . '</td></tr>
-            <tr><td>主题</td><td>' . $v['title'] . '</td></tr>
-            <tr><td>正文</td><td>' . $v['content'] . '</td></tr>
-            <tr><td>签名</td><td>' . $v['email_sign'] . '</td></tr>
+            <style>
+            table {
+                width: 95%;
+                border-spacing: 0;/**设置相邻单元格的边框间的距离**/
+                border-collapse: collapse;/**边框会合并为一个单一的边框**/
+                color:#5a5a5a;
+                /**table-layout: fixed;/**固定table表格**/
+            }
+            table  thead {
+                background-color: #d9edf7;
+            }
+            table td,table th{
+                border:1px solid #ccc;
+                /**overflow: hidden;/**溢出隐藏**/
+                /**white-space: nowrap;/**不换行**/
+                text-overflow: ellipsis;/**溢出不可见部分使用...代替**/
+            }
+            p{ word-wrap:break-word; width:520px;}
+        </style>
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="2" style="text-align: center">邮件回复内容</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr style="width: 800px;"><td style="padding: 10px;width: 80px;">联系人</td><td style="padding: 10px;width: 700px;' . $style . '">' . $v['sender_email'] . '</td></tr>
+            <tr><td style="padding: 10px;">回复时间</td><td style="padding: 10px;">' . $v['handle_time'] . '</td></tr>
+            <tr><td style="padding: 10px;">标题</td><td style="padding: 10px;">' . $v['title'] . '</td></tr>
+            <tr><td style="padding: 10px;">正文</td><td style="padding: 10px;">' . $v['content'] . '</td></tr>
+            <tr><td style="padding: 10px;">签名</td><td style="padding: 10px;">' . $v['email_sign'] . '</td></tr>
+            </tbody>
         </table><hr>';;
         }
         // 返回自定义回复详情页面

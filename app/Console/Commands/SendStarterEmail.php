@@ -43,7 +43,6 @@ class SendStarterEmail extends Command
         $send_mail = new SendToStartMail('');
         $job = $send_mail->onConnection('database')->onQueue('gp_email_send');
         dispatch($job);//分发任务到队列
-        dispatch($job);//分发任务到队列
         return 1;
     }
 }

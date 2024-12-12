@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateContactsTable extends Migration
 {
@@ -23,12 +24,14 @@ class CreateContactsTable extends Migration
             $table->tinyInteger('send_start_hour')->unsigned()->default(9)->comment("联系人发送邮件开始时间点");
             $table->tinyInteger('send_end_hour')->unsigned()->default(17)->comment("联系人发送邮件结束时间点");
             $table->integer('send_count')->default(0)->unsigned()->comment('给此联系人发送邮件次数');
-            $table->tinyInteger('business_status')->unsigned()->default(1)->comment("联系人的合作状态，0：不合作 1:合作中，2：已合作");
+            //$table->tinyInteger('business_status')->unsigned()->default(1)->comment("联系人的合作状态，0：不合作 1:合作中，2：已合作");
             $table->tinyInteger('task_status')->unsigned()->default(1)->comment("联系人任务状态，0:停用，1：正常");
             $table->tinyInteger('status')->unsigned()->default(1)->comment("联系人状态，0:删除，1：正常");
             $table->tinyInteger('send_max_num')->unsigned()->default(5)->comment("联系人最大发送次数");
             $table->string('remarks',64)->default('')->comment('备注');
-            $table->timestamps();
+            //$table->timestamps();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
 
         Schema::create('mail_for_sends', function (Blueprint $table) { //联系人配置的发送邮件内容
@@ -42,9 +45,11 @@ class CreateContactsTable extends Migration
             $table->tinyInteger('send_type')->unsigned()->default(1)->comment("发送邮件类型，1:自动，2：手动");
             $table->dateTime('plan_send_time')->default('1990-01-01 00:00:00')->comment("联系人发送邮件计划发送时间");
             $table->dateTime('real_send_time')->default('1990-01-01 00:00:00')->comment("实际发送邮件的时间");
-            //$table->date('send_date')->default('1990-01-01')->comment("处理发送邮件的日期");
+            $table->dateTime('sender_local_time')->default('1990-01-01 00:00:00')->comment("收件人所在国家时区时间");
             $table->tinyInteger('send_status')->unsigned()->default(1)->comment("邮件发送状态，1:待发送，2：已发送，3：取消发送，4：发送失败");
-            $table->timestamps();
+            //$table->timestamps();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }
 

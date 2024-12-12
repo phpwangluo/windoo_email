@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateSendersTable extends Migration
 {
@@ -25,7 +26,9 @@ class CreateSendersTable extends Migration
             $table->tinyInteger('status')->unsigned()->default(1)->comment("发件人状态，0:删除，1：正常");
             $table->string('remarks',512)->default('')->comment('备注');
             $table->integer('mail_setting_id')->default(1)->unsigned()->comment('关联邮箱运营商配置');
-            $table->timestamps();
+            //$table->timestamps();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }
 

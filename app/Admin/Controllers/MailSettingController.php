@@ -25,14 +25,22 @@ class MailSettingController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new MailSetting());
-        $grid->column('id', __('编号'));
+        $grid->filter(function($filter){
+
+            // 去掉默认的id过滤器
+            $filter->disableIdFilter();
+            // 在这里添加字段过滤器
+            $filter->equal('support_name', '运营商');
+
+        });
+        $grid->column('id', __('编号'))->hide();
+        $grid->column('support_name', __('运营商'));
         $grid->column('driver', __('发送Driver'));
         $grid->column('host', __('发送Host'));
         $grid->column('port', __('发送Port'));
         $grid->column('encryption', __('发送Encryption'));
         //$grid->column('sendmail', __('发送Sendmail'));
         //$grid->column('pretend', __('发送Pretend'));
-        $grid->column('support_name', __('运营商'));
         $grid->column('getmail_protocol', __('拉取protocol'));
         $grid->column('getmail_host', __('拉取host'));
         $grid->column('getmail_port', __('拉取port'));
@@ -43,10 +51,16 @@ class MailSettingController extends AdminController
             $actions->disableDelete();
 
             // 去掉编辑
-            //$actions->disableEdit();
+            $actions->disableEdit();
 
             // 去掉查看
             $actions->disableView();
+
+            $actions->prepend('<a
+                title="编辑"
+                href="'.$this->getResource().'/'.$this->getRouteKey().'/edit"
+                class="'.$this->grid->getGridRowName().'-edit">
+                <i class="fa fa-edit"></i>&nbsp;&nbsp;');
         });
         //$grid->column('created_at', __('Created at'));
         //$grid->column('updated_at', __('Updated at'));

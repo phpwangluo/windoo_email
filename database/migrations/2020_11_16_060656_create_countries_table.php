@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateCountriesTable extends Migration
 {
@@ -21,7 +22,9 @@ class CreateCountriesTable extends Migration
             $table->tinyInteger('send_start_hour')->unsigned()->default(9)->comment("默认发送邮件开始时间点");
             $table->tinyInteger('send_end_hour')->unsigned()->default(17)->comment("默认发送邮件结束时间点");
             $table->tinyInteger('status')->unsigned()->default(1)->comment("国家状态");
-            $table->timestamps();
+            //$table->timestamps();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }
 

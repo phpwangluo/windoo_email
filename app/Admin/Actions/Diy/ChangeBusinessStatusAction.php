@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 class ChangeBusinessStatusAction extends RowAction
 {
-    public $name = '是否合作';
+    public $name = '合作意向';
 
     public function handle(Model $model, Request $request)
     {
@@ -33,7 +33,7 @@ class ChangeBusinessStatusAction extends RowAction
                 'customer_tag'=>$contact_detail['customer_tag'],
                 'business_status'=>$business_status,
                 'remarks'=>$remarks,
-                'created_at'=>date('Y-m-d H:i:s',time()),
+                //'created_at'=>date('Y-m-d H:i:s',time()),
             ];
             BusinessSource::insert($insert_data);
         }else{

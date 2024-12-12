@@ -23,6 +23,11 @@ class MailForSend extends Model
         'send_type',
         'send_start_hour',
         'send_end_hour',
-        'send_status'
+        'send_status',
+        'plan_send_time'
     ];
+    public function template()
+    {
+        return $this->belongsTo(Template::class,'template_id');
+    }
 }

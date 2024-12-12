@@ -20,9 +20,11 @@
 use Encore\Admin\Show;
 use App\Admin\Extensions\Show\UnSerialize;
 use App\Admin\Extensions\Show\MailList;
-use App\Admin\Extensions\Tools\Simditor;
-use Encore\Admin\Form;
+use App\Admin\Extensions\Show\MailContentDiyShow;
+use Grid\Displayers\Actions;
 //Encore\Admin\Form::forget(['map', 'editor']);
-Form::extend('seditor', Simditor::class);
 Show::extend('unserialize', UnSerialize::class);
 show::extend('replylist',MailList::class);
+show::extend('mailforsendcontent',MailContentDiyShow::class);
+
+app('view')->prependNamespace('admin', resource_path('views/admin')); //重新指向前端资源

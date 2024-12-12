@@ -35,6 +35,41 @@ return [
     */
 
     'channels' => [
+        'info_create_task' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/email/create_task_failed.log'),
+            // 挂载日志格式接口（重点）
+            'tap' => [App\Logging\ApplogFormatter::class],
+            'level' => 'info',
+        ],
+        'info_send_email' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/email/send_email_failed.log'),
+            // 挂载日志格式接口（重点）
+            'tap' => [App\Logging\ApplogFormatter::class],
+            'level' => 'info',
+        ],
+        'error_gp_email_send' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/email/error_gp_email_send.log'),
+            // 挂载日志格式接口（重点）
+            'tap' => [App\Logging\ApplogFormatter::class],
+            'level' => 'error',
+        ],
+        'error_gp_email_create' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/email/error_gp_email_create.log'),
+            // 挂载日志格式接口（重点）
+            'tap' => [App\Logging\ApplogFormatter::class],
+            'level' => 'error',
+        ],
+        'error_gp_email_receive' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/email/error_gp_email_receive.log'),
+            // 挂载日志格式接口（重点）
+            'tap' => [App\Logging\ApplogFormatter::class],
+            'level' => 'error',
+        ],
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],

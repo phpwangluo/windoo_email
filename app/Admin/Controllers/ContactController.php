@@ -4,16 +4,14 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Diy\ExportTemplateContactAction;
 use App\Admin\Actions\Diy\ImportContactsAction;
-use App\Admin\Actions\Diy\ChangeTaskStatusAction;
+use App\Admin\Extensions\DiyHandle\ChangeContactStatus;
 use App\Models\Contact;
-use App\Models\MailForSend;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\MessageBag;
 
 class ContactController extends AdminController
 {
@@ -33,6 +31,7 @@ class ContactController extends AdminController
     {
         $grid = new Grid(new Contact());
         $grid->model()->where('status', '=', 1);
+        $grid->model()->orderBy('task_status','desc');
         $grid->filter(function($filter){
 
             // 去掉默认的id过滤器
@@ -41,13 +40,18 @@ class ContactController extends AdminController
             // 在这里添加字段过滤器
             $filter->equal('country_id', '国家')->select('/api/countrylist');
             $filter->equal('trade_id', '行业')->select('/api/tradelist');
+            $filter->equal('email_address', '联系人')->email();
+            $filter->equal('task_status', '联系人状态')->select([
+                '0'=>'停用',
+                '1'=>'正常',
+            ]);
             $filter->equal('send_count', '发送次数')->integer();
 
         });
         $grid->disableExport();//禁用导出
         $grid->disableCreateButton(); //禁用创建
         //$grid->column('id', __('Id'));
-        $grid->column('email_address', __('目标邮箱'));
+        $grid->column('email_address', __('联系人'));
         $grid->column('country.country_name', __('国家'));
         $grid->column('trade.trade_name', __('行业'));
         $grid->column('template.template_name', __('模板名称'));
@@ -56,7 +60,7 @@ class ContactController extends AdminController
         //$grid->column('send_end_hour', __('Send end hour'));
         $grid->column('send_count', __('发送次数'));
         //$grid->column('business_status', __('Business status'));
-        $grid->column('task_status', __('任务状态'))->using([
+        $grid->column('task_status', __('联系人状态'))->using([
             0 => '停用',
             1 => '使用中',
         ], '未知')->dot([
@@ -73,17 +77,26 @@ class ContactController extends AdminController
             $actions->disableDelete();
 
             // 去掉编辑
-            //$actions->disableEdit();
+            $actions->disableEdit();
 
             // 去掉查看
             $actions->disableView();
             if($actions->row->task_status == 1){
                 $name = '关闭';
+                $to_task_status = 0;
             }else{
                 $name = '开启';
+                $to_task_status = 1;
             }
             // 添加自定义修改任务状态的按钮
-            $actions->add(new ChangeTaskStatusAction($name));
+            //$actions->add(new ChangeTaskStatusAction($name));
+            $actions->prepend('<a
+                title="编辑"
+                href="'.$this->getResource().'/'.$this->getRouteKey().'/edit"
+                class="'.$this->grid->getGridRowName().'-edit">
+                <i class="fa fa-edit"></i>&nbsp;&nbsp;');
+            // 老版本添加自定义删除按钮
+            $actions->append(new ChangeContactStatus($actions->getKey(),$to_task_status));
         });
         $grid->tools(function ($tools) {
             $tools->batch(function ($batch) {
@@ -150,18 +163,18 @@ class ContactController extends AdminController
 
         });
         if(Route::currentRouteName () == 'admin.contacts.edit'){
-            $form->text('email_address', __('邮箱名称'))->readonly()->required();
+            $form->text('email_address', __('联系人'))->readonly()->required();
             $form->text('country.country_name', __('国家'))->readonly()->required();
             $form->text('trade.trade_name', __('行业'))->readonly()->required();
         }else{
-            $form->text('email_address', __('邮箱名称'))->required();
+            $form->text('email_address', __('联系人'))->required();
             $form->select('country_id', __('国家'))->options('/api/countrylist')->required();
             $form->select('trade_id', __('行业'))->options('/api/tradelist')->required();
         }
         $form->hidden('task_status');
         $form->hidden('id');
         $form->select('template_id', __('模板名称'))->options('/api/templatelist')->required();
-        $form->number('send_start_hour', __('发送时间'))->default(9)->min(0)->max(23)->required();
+        $form->number('send_start_hour', __('开始时间'))->default(9)->min(0)->max(23)->required();
         $form->number('send_end_hour', __('结束时间'))->default(17)->min(0)->max(23)->required();
         $form->text('remarks', __('备注'));
         $form->footer(function ($footer) {
@@ -193,7 +206,7 @@ class ContactController extends AdminController
                 || $send_end_hour != $model->send_end_hour){
                 Contact::where('email_address',$model->email_address)
                     ->update([
-                        'send_max_num' => env('SEND_MAIL_LIMIT_NUM'),
+                        'send_max_num' => 1,
                     ]);
             }
         });

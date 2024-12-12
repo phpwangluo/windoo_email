@@ -13,6 +13,7 @@ Route::group([
 
     $router->get('/', 'HomeController@index')->name('home');
 
+    /**GP邮件管理系统 */
     $router->resource('countries', CountryController::class); //国家管理路由
 
     $router->resource('trades', TradeController::class); //行业管理路由
@@ -30,5 +31,18 @@ Route::group([
     $router->resource('mail-details', MailDetailController::class);
 
     $router->resource('business-sources', BusinessSourceController::class);//合作资源管理
-//自定义详情页开发
+
+    $router->resource('mail-for-sends', MailForSendController::class);
+
+
+    /** 站群内容管理系统 */
+
+    $router->resource('sites-blog-sites', Sites\BlogSitesController::class); //站点配置
+    $router->resource('sites-blog-articles', Sites\BlogArticlesController::class); //文章管理
+    $router->resource('sites-blog-categories', Sites\BlogCategriesController::class); //边栏管理
+    $router->resource('sites-blog-article-categories', Sites\BlogArticlesCategriesController::class);
+
+    $router->resource('sites-blog-page-settings', Sites\BlogPageSettingsController::class); //页面设置
+    $router->resource('sites-blog-authors', Sites\BlogAuthorsController::class); //博客管理
+
 });

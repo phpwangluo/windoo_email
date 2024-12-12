@@ -2,7 +2,6 @@
 
 namespace App\Admin\Controllers;
 
-use App\Admin\Actions\Diy\NewDelete;
 use App\Models\Trade;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -10,6 +9,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\MessageBag;
+use App\Admin\Extensions\DiyHandle\TradeDelete;
 
 class TradeController extends AdminController
 {
@@ -47,7 +47,12 @@ class TradeController extends AdminController
             $actions->disableView();
 
             // 添加自定义删除按钮
-            $actions->add(new NewDelete());
+            //$actions->add(new NewDelete());
+
+            // 添加操作
+            if($actions->row->trade_name != '全部'){
+                $actions->append(new TradeDelete($actions->getKey()));
+            }
         });
         $grid->tools(function ($tools) {
             $tools->batch(function ($batch) {

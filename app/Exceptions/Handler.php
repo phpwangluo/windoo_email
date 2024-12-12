@@ -2,8 +2,9 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\Diy\EmailException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-
+use Exception;
 class Handler extends ExceptionHandler
 {
     /**
@@ -33,5 +34,36 @@ class Handler extends ExceptionHandler
     public function register()
     {
         //
+    }
+    // Handler的render函数
+    /**
+     * Render an exception into an HTTP response.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Throwable  $e
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Throwable
+     */
+    public function render($request,\Throwable $e)
+    {
+        // 如果config配置debug为true ==>debug模式的话让laravel自行处理
+        if(config('app.debug')){
+            return parent::render($request, $e);
+        }
+        return $this->handle($request, $e);
+    }
+
+    // 新添加的handle函数
+    public function handle($request, Exception $e){
+        if($e instanceof EmailException) {
+            $result = [
+                "msg"    => $e->getMessage(),
+                "data"   => $request->get('data'),
+                "status" => $e->getCode()
+            ];
+            return response()->json($result);
+        }
+        return parent::render($request, $e);
     }
 }
